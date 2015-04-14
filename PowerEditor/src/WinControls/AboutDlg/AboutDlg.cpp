@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -32,7 +32,7 @@
 
 BOOL CALLBACK AboutDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
+	switch (message) 
 	{
         case WM_INITDIALOG :
 		{
@@ -82,17 +82,18 @@ BOOL CALLBACK AboutDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_DRAWITEM :
 		{
 			HICON hIcon = (HICON)::LoadImage(_hInst, MAKEINTRESOURCE(IDI_CHAMELEON), IMAGE_ICON, 64, 64, LR_DEFAULTSIZE);
+			//HICON hIcon = (HICON)::LoadImage(_hInst, MAKEINTRESOURCE(IDI_JESUISCHARLIE), IMAGE_ICON, 64, 64, LR_DEFAULTSIZE);
 			DRAWITEMSTRUCT *pdis = (DRAWITEMSTRUCT *)lParam;
 			::DrawIconEx(pdis->hDC, 0, 0, hIcon, 64, 64, 0, NULL, DI_NORMAL);
 			return TRUE;
 		}
 
-		case WM_COMMAND :
+		case WM_COMMAND : 
 		{
 			switch (wParam)
 			{
 				case IDCANCEL :
-				case IDOK :
+				case IDOK : 
 					display(false);
 					return TRUE;
 
@@ -106,7 +107,7 @@ BOOL CALLBACK AboutDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 			return TRUE;
 		}
 	}
-	return FALSE;
+	return FALSE;	
 }
 
 void AboutDlg::doDialog()

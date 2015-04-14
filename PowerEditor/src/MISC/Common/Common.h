@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -37,6 +37,9 @@ const bool dirDown = false;
 #define NPP_CP_BIG5               950
 
 #define LINKTRIGGERED WM_USER+555
+
+#define BCKGRD_COLOR (RGB(255,102,102))
+#define TXT_COLOR    (RGB(255,255,255))
 
 #ifdef UNICODE
 	#define NppMainEntry wWinMain
@@ -105,6 +108,10 @@ std::string wstring2string(const std::wstring & rwString, UINT codepage);
 bool isInList(const TCHAR *token, const TCHAR *list);
 generic_string BuildMenuFileName(int filenameLen, unsigned int pos, const generic_string &filename);
 
+std::string getFileContent(const TCHAR *file2read);
+generic_string relativeFilePathToFullFilePath(const TCHAR *relativeFilePath);
+void writeFileContent(const TCHAR *file2write, const char *content2write);
+
 class WcharMbcsConvertor {
 public:
 	static WcharMbcsConvertor * getInstance() {return _pSelf;};
@@ -114,7 +121,7 @@ public:
 	const wchar_t * char2wchar(const char *mbcs2Convert, UINT codepage, int *mstart, int *mend);
 	const char * wchar2char(const wchar_t *wcStr, UINT codepage, int lenIn=-1, int *pLenOut=NULL);
 	const char * wchar2char(const wchar_t *wcStr, UINT codepage, long *mstart, long *mend);
-
+	
 	const char * encode(UINT fromCodepage, UINT toCodepage, const char *txt2Encode, int lenIn=-1, int *pLenOut=NULL, int *pBytesNotProcessed=NULL) {
 		int lenWc = 0;
         const wchar_t * strW = char2wchar(txt2Encode, fromCodepage, lenIn, &lenWc, pBytesNotProcessed);
@@ -177,6 +184,8 @@ private:
 #endif
 
 generic_string PathRemoveFileSpec(generic_string & path);
-generic_string PathAppend(generic_string &strDest, const generic_string str2append);
+generic_string PathAppend(generic_string &strDest, const generic_string & str2append);
+COLORREF getCtrlBgColor(HWND hWnd);
+generic_string stringToUpper(generic_string strToConvert);
 
 #endif //M30_IDE_COMMUN_H

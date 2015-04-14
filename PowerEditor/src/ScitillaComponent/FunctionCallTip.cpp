@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -46,7 +46,7 @@ struct FunctionValues {
 };
 
 inline bool lower(TCHAR c) {
-	return (c >= 'a' && c <= 'z');
+	return (c >= 'a' && c <= 'z');	
 }
 
 inline bool match(TCHAR c1, TCHAR c2) {
@@ -55,7 +55,7 @@ inline bool match(TCHAR c1, TCHAR c2) {
 		return ((c1-32) == c2);
 	if (lower(c2))
 		return ((c2-32) == c1);
-	return false;
+	return false;	
 }
 
 //test string case insensitive ala Scintilla
@@ -67,14 +67,14 @@ int testNameNoCase(const TCHAR * name1, const TCHAR * name2, int len = -1) {
 	int i = 0;
 	while(match(name1[i], name2[i])) {
 		if (name1[i] == 0 || i == len) {
-			return 0;	//equal
+			return 0;	//equal	
 		}
-		i++;
+		++i;	
 	}
-
+	
 	int subs1 = lower(name1[i])?32:0;
 	int subs2 = lower(name2[i])?32:0;
-
+	
 	return ( (name1[i]-subs1) - (name2[i]-subs2) );
 }
 
@@ -82,6 +82,14 @@ void FunctionCallTip::setLanguageXML(TiXmlElement * pXmlKeyword) {
 	if (isVisible())
 		close();
 	_pXmlKeyword = pXmlKeyword;
+
+	// Clear all buffered values, because they may point to freed memory area.
+	reset();
+
+	// Also clear _funcName so that next getCursorFunction will call loadFunction to parse XML structure
+	if (_funcName)
+		delete [] _funcName;
+	_funcName = 0;
 }
 
 bool FunctionCallTip::updateCalltip(int ch, bool needShown) {
@@ -130,14 +138,14 @@ bool FunctionCallTip::getCursorFunction()
 	int endpos = _pEditView->execute(SCI_GETLINEENDPOSITION, line);
 	int len = endpos - startpos + 3;	//also take CRLF in account, even if not there
 	int offset = _curPos - startpos;	//offset is cursor location, only stuff before cursor has influence
-	const int maxLen = 128;
+	const int maxLen = 256;
 
 	if ((offset < 2) || (len >= maxLen))
 	{
 		reset();
 		return false;	//cannot be a func, need name and separator
 	}
-
+	
 	TCHAR lineData[maxLen] = TEXT("");
 
 	_pEditView->getLine(line, lineData, len);
@@ -148,7 +156,7 @@ bool FunctionCallTip::getCursorFunction()
 	std::vector< Token > tokenVector;
 	int tokenLen = 0;
 	TCHAR ch;
-	for (int i = 0; i < offset; i++) 	//we dont care about stuff after the offset
+	for (int i = 0; i < offset; ++i) 	//we dont care about stuff after the offset
     {
 		//tokenVector.push_back(pair(lineData+i, len));
 		ch = lineData[i];
@@ -157,8 +165,8 @@ bool FunctionCallTip::getCursorFunction()
 			tokenLen = 0;
 			TCHAR * begin = lineData+i;
             while ((isBasicWordChar(ch) || isAdditionalWordChar(ch)) && i < offset) {
-				tokenLen++;
-				i++;
+				++tokenLen;
+				++i;
 				ch = lineData[i];
 			}
 			tokenVector.push_back(Token(begin, tokenLen, true));
@@ -185,16 +193,18 @@ bool FunctionCallTip::getCursorFunction()
 
 	FunctionValues curValue, newValue;
 	int scopeLevel = 0;
-	for (size_t i = 0; i < vsize; i++) {
+	for (size_t i = 0; i < vsize; ++i)
+	{
 		Token & curToken = tokenVector.at(i);
 		if (curToken.isIdentifier) {
 			curValue.lastIdentifier = i;
 		} else {
-			if (curToken.token[0] == _start) {
-				scopeLevel++;
+			if (curToken.token[0] == _start)
+			{
+				++scopeLevel;
 				newValue = curValue;
 				valueVec.push_back(newValue);	//store the current settings, so when this new function doesnt happen to be the 'real' one, we can restore everything
-
+				
 				curValue.scopeLevel = scopeLevel;
 				if (i > 0 && curValue.lastIdentifier == int(i)-1) {	//identifier must be right before (, else we have some expression like "( x + y() )"
 					curValue.lastFunctionIdentifier = curValue.lastIdentifier;
@@ -203,7 +213,7 @@ bool FunctionCallTip::getCursorFunction()
 					curValue.lastFunctionIdentifier = -1;
 				}
 			} else if (curToken.token[0] == _param && curValue.lastFunctionIdentifier > -1) {
-				curValue.param++;
+				++curValue.param;
 			} else if (curToken.token[0] == _stop) {
 				if (scopeLevel)	//scope cannot go below -1
 					scopeLevel--;
@@ -221,7 +231,7 @@ bool FunctionCallTip::getCursorFunction()
 			}
 		}
 	}
-
+	
 	bool res = false;
 
 	if (curValue.lastFunctionIdentifier == -1) {	//not in direct function. Start popping the stack untill we empty it, or a func IS found
@@ -280,13 +290,13 @@ bool FunctionCallTip::loadFunction() {
 			const TCHAR * val = funcNode->Attribute(TEXT("func"));
 			if (val)
 			{
-				if (!lstrcmp(val, TEXT("yes")))
+				if (!lstrcmp(val, TEXT("yes"))) 
                 {
 					//what we've been looking for
 					_curFunction = funcNode;
 					break;
 				}
- else
+				else 
                 {
 					//name matches, but not a function, abort the entire procedure
 					return false;
@@ -325,7 +335,7 @@ bool FunctionCallTip::loadFunction() {
 		_overloads.push_back(paramVec);
 		paramVec.clear();
 
-		_currentNrOverloads++;
+		++_currentNrOverloads;
 	}
 
 	_currentNrOverloads = (int)_overloads.size();
@@ -336,7 +346,7 @@ bool FunctionCallTip::loadFunction() {
 	return true;
 }
 
-void FunctionCallTip::showCalltip()
+void FunctionCallTip::showCalltip() 
 {
 	if (_currentNrOverloads == 0)
     {
@@ -349,7 +359,7 @@ void FunctionCallTip::showCalltip()
 	size_t psize = params.size()+1, osize;
 	if ((size_t)_currentParam >= psize) {
 		osize = _overloads.size();
-		for(size_t i = 0; i < osize; i++) {
+		for(size_t i = 0; i < osize; ++i) {
 			psize = _overloads.at(i).size()+1;
 			if ((size_t)_currentParam < psize) {
 				_currentOverload = i;
@@ -368,7 +378,7 @@ void FunctionCallTip::showCalltip()
 		bytesNeeded += lstrlen(curDescriptionText);
 
 	size_t nrParams = params.size();
-	for(size_t i = 0; i < nrParams; i++) {
+	for(size_t i = 0; i < nrParams; ++i) {
 		bytesNeeded += lstrlen(params.at(i)) + 2;	//'param, '
 	}
 
@@ -394,9 +404,9 @@ void FunctionCallTip::showCalltip()
 
 	int highlightstart = 0;
 	int highlightend = 0;
-	for(size_t i = 0; i < nrParams; i++)
+	for(size_t i = 0; i < nrParams; ++i) 
 	{
-		if (int(i) == _currentParam)
+		if (int(i) == _currentParam) 
 		{
 			highlightstart = lstrlen(textBuffer);
 			highlightend = highlightstart + lstrlen(params.at(i));

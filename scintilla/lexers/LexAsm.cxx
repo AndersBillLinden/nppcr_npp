@@ -16,10 +16,6 @@
 #include <assert.h>
 #include <ctype.h>
 
-#ifdef _MSC_VER
-#pragma warning(disable: 4786)
-#endif
-
 #include <string>
 #include <map>
 #include <set>
@@ -157,7 +153,7 @@ class LexerAsm : public ILexer {
 public:
 	LexerAsm() {
 	}
-	~LexerAsm() {
+	virtual ~LexerAsm() {
 	}
 	void SCI_METHOD Release() {
 		delete this;
@@ -407,10 +403,10 @@ void SCI_METHOD LexerAsm::Fold(unsigned int startPos, int length, int initStyle,
 		if (options.foldCommentExplicit && ((style == SCE_ASM_COMMENT) || options.foldExplicitAnywhere)) {
 			if (userDefinedFoldMarkers) {
 				if (styler.Match(i, options.foldExplicitStart.c_str())) {
-					levelNext++;
+ 					levelNext++;
 				} else if (styler.Match(i, options.foldExplicitEnd.c_str())) {
-					levelNext--;
-				}
+ 					levelNext--;
+ 				}
 			} else {
 				if (ch == ';') {
 					if (chNext == '{') {
@@ -419,8 +415,8 @@ void SCI_METHOD LexerAsm::Fold(unsigned int startPos, int length, int initStyle,
 						levelNext--;
 					}
 				}
-			}
-		}
+ 			}
+ 		}
 		if (options.foldSyntaxBased && (style == SCE_ASM_DIRECTIVE)) {
 			word[wordlen++] = static_cast<char>(LowerCase(ch));
 			if (wordlen == 100) {                   // prevent overflow

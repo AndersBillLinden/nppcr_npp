@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -75,7 +75,7 @@ struct PluginInfo {
 	PFUNCGETFUNCSARRAY _pFuncGetFuncsArray;
 	PMESSAGEPROC _pMessageProc;
 	PFUNCISUNICODE _pFuncIsUnicode;
-
+	
 	FuncItem *_funcItems;
 	int _nbFuncItem;
 	generic_string _moduleName;
@@ -86,8 +86,8 @@ public:
 	PluginsManager() : _hPluginsMenu(NULL), _isDisabled(false), _dynamicIDAlloc(ID_PLUGINS_CMD_DYNAMIC, ID_PLUGINS_CMD_DYNAMIC_LIMIT),
 					   _markerAlloc(MARKER_PLUGINS, MARKER_PLUGINS_LIMIT)	{};
 	~PluginsManager() {
-
-		for (size_t i = 0 ; i < _pluginInfos.size() ; i++)
+		
+		for (size_t i = 0, len = _pluginInfos.size(); i < len; ++i)
 			delete _pluginInfos[i];
 
 		if (_hPluginsMenu)
@@ -99,7 +99,7 @@ public:
 
     int loadPlugin(const TCHAR *pluginFilePath, vector<generic_string> & dll2Remove);
 	bool loadPlugins(const TCHAR *dir = NULL);
-
+	
     bool unloadPlugin(int index, HWND nppHandle);
 
 	void runPluginCommand(size_t i);
@@ -109,7 +109,7 @@ public:
 	HMENU setMenu(HMENU hMenu, const TCHAR *menuName);
 	bool getShortcutByCmdID(int cmdID, ShortcutKey *sk);
 
-	void notify(SCNotification *notification);
+	void notify(const SCNotification *notification);
 	void relayNppMessages(UINT Message, WPARAM wParam, LPARAM lParam);
 	bool relayPluginMessages(UINT Message, WPARAM wParam, LPARAM lParam);
 
@@ -142,7 +142,7 @@ private:
 		::MessageBox(NULL, msg.c_str(), TEXT(" just crash in\r"), MB_OK|MB_ICONSTOP);
 	};
 	bool isInLoadedDlls(const TCHAR *fn) const {
-		for (size_t i = 0; i < _loadedDlls.size(); i++)
+		for (size_t i = 0; i < _loadedDlls.size(); ++i)
 			if (generic_stricmp(fn, _loadedDlls[i].c_str()) == 0)
 				return true;
 		return false;

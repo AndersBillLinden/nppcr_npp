@@ -34,10 +34,10 @@ IF [%BOOSTPATH%]==[] (
 SET TOOLSETCOMMAND=
 
 IF NOT [%MSVCTOOLSET%]==[] (
-	SET TOOLSETCOMMAND=toolset=%MSVCTOOLSET%
+	SET TOOLSETCOMMAND=toolset=%MSVCTOOLSET% 
 )
 
-
+	
 
 IF NOT EXIST "%BOOSTPATH%\boost\regex.hpp" (
    GOTO BOOSTNOTFOUND
@@ -117,6 +117,16 @@ IF NOT [%MSVCTOOLSET%]==[] (
     GOTO TOOLSETKNOWN
 )
 
+:: VS2013
+IF EXIST %BOOSTPATH%\bin.v2\libs\regex\build\msvc-12.0\release\link-static\runtime-link-static\threading-multi\libboost_regex-vc120-mt-s-%BOOSTVERSION%.lib (
+	SET MSVCTOOLSET=msvc-12.0
+)
+
+:: VS2012
+IF EXIST %BOOSTPATH%\bin.v2\libs\regex\build\msvc-11.0\release\link-static\runtime-link-static\threading-multi\libboost_regex-vc110-mt-s-%BOOSTVERSION%.lib (
+	SET MSVCTOOLSET=msvc-11.0
+)
+
 :: VS2010
 IF EXIST %BOOSTPATH%\bin.v2\libs\regex\build\msvc-10.0\release\link-static\runtime-link-static\threading-multi\libboost_regex-vc100-mt-s-%BOOSTVERSION%.lib (
 	SET MSVCTOOLSET=msvc-10.0
@@ -133,7 +143,7 @@ IF EXIST %BOOSTPATH%\bin.v2\libs\regex\build\msvc-8.0\release\link-static\runtim
 )
 
 IF [%MSVCTOOLSET%]==[] (
-	ECHO No correctly built boost regex libraries could be found.
+	ECHO No correctly built boost regex libraries could be found.  
 	ECHO Try specifying the MSVC version on the command line.
 	GOTO USAGE
 )
@@ -146,6 +156,15 @@ ECHO Run buildboost.bat without parameters to see the usage.
 
 :TOOLSETKNOWN
 
+:: VS2013
+IF [%MSVCTOOLSET%]==[msvc-12.0] (
+	SET BOOSTLIBPATH=%BOOSTPATH%\bin.v2\libs\regex\build\msvc-12.0
+)
+
+:: VS2012
+IF [%MSVCTOOLSET%]==[msvc-11.0] (
+	SET BOOSTLIBPATH=%BOOSTPATH%\bin.v2\libs\regex\build\msvc-11.0
+)
 
 :: VS2010
 IF [%MSVCTOOLSET%]==[msvc-10.0] (
@@ -166,8 +185,8 @@ IF [%MSVCTOOLSET%]==[msvc-8.0] (
 IF [%BOOSTLIBPATH%] == [] (
     ECHO ****************************************
 	ECHO ** ERROR
-	ECHO ** Boost library could not be found.
-	ECHO ** Make sure you've specified the correct boost path on the command line,
+	ECHO ** Boost library could not be found.  
+	ECHO ** Make sure you've specified the correct boost path on the command line, 
 	ECHO ** and try adding the toolset version
 	ECHO ****************************************
 	GOTO USAGE
@@ -183,9 +202,9 @@ ECHO Boost::regex built.
 ECHO.
 ECHO Now you need to build scintilla.
 ECHO.
-ECHO From the scintilla\win32 directory
+ECHO From the scintilla\win32 directory 
 ECHO.
-ECHO   nmake -f scintilla.mak
+ECHO   nmake -f scintilla.mak 
 ECHO.
 ECHO.
 
@@ -199,7 +218,7 @@ ECHO.
 ECHO.
 ECHO Boost is available free from www.boost.org
 ECHO.
-ECHO Unzip the file downloaded from www.boost.org, and give the absolute path
+ECHO Unzip the file downloaded from www.boost.org, and give the absolute path 
 ECHO as the first parameter to buildboost.bat
 ECHO.
 ECHO e.g.
@@ -209,10 +228,12 @@ ECHO.
 ECHO.
 ECHO You can specify which version of the Visual Studio compiler to use
 ECHO with --toolset.
-ECHO Use:
+ECHO Use:   
 ECHO   --toolset msvc-8.0     for Visual studio 2005
 ECHO   --toolset msvc-9.0     for Visual Studio 2008
 ECHO   --toolset msvc-10.0    for Visual Studio 2010
+ECHO   --toolset msvc-11.0    for Visual Studio 2012
+ECHO   --toolset msvc-12.0    for Visual Studio 2013
 ECHO.
 ECHO.
 ECHO e.g.  To build with boost in d:\libs\boost_1_48_0 with Visual Studio 2008
@@ -225,7 +246,7 @@ GOTO EOF
 :BUILDERROR
 ECHO There was an error building boost.  Please see the messages above for details.
 ECHO  - Have you got a clean extract from a recent boost version, such as 1.48?
-ECHO  - Download a fresh copy from www.boost.org and extract it to a directory,
+ECHO  - Download a fresh copy from www.boost.org and extract it to a directory, 
 ECHO    and run the batch again with the name of that directory
 
 :EOF

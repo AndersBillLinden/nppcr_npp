@@ -277,9 +277,9 @@ static void ColorizeTxt2tagsDoc(unsigned int startPos, int length, int initStyle
                 // Catch the special case of an unordered list
                 if (sc.chNext == ' ' && IsASpaceOrTab(sc.GetRelative(1))) {
                  //    if (IsNewline(sc.ch)) {
-			//precharCount = 0;
+                     	//precharCount = 0;
                 //		sc.SetState(SCE_TXT2TAGS_LINE_BEGIN);
-				//sc.SetState(SCE_TXT2TAGS_PRECHAR);
+                		//sc.SetState(SCE_TXT2TAGS_PRECHAR);
 				//	}
                 //    else {
                 //    precharCount = 0;

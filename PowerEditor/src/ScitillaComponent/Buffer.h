@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -60,13 +60,6 @@ enum BufferStatusInfo {
 	BufferChangeMask		= 0x3FF		//Mask: covers all changes
 };
 
-struct HeaderLineState {
-	HeaderLineState() : _headerLineNumber(0), _isExpanded(true){};
-	HeaderLineState(int lineNumber, bool isExpanded) : _headerLineNumber(lineNumber), _isExpanded(isExpanded){};
-	int _headerLineNumber;
-	bool _isExpanded;
-};
-
 //const int userLangNameMax = 16;
 const TCHAR UNTITLED_STR[] = TEXT("new ");
 
@@ -75,7 +68,7 @@ class FileManager {
 public:
 	void init(Notepad_plus * pNotepadPlus, ScintillaEditView * pscratchTilla);
 
-	//void activateBuffer(int index);
+	//void activateBuffer(int index);	
 	void checkFilesystemChanges();
 
 	int getNrBuffers() { return _nrBufs; };
@@ -89,7 +82,7 @@ public:
 
 	void addBufferReference(BufferID id, ScintillaEditView * identifer);	//called by Scintilla etc indirectly
 
-	BufferID loadFile(const TCHAR * filename, Document doc = NULL, int encoding = -1);	//ID == BUFFER_INVALID on failure. If Doc == NULL, a new file is created, otherwise data is loaded in given document
+	BufferID loadFile(const TCHAR * filename, Document doc = NULL, int encoding = -1, const TCHAR *backupFileName = NULL, time_t fileNameTimestamp = 0);	//ID == BUFFER_INVALID on failure. If Doc == NULL, a new file is created, otherwise data is loaded in given document
 	BufferID newEmptyDocument();
 	//create Buffer from existing Scintilla, used from new Scintillas. If dontIncrease = true, then the new document number isnt increased afterwards.
 	//usefull for temporary but neccesary docs
@@ -102,36 +95,30 @@ public:
 	bool reloadBuffer(BufferID id);
 	bool reloadBufferDeferred(BufferID id);
 	bool saveBuffer(BufferID id, const TCHAR * filename, bool isCopy = false, generic_string * error_msg = NULL);
+	bool backupCurrentBuffer();
+	bool deleteCurrentBufferBackup();
 	bool deleteFile(BufferID id);
 	bool moveFile(BufferID id, const TCHAR * newFilename);
-
 	bool createEmptyFile(const TCHAR * path);
-
 	static FileManager * getInstance() {return _pSelf;};
 	void destroyInstance() { delete _pSelf; };
-
-	void increaseDocNr() {_nextNewNumber++;};
-
 	int getFileNameFromBuffer(BufferID id, TCHAR * fn2copy);
-
 	int docLength(Buffer * buffer) const;
-
 	int getEOLFormatForm(const char *data) const;
+	size_t nextUntitledNewNumber() const;
 
 private:
-	FileManager() : _nextNewNumber(1), _nextBufferID(0), _pNotepadPlus(NULL), _nrBufs(0), _pscratchTilla(NULL){};
+	FileManager() : _nextBufferID(0), _pNotepadPlus(NULL), _nrBufs(0), _pscratchTilla(NULL){};
 	~FileManager();
 	static FileManager *_pSelf;
 
 	Notepad_plus * _pNotepadPlus;
 	ScintillaEditView * _pscratchTilla;
 	Document _scratchDocDefault;
-
-	int _nextNewNumber;
-
 	std::vector<Buffer *> _buffers;
 	BufferID _nextBufferID;
 	size_t _nrBufs;
+	int detectCodepage(char* buf, size_t len);
 
 	bool loadFileData(Document doc, const TCHAR * filename, Utf8_16_Read * UnicodeConvertor, LangType language, int & encoding, formatType *pFormat = NULL);
 };
@@ -142,7 +129,7 @@ class Buffer
 {
 friend class FileManager;
 public :
-	//Loading a document:
+	//Loading a document: 
 	//constructor with ID.
 	//Set a reference (pointer to a container mostly, like DocTabView or ScintillaEditView)
 	//Set the position manually if needed
@@ -256,8 +243,8 @@ public :
     void setPosition(const Position & pos, ScintillaEditView * identifier);
 	Position & getPosition(ScintillaEditView * identifier);
 
-	void setHeaderLineState(const std::vector<HeaderLineState> & folds, ScintillaEditView * identifier);
-	const std::vector<HeaderLineState> & getHeaderLineState(const ScintillaEditView * identifier) const;
+	void setHeaderLineState(const std::vector<size_t> & folds, ScintillaEditView * identifier);
+	const std::vector<size_t> & getHeaderLineState(const ScintillaEditView * identifier) const;
 
 	bool isUserDefineLangExt() const {
 		return (_userLangExt[0] != '\0');
@@ -329,6 +316,20 @@ public :
 	generic_string getFileTime(fileTimeType ftt);
 
     Lang * getCurrentLang() const;
+	
+	bool isModified() const {return _isModified;};
+	void setModifiedStatus(bool isModified) {_isModified = isModified;};
+	generic_string getBackupFileName() const {return _backupFileName;};
+	void setBackupFileName(generic_string fileName) {_backupFileName = fileName;};
+	time_t getLastModifiedTimestamp() const {return _timeStamp;};
+	bool isLoadedDirty() const {
+		return _isLoadedDirty;
+	};
+
+	void setLoadedDirty(bool val) {
+		_isLoadedDirty = val;
+	};
+
 private :
 	FileManager * _pManager;
 	bool _canNotify;
@@ -349,13 +350,14 @@ private :
 	//All the vectors must have the same size at all times
 	vector< ScintillaEditView * > _referees;
 	vector< Position > _positions;
-	vector< vector<HeaderLineState> > _foldStates;
+	vector< vector<size_t> > _foldStates;
 
 	//vector< pair<size_t, pair<size_t, bool> > > _linesUndoState;
 
 	//Environment properties
 	DocFileStatus _currentStatus;
 	time_t _timeStamp; // 0 if it's a new doc
+	
 	bool _isFileReadOnly;
 	generic_string _fullPathName;
 	TCHAR * _fileName;	//points to filename part in _fullPathName
@@ -363,6 +365,11 @@ private :
 
 	long _recentTag;
 	static long _recentTagCtr;
+
+	// For backup system
+	generic_string _backupFileName; // default: ""
+	bool _isModified; // default: false
+	bool _isLoadedDirty; // default: false
 
 	void updateTimeStamp();
 
@@ -375,7 +382,7 @@ private :
 
 	void doNotify(int mask) {
 		if (_canNotify)
-			_pManager->beNotifiedOfBufferChange(this, mask);
+			_pManager->beNotifiedOfBufferChange(this, mask); 
 	};
 };
 

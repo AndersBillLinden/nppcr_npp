@@ -24,10 +24,6 @@
 #include <assert.h>
 #include <ctype.h>
 
-#ifdef _MSC_VER
-#pragma warning(disable: 4786)
-#endif
-
 #include <string>
 #include <map>
 
@@ -227,7 +223,7 @@ public:
 	           CheckFoldPoint(CheckFoldPoint_),
 	           osBasic(wordListDescriptions) {
 	}
-	~LexerBasic() {
+	virtual ~LexerBasic() {
 	}
 	void SCI_METHOD Release() {
 		delete this;
@@ -474,11 +470,11 @@ void SCI_METHOD LexerBasic::Fold(unsigned int startPos, int length, int /* initS
 		if (options.foldCommentExplicit && ((styler.StyleAt(i) == SCE_B_COMMENT) || options.foldExplicitAnywhere)) {
 			if (userDefinedFoldMarkers) {
 				if (styler.Match(i, options.foldExplicitStart.c_str())) {
-					level |= SC_FOLDLEVELHEADERFLAG;
+ 					level |= SC_FOLDLEVELHEADERFLAG;
 					go = 1;
 				} else if (styler.Match(i, options.foldExplicitEnd.c_str())) {
-					go = -1;
-				}
+ 					go = -1;
+ 				}
 			} else {
 				if (c == comment_char) {
 					if (cNext == '{') {
@@ -488,8 +484,8 @@ void SCI_METHOD LexerBasic::Fold(unsigned int startPos, int length, int /* initS
 						go = -1;
 					}
 				}
-			}
-		}
+ 			}
+ 		}
 		if (atEOL) { // line end
 			if (!done && wordlen == 0 && options.foldCompact) // line was only space
 				level |= SC_FOLDLEVELWHITEFLAG;

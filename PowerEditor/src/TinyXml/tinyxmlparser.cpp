@@ -2,23 +2,23 @@
 www.sourceforge.net/projects/tinyxml
 Original code (2.0 and earlier )copyright (c) 2000-2002 Lee Thomason (www.grinninglizard.com)
 
-This software is provided 'as-is', without any express or implied
-warranty. In no event will the authors be held liable for any
+This software is provided 'as-is', without any express or implied 
+warranty. In no event will the authors be held liable for any 
 damages arising from the use of this software.
 
-Permission is granted to anyone to use this software for any
-purpose, including commercial applications, and to alter it and
+Permission is granted to anyone to use this software for any 
+purpose, including commercial applications, and to alter it and 
 redistribute it freely, subject to the following restrictions:
 
-1. The origin of this software must not be misrepresented; you must
+1. The origin of this software must not be misrepresented; you must 
 not claim that you wrote the original software. If you use this
 software in a product, an acknowledgment in the product documentation
 would be appreciated but is not required.
 
-2. Altered source versions must be plainly marked as such, and
+2. Altered source versions must be plainly marked as such, and 
 must not be misrepresented as being the original software.
 
-3. This notice may not be removed or altered from any source
+3. This notice may not be removed or altered from any source 
 distribution.
 */
 
@@ -29,8 +29,8 @@ distribution.
 
 // Note tha "PutString" hardcodes the same list. This
 // is less flexible than it appears. Changing the entries
-// or order will break putstring.
-TiXmlBase::Entity TiXmlBase::entity[ NUM_ENTITY ] =
+// or order will break putstring.	
+TiXmlBase::Entity TiXmlBase::entity[ NUM_ENTITY ] = 
 {
 	{ TEXT("&amp;"),  5, '&' },
 	{ TEXT("&lt;"),   4, '<' },
@@ -95,7 +95,7 @@ void TiXmlParsingData::Stamp( const TCHAR* now )
 			case '\r':
 				// bump down to the next line
 				++row;
-				col = 0;
+				col = 0;				
 				// Eat the character
 				++p;
 
@@ -202,11 +202,11 @@ const TCHAR* TiXmlBase::ReadName( const TCHAR* p, TIXML_STRING * name )
 	// After that, they can be letters, underscores, numbers,
 	// hyphens, or colons. (Colons are valid ony for namespaces,
 	// but tinyxml can't tell namespaces from names.)
-	if (    p && *p
+	if (    p && *p 
 		 && ( isalpha( (UCHAR) *p ) || *p == '_' ) )
 	{
 		while(		p && *p
-				&&	(		isalnum( (UCHAR ) *p )
+				&&	(		isalnum( (UCHAR ) *p ) 
 						 || *p == '_'
 						 || *p == '-'
 						 || *p == '.'
@@ -302,10 +302,10 @@ bool TiXmlBase::StringEqual( const TCHAR* p,
 	return false;
 }
 
-const TCHAR* TiXmlBase::ReadText(	const TCHAR* p,
-									TIXML_STRING * text,
-									bool trimWhiteSpace,
-									const TCHAR* endTag,
+const TCHAR* TiXmlBase::ReadText(	const TCHAR* p, 
+									TIXML_STRING * text, 
+									bool trimWhiteSpace, 
+									const TCHAR* endTag, 
 									bool caseInsensitive )
 {
     *text = TEXT("");
@@ -370,7 +370,7 @@ void TiXmlDocument::StreamIn( TIXML_ISTREAM * in, TIXML_STRING * tag )
 	// This "pre-streaming" will never read the closing ">" so the
 	// sub-tag can orient itself.
 
-	if ( !StreamTo( in, '<', tag ) )
+	if ( !StreamTo( in, '<', tag ) ) 
 	{
 		SetError( TIXML_ERROR_PARSING_EMPTY, 0, 0 );
 		return;
@@ -387,7 +387,7 @@ void TiXmlDocument::StreamIn( TIXML_ISTREAM * in, TIXML_STRING * tag )
 
 		if ( in->good() )
 		{
-			// We now have something we presume to be a node of
+			// We now have something we presume to be a node of 
 			// some sort. Identify it, and call the node to
 			// continue streaming.
 			TiXmlNode* node = Identify( tag->c_str() + tagIndex );
@@ -476,7 +476,7 @@ const TCHAR* TiXmlDocument::Parse( const TCHAR* p, TiXmlParsingData* prevData )
 }
 
 void TiXmlDocument::SetError( int err, const TCHAR* pError, TiXmlParsingData* data )
-{
+{	
 	// The first error in a chain is more accurate - don't set again!
 	if ( error )
 		return;
@@ -514,7 +514,7 @@ TiXmlNode* TiXmlNode::Identify( const TCHAR* p )
 		return 0;
 	}
 
-	// What is this thing?
+	// What is this thing? 
 	// - Elements start with a letter or underscore, but xml is reserved.
 	// - Comments: <!--
 	// - Decleration: <?xml
@@ -577,7 +577,7 @@ void TiXmlElement::StreamIn (TIXML_ISTREAM * in, TIXML_STRING * tag)
 	{
 		int c = in->get();
 		(*tag) += (TCHAR) c ;
-
+		
 		if ( c == '>' )
 			break;
 	}
@@ -587,7 +587,7 @@ void TiXmlElement::StreamIn (TIXML_ISTREAM * in, TIXML_STRING * tag)
 	// Okay...if we are a "/>" tag, then we're done. We've read a complete tag.
 	// If not, identify and stream.
 
-	if (    tag->at( tag->length() - 1 ) == '>'
+	if (    tag->at( tag->length() - 1 ) == '>' 
 		 && tag->at( tag->length() - 2 ) == '/' )
 	{
 		// All good!
@@ -604,7 +604,7 @@ void TiXmlElement::StreamIn (TIXML_ISTREAM * in, TIXML_STRING * tag)
 			StreamWhiteSpace( in, tag );
 
 			// Do we have text?
-			if ( in->good() && in->peek() != '<' )
+			if ( in->good() && in->peek() != '<' ) 
 			{
 				// Yep, text.
 				TiXmlText text( TEXT("") );
@@ -630,7 +630,7 @@ void TiXmlElement::StreamIn (TIXML_ISTREAM * in, TIXML_STRING * tag)
 					return;
 
 				int c = in->peek();
-
+				
 				if ( c == '>' )
 					break;
 
@@ -730,7 +730,7 @@ const TCHAR* TiXmlElement::Parse( const TCHAR* p, TiXmlParsingData* data )
 			// Empty tag.
 			if ( *p  != '>' )
 			{
-				if ( document ) document->SetError( TIXML_ERROR_PARSING_EMPTY, p, data );
+				if ( document ) document->SetError( TIXML_ERROR_PARSING_EMPTY, p, data );		
 				return 0;
 			}
 			return (p+1);
@@ -819,8 +819,8 @@ const TCHAR* TiXmlElement::ReadValue( const TCHAR* p, TiXmlParsingData* data )
 				LinkEndChild( textNode );
 			else
 				delete textNode;
-		}
-		else
+		} 
+		else 
 		{
 			// We hit a '<'
 			// Have we hit a new element or an end tag?
@@ -835,7 +835,7 @@ const TCHAR* TiXmlElement::ReadValue( const TCHAR* p, TiXmlParsingData* data )
 				{
 					p = node->Parse( p, data );
 					LinkEndChild( node );
-				}
+				}				
 				else
 				{
 					return 0;
@@ -848,7 +848,7 @@ const TCHAR* TiXmlElement::ReadValue( const TCHAR* p, TiXmlParsingData* data )
 	if ( !p )
 	{
 		if ( document ) document->SetError( TIXML_ERROR_READING_ELEMENT_VALUE, 0, 0 );
-	}
+	}	
 	return p;
 }
 
@@ -858,13 +858,13 @@ void TiXmlUnknown::StreamIn( TIXML_ISTREAM * in, TIXML_STRING * tag )
 {
 	while ( in->good() )
 	{
-		int c = in->get();
+		int c = in->get();	
 		(*tag) += (TCHAR)c;
 
 		if ( c == '>' )
 		{
 			// All is well.
-			return;
+			return;		
 		}
 	}
 }
@@ -910,15 +910,15 @@ void TiXmlComment::StreamIn( TIXML_ISTREAM * in, TIXML_STRING * tag )
 {
 	while ( in->good() )
 	{
-		int c = in->get();
+		int c = in->get();	
 		(*tag) += (TCHAR)c;
 
-		if ( c == '>'
+		if ( c == '>' 
 			 && tag->at( tag->length() - 2 ) == '-'
 			 && tag->at( tag->length() - 3 ) == '-' )
 		{
 			// All is well.
-			return;
+			return;		
 		}
 	}
 }
@@ -989,7 +989,7 @@ const TCHAR* TiXmlAttribute::Parse( const TCHAR* p, TiXmlParsingData* data )
 		if ( document ) document->SetError( TIXML_ERROR_READING_ATTRIBUTES, p, data );
 		return 0;
 	}
-
+	
 	const TCHAR* end;
 
 	if ( *p == '\'' )
@@ -1026,7 +1026,7 @@ void TiXmlText::StreamIn( TIXML_ISTREAM * in, TIXML_STRING * tag )
 {
 	while ( in->good() )
 	{
-		int c = in->peek();
+		int c = in->peek();	
 		if ( c == '<' )
 			return;
 
@@ -1106,19 +1106,19 @@ const TCHAR* TiXmlDeclaration::Parse( const TCHAR* p, TiXmlParsingData* data )
 		if ( StringEqual( p, TEXT("version"), true ) )
 		{
 			TiXmlAttribute attrib;
-			p = attrib.Parse( p, data );
+			p = attrib.Parse( p, data );		
 			version = attrib.Value();
 		}
 		else if ( StringEqual( p, TEXT("encoding"), true ) )
 		{
 			TiXmlAttribute attrib;
-			p = attrib.Parse( p, data );
+			p = attrib.Parse( p, data );		
 			encoding = attrib.Value();
 		}
 		else if ( StringEqual( p, TEXT("standalone"), true ) )
 		{
 			TiXmlAttribute attrib;
-			p = attrib.Parse( p, data );
+			p = attrib.Parse( p, data );		
 			standalone = attrib.Value();
 		}
 		else
@@ -1133,7 +1133,7 @@ const TCHAR* TiXmlDeclaration::Parse( const TCHAR* p, TiXmlParsingData* data )
 
 bool TiXmlText::Blank() const
 {
-	for ( unsigned i=0; i<value.length(); i++ )
+	for ( unsigned int i=0, len=value.length(); i<len; i++ )
 		if ( !isspace( value[i] ) )
 			return false;
 	return true;

@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -42,10 +42,10 @@ struct DLGTEMPLATEEX {
       WORD   signature;
       DWORD  helpID;
       DWORD  exStyle;
-      DWORD  style;
+      DWORD  style; 
       WORD   cDlgItems;
       short  x;
-      short  y;
+      short  y;    
       short  cx;
       short  cy;
       // The structure has more fields but are variable length
@@ -71,11 +71,14 @@ public :
 
 	void display(bool toShow = true) const;
 
-	POINT getLeftTopPoint(HWND hwnd/*, POINT & p*/) const {
+	POINT getTopPoint(HWND hwnd, bool isLeft = true) const {
 		RECT rc;
 		::GetWindowRect(hwnd, &rc);
 		POINT p;
-		p.x = rc.left;
+		if (isLeft)
+			p.x = rc.left;
+		else
+			p.x = rc.right;
 		p.y = rc.top;
 		::ScreenToClient(_hSelf, &p);
 		return p;

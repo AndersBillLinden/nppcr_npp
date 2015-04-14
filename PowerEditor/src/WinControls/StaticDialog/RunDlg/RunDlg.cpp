@@ -26,9 +26,9 @@
 
 void Command::extractArgs(TCHAR *cmd2Exec, TCHAR *args, const TCHAR *cmdEntier)
 {
-	int i = 0;
+	size_t i = 0;
 	bool quoted = false;
-	for ( ; i < int(lstrlen(cmdEntier)) ; i++)
+	for (size_t len = lstrlen(cmdEntier); i < len ; ++i)
 	{
 		if ((cmdEntier[i] == ' ') && (!quoted))
 			break;
@@ -38,13 +38,13 @@ void Command::extractArgs(TCHAR *cmd2Exec, TCHAR *args, const TCHAR *cmdEntier)
 		cmd2Exec[i] = cmdEntier[i];
 	}
 	cmd2Exec[i] = '\0';
-
-	if (i < int(lstrlen(cmdEntier)))
+	
+	if (i < size_t(lstrlen(cmdEntier)))
 	{
-		for ( ; (i < int(lstrlen(cmdEntier))) && (cmdEntier[i] == ' ') ; i++);
-		if (i < int(lstrlen(cmdEntier)))
+		for (size_t len = size_t(lstrlen(cmdEntier)); (i < len) && (cmdEntier[i] == ' ') ; ++i);
+		if (i < size_t(lstrlen(cmdEntier)))
 		{
-			for (int k = 0 ; i <= int(lstrlen(cmdEntier)) ; i++, k++)
+			for (size_t k = 0, len2 = size_t(lstrlen(cmdEntier)); i <= len2; ++i, ++k)
 			{
 				args[k] = cmdEntier[i];
 			}
@@ -91,14 +91,14 @@ int whichVar(TCHAR *str)
 void expandNppEnvironmentStrs(const TCHAR *strSrc, TCHAR *stringDest, size_t strDestLen, HWND hWnd)
 {
 	size_t j = 0;
-	for (int i = 0  ; i < lstrlen(strSrc) ; i++)
+	for (size_t i = 0, len = size_t(lstrlen(strSrc)); i < len; ++i)
 	{
 		int iBegin = -1;
 		int iEnd = -1;
 		if ((strSrc[i] == '$') && (strSrc[i+1] == '('))
 		{
 			iBegin = i += 2;
-			for ( ; i < lstrlen(strSrc) ; i++)
+			for (size_t len2 = size_t(lstrlen(strSrc)); i < len2 ; ++i)
 			{
 				if (strSrc[i] == ')')
 				{
@@ -113,7 +113,7 @@ void expandNppEnvironmentStrs(const TCHAR *strSrc, TCHAR *stringDest, size_t str
 			{
 				TCHAR str[MAX_PATH];
 				int m = 0;
-				for (int k = iBegin  ; k <= iEnd ; k++)
+				for (int k = iBegin  ; k <= iEnd ; ++k)
 					str[m++] = strSrc[k];
 				str[m] = '\0';
 
@@ -137,7 +137,7 @@ void expandNppEnvironmentStrs(const TCHAR *strSrc, TCHAR *stringDest, size_t str
 					else
 						::SendMessage(hWnd, RUNCOMMAND_USER + internalVar, CURRENTWORD_MAXLENGTH, (LPARAM)expandedStr);
 
-					for (int p = 0 ; p < lstrlen(expandedStr) ; p++)
+					for (size_t p = 0, len3 = size_t(lstrlen(expandedStr)); p < len3; ++p)
 					{
 						if (j < (strDestLen-1))
 							stringDest[j++] = expandedStr[p];
@@ -198,16 +198,16 @@ HINSTANCE Command::run(HWND hWnd)
 
 BOOL CALLBACK RunDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 {
-	switch (message)
+	switch (message) 
 	{
-		case WM_COMMAND :
+		case WM_COMMAND : 
 		{
 			switch (wParam)
 			{
 				case IDCANCEL :
 					display(false);
 					return TRUE;
-
+				
 				case IDOK :
 				{
 					TCHAR cmd[MAX_PATH];
@@ -243,10 +243,10 @@ BOOL CALLBACK RunDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 					{
 						HMENU hRunMenu = ::GetSubMenu((HMENU)::SendMessage(_hParent, NPPM_INTERNAL_GETMENU, 0, 0), MENUINDEX_RUN);
 						int const posBase = 2;
-
+						
 						if (nbCmd == 0)
 							::InsertMenu(hRunMenu, posBase - 1, MF_BYPOSITION, (unsigned int)-1, 0);
-
+						
 						theUserCmds.push_back(uc);
 						::InsertMenu(hRunMenu, posBase + nbCmd, MF_BYPOSITION, cmdID, uc.toMenuItemString().c_str());
 
@@ -273,7 +273,18 @@ BOOL CALLBACK RunDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 					fd.setExtFilter(TEXT("All files : "), TEXT(".*"), NULL);
 
 					if (const TCHAR *fn = fd.doOpenSingleFileDlg())
-						addTextToCombo(fn);
+					{
+						if(wcschr(fn, ' ') != NULL)
+						{
+							generic_string fn_quotes(fn);
+							fn_quotes = TEXT("\"") + fn_quotes + TEXT("\"");
+							addTextToCombo(fn_quotes.c_str());
+						}
+						else
+						{
+							addTextToCombo(fn);
+						}
+					}
 					return TRUE;
 				}
 
@@ -282,7 +293,7 @@ BOOL CALLBACK RunDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 			}
 		}
 	}
-	return FALSE;
+	return FALSE;	
 }
 
 void RunDlg::addTextToCombo(const TCHAR *txt2Add) const

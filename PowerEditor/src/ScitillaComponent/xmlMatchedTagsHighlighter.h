@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -38,10 +38,10 @@ class XmlMatchedTagsHighlighter {
 public:
 	XmlMatchedTagsHighlighter(ScintillaEditView *pEditView):_pEditView(pEditView){};
 	void tagMatch(bool doHiliteAttr);
-
+	
 private:
 	ScintillaEditView *_pEditView;
-
+	
 	struct XmlMatchedTagsPos {
 		int tagOpenStart;
 		int tagNameEnd;
@@ -56,7 +56,7 @@ private:
 		int end;
 		bool success;
 	};
-
+	
 	bool getXmlMatchedTagsPos(XmlMatchedTagsPos & tagsPos);
 
 	// Allowed whitespace characters in XML
@@ -67,9 +67,9 @@ private:
 	FindResult findOpenTag(const std::string& tagName, int start, int end);
 	FindResult findCloseTag(const std::string& tagName, int start, int end);
 	int findCloseAngle(int startPosition, int endPosition);
-
+	
 	vector< pair<int, int> > getAttributesPos(int start, int end);
-
+	
 };
 
 #endif //XMLMATCHEDTAGSHIGHLIGHTER_H

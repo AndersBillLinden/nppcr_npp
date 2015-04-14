@@ -14,10 +14,6 @@
 #include <assert.h>
 #include <ctype.h>
 
-#ifdef _MSC_VER
-#pragma warning(disable: 4786)
-#endif
-
 #include <string>
 #include <map>
 
@@ -164,7 +160,7 @@ public:
 	LexerD(bool caseSensitive_) :
 		caseSensitive(caseSensitive_) {
 	}
-	~LexerD() {
+	virtual ~LexerD() {
 	}
 	void SCI_METHOD Release() {
 		delete this;
@@ -513,10 +509,10 @@ void SCI_METHOD LexerD::Fold(unsigned int startPos, int length, int initStyle, I
 		if (options.foldComment && options.foldCommentExplicit && ((style == SCE_D_COMMENTLINE) || options.foldExplicitAnywhere)) {
 			if (userDefinedFoldMarkers) {
 				if (styler.Match(i, options.foldExplicitStart.c_str())) {
-					levelNext++;
+ 					levelNext++;
 				} else if (styler.Match(i, options.foldExplicitEnd.c_str())) {
-					levelNext--;
-				}
+ 					levelNext--;
+ 				}
 			} else {
 				if ((ch == '/') && (chNext == '/')) {
 					char chNext2 = styler.SafeGetCharAt(i + 2);
@@ -526,8 +522,8 @@ void SCI_METHOD LexerD::Fold(unsigned int startPos, int length, int initStyle, I
 						levelNext--;
 					}
 				}
-			}
-		}
+ 			}
+ 		}
 		if (options.foldSyntaxBased && (style == SCE_D_OPERATOR)) {
 			if (ch == '{') {
 				// Measure the minimum before a '{' to allow

@@ -1,16 +1,16 @@
 // this file is part of Function List Plugin for Notepad++
 // Copyright (C)2005 Jens Lorenz <jens.plugin.npp@gmx.de>
-//
+// 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either
 // version 2 of the License, or (at your option) any later version.
-//
+// 
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -20,7 +20,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
+// 
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 
@@ -44,7 +44,7 @@ public:
 
 	DockingDlgInterface(int dlgID): StaticDialog(), _HSource(NULL),\
 		_dlgID(dlgID), _isFloating(TRUE), _iDockedPos(0), _pluginName(TEXT("")) {};
-
+	
 	virtual void init(HINSTANCE hInst, HWND parent)	{
 		StaticDialog::init(hInst, parent);
 		TCHAR temp[MAX_PATH];
@@ -75,8 +75,22 @@ public:
     virtual void destroy() {
     };
 
+	virtual void setBackgroundColor(COLORREF) {
+    };
+
+	virtual void setForegroundColor(COLORREF) {
+    };
+
 	virtual void display(bool toShow = true) const {
 		::SendMessage(_hParent, toShow?NPPM_DMMSHOW:NPPM_DMMHIDE, 0, (LPARAM)_hSelf);
+	};
+
+	bool isClosed() const {
+		return _isClosed;
+	};
+
+	void setClosed(bool toClose) {
+		_isClosed = toClose;
 	};
 
 	const TCHAR * getPluginFileName() const {
@@ -86,10 +100,10 @@ public:
 protected :
 	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM, LPARAM lParam)
 	{
-		switch (message)
+		switch (message) 
 		{
 
-			case WM_NOTIFY:
+			case WM_NOTIFY: 
 			{
 				LPNMHDR	pnmh	= (LPNMHDR)lParam;
 
@@ -123,7 +137,7 @@ protected :
 		}
 		return FALSE;
 	};
-
+	
 	// Handles
     HWND			_HSource;
 	int				_dlgID;
@@ -131,6 +145,7 @@ protected :
 	int				_iDockedPos;
 	generic_string  _moduleName;
 	generic_string  _pluginName;
+	bool			_isClosed;
 };
 
 #endif // DOCKINGDLGINTERFACE_H

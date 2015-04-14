@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -74,7 +74,8 @@ public:
     };
 	bool getMsgBoxLang(const char *msgBoxTagName, generic_string & title, generic_string & message);
 	generic_string getProjectPanelLangMenuStr(const char * nodeName, int cmdID, const TCHAR *defaultStr) const;
-	generic_string getProjectPanelLangStr(const char *nodeName, const TCHAR *defaultStr) const;
+	//generic_string getFunctionListPanelLangStr(const char *nodeName, const TCHAR *defaultStr) const;
+	generic_string getAttrNameStr(const TCHAR *defaultStr, const char *nodeL1Name, const char *nodeL2Name = NULL) const;
 	int messageBox(const char *msgBoxTagName, HWND hWnd, TCHAR *message, TCHAR *title, int msgBoxType, int intInfo = 0, TCHAR *strInfo = NULL);
 private:
 	TiXmlNodeA *_nativeLangA;

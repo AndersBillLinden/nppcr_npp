@@ -15,11 +15,11 @@
 					<Item menuId="macro" name = "ãÇßÑæ"/>
 					<Item menuId="run" name = "ÊÔÛíá"/>
 				</Entries>
-
+             
                 <!-- Sub Menu Entries -->
                 <SubEntries>
                 </SubEntries>
-
+                
                 <!-- all menu item -->
                 <Commands>
                     <Item id = "41001" name = "&amp;ÌÏíÏ	Ctrl+N"/>
@@ -35,7 +35,7 @@
 
                     <Item id = "41012" name = "ÊÍãíá ÌáÓÉ..."/>
                     <Item id = "41013" name = "ÍÝÙ ÌáÓÉ..."/>
-
+                    
                     <Item id = "42001" name = "Þ&amp;Õ	Ctrl+X"/>
                     <Item id = "42002" name = "&amp;äÓÎ	Ctrl+C"/>
                     <Item id = "42003" name = "&amp;ÊÑÇÌÚ	Ctrl+Z"/>
@@ -49,8 +49,8 @@
                     <Item id = "42011" name = "ÃäÞá ÇáÓØÑ ÇáÍÇáí	Ctrl+T"/>
                     <Item id = "42012" name = "ÊÞÓíã ÃÓØÑ	Ctrl+I"/>
                     <Item id = "42013" name = "ÑÈØ ÃÓØÑ	Ctrl+J"/>
-                    <Item id = "42014" name = "äÞá ÇáÓØÑ ÇáÍÇáí Åáì ÃÚáì	Ctrl+Shift+Up"/>
-                    <Item id = "42015" name = "äÞá ÇáÓØÑ ÇáÍÇáí Åáì ÃÓÝá	Ctrl+Shift+Down"/>
+                    <Item id = "42014" name = "äÞá ÇáÓØÑ ÇáÍÇáí Åáì ÃÚáì	Ctrl+Shift+Up"/>   
+                    <Item id = "42015" name = "äÞá ÇáÓØÑ ÇáÍÇáí Åáì ÃÓÝá	Ctrl+Shift+Down"/>   
                     <Item id = "42016" name = "ÃÍÑÝ ÅäÌáíÒíÉ ßÈíÑÉ	Ctrl+Shift+U"/>
                     <Item id = "42017" name = "ÃÍÑÝ ÅäÌáíÒíÉ ÕÛíÑÉ	Ctrl+U"/>
                     <Item id = "42018" name = "&amp;ÈÏÁ ÇáÊÓÌíá	Ctrl+Shift+R"/>
@@ -62,7 +62,7 @@
                     <Item id = "42025" name = "ÍÝÙ ÇáãÇßÑæ ÇáÍÇáíÉ ÇáãÓÌáÉ"/>
                     <Item id = "42026" name = "ÇÊÌÇå ÇáäÕ ãä Çáíãíä Åáì ÇáíÓÇÑ	Ctrl+Alt+R"/>
                     <Item id = "42027" name = "ÇÊÌÇå ÇáäÕ ãä ÇáíÓÇÑ Åáì Çáíãíä	Ctrl+Alt+L"/>
-
+					
                     <Item id = "43001" name = "&amp;ÈÍË...	Ctrl+F"/>
                     <Item id = "43002" name = "ÅíÌÇÏ &amp;ÇáÊÇáí	F3"/>
                     <Item id = "43003" name = "ÅÓÊÈÏÇá...	Ctrl+H"/>
@@ -74,35 +74,35 @@
                     <Item id = "43009" name = "ÅÐåÈ Åáì ÇáÞæÓ ÇáãØÇÈÞ	Ctrl+B"/>
                     <Item id = "43010" name = "ÅíÌÇÏ ÇáÓÇÈÞ	Shift+F3"/>
                     <Item id = "43013" name = "ÈÍË Ýí ÇáãáÝÇÊ	Ctrl+Shift+F"/>
-
-
-
-
-
-
-
-
-
-
+					
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                     <Item id = "44010" name = "áÝ Çáßá	Alt+0"/>
                     <Item id = "44011" name = "ÊÚÑíÝ ÍæÇÑ ÇáãÓÊÎÏã"/>
-
-
-
-
-
-
-
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                     <Item id = "44019" name = "ÃÙåÑ ßá ÇáÃÍÑÝ"/>
                     <Item id = "44020" name = "ÃÙåÑ ãæÌå ÇáØáÈ"/>
-
+                    
                     <Item id = "44022" name = "ÛáøöÝ"/>
                     <Item id = "44023" name = "&amp;ÊÕÛíÑ	Ctrl-Mouse Wheel Up"/>
                     <Item id = "44024" name = "Êß&amp;ÈíÑ	Ctrl-Mouse Wheel Down"/>
                     <Item id = "44025" name = "ÃÙåÑ ÇáãÓÇÝÇÊ ÇáÈíÖÇÁ æ ÊÇÈ"/>
                     <Item id = "44026" name = "ÃÙåÑ äåÇíÉ ÇáÓØÑ"/>
-
-
+                    
+                    
                     <Item id = "44029" name = "ÚÏã áÝ Çáßá	Alt+Shift+0"/>
                     <Item id = "44030" name = " ÃáÛí ÇáãÓÊæì ÇáÍÇáí	Ctrl+Alt+F"/>
                     <Item id = "44031" name = "áÇ ÊáÛí ÇáãÓÊæì ÇáÍÇáí	Ctrl+Alt+Shift+F"/>
@@ -119,23 +119,23 @@
                     <Item id = "45006" name = " ÑãÒ áÜ (UCS-2 Big Endian)"/>
                     <Item id = "45007" name = " ÑãÒ áÜ (UCS-2 Little Endian)"/>
                     <Item id = "45008" name = " ÑãÒ áÜ (UTF-8 (without BOM))"/>
-
+                    
                     <Item id = "10001" name = "ÅÐåÈ Åáì ãäÙÑ ÂÎÑ"/>
                     <Item id = "10002" name = "ÇäÓÎ Åáì ãäÙÑ ÂÎÑ"/>
-
+                    
                     <Item id = "46001" name = "äãØ ãÚÑÝ ..."/>
                     <Item id = "47000" name = "Íæá...	F1"/>
-
-
-
-
-
-
-
-
-
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                     <Item id = "48009" name = "ÑÇÓã ÇáÅÎÊÕÇÑ..."/>
-
+                    
                     <Item id = "49000" name = "&amp;ÊÔÛíá..."/>
                 </Commands>
             </Main>
@@ -151,7 +151,7 @@
                     <Item CMID = "6" name = "ÇäÓÎ Çáì ãäÙÑ ÂÎÑ"/>
             </TabBar>
         </Menu>
-
+        
         <Dialog>
             <Find title = "ÌÏ... ">
                 <Item id = "1" name = "ÌöÏ ÇáÊÇáí"/>
@@ -172,12 +172,12 @@
                 <Item id = "1611" name = "ÃÚÏ&amp;ÇÓÊÈÏá ÈÜ:"/>
                 <Item id = "1608" name = "&amp;ÇÚÏ ÇÓÊÈÏÇá"/>
                 <Item id = "1609" name = "ÇÚÏ ÇÓÊÈÏÇá &amp;Çáßá"/>
-				<Item id = "1623" name = "ÇáæÖæÍ"/>
-				<Item id = "1632" name = "Ýí ÇáÅÎÊíÇÑ"/>
-				<Item id = "1633" name = "ÇãÓÍ"/>
-				<Item id = "1635" name = "ÅÓÊÈÏÇá Çáßá Ýí ÌãíÚ ÇáãÓÊäÏÇÊ ÇáãÝÊæÍÉ"/>
-				<Item id = "1636" name = "ÅíÌÇÏ Çáßá Ýí ÌãíÚ ÇáãÓÊäÏÇÊ ÇáãÝÊæÍÉ"/>
-				<Item id = "1637" name = "ÇÈÍË Ýí ÇáãáÝ"/>
+			 	<Item id = "1623" name = "ÇáæÖæÍ"/>
+			 	<Item id = "1632" name = "Ýí ÇáÅÎÊíÇÑ"/>
+			 	<Item id = "1633" name = "ÇãÓÍ"/>
+			 	<Item id = "1635" name = "ÅÓÊÈÏÇá Çáßá Ýí ÌãíÚ ÇáãÓÊäÏÇÊ ÇáãÝÊæÍÉ"/>
+			 	<Item id = "1636" name = "ÅíÌÇÏ Çáßá Ýí ÌãíÚ ÇáãÓÊäÏÇÊ ÇáãÝÊæÍÉ"/>
+			 	<Item id = "1637" name = "ÇÈÍË Ýí ÇáãáÝ"/>
             </Find>
             <Item id = "1640" name = "ÎíÇÑÇÊ ÇáãÍÇæÑÉ"/>
             <GoToLine title = "ÇÐåÈ ááÓØÑ ÑÞã ">
@@ -194,15 +194,15 @@
                 <Item id = "2" name = "ÃáÛí"/>
                 <Item id = "1904" name = "ÇÍÝÙ ..."/>
             </Run>
-
+            
             <StyleConfig title = "ãÚÑÝ ÇáÃäãÇØ">
 				<Item id = "1" name = "ÌÑÈåÇ!"/>
 				<Item id = "2" name = "ÃáÛí"/>
 				<Item id = "2301" name = "ÇÍÝÙ &amp;&amp; ÃÛáÞ"/>
-				<Item id = "2303" name = "ÇáÔÝÇÝíÉ"/>
-
+				<Item id = "2303" name = "ÇáÔÝÇÝíÉ"/>		
+				
                 <SubDialog>
-			<Item id = "2204" name = "ÛÇãÞ"/>
+                	<Item id = "2204" name = "ÛÇãÞ"/>
                     <Item id = "2205" name = "ãÇÆá"/>
                     <Item id = "2206" name = "Çááæä ÇáÃãÇãí"/>
                     <Item id = "2207" name = "áæä ÇáÎáÝíÉ"/>
@@ -218,9 +218,9 @@
                     <Item id = "2219" name = "ßáãÇÊ ÏÇáÉ ÇÚÊíÇÏíÉ"/>
                     <Item id = "2221" name = "ßáãÇÊ ÏÇáÉ ãÚÑÝÉ ãä ÇáãÓÊÎÏã"/>
                 </SubDialog>
-
+				
             </StyleConfig>
-
+            
             <UserDefine title = "ãÚÑÝ ÇáãÓÊÎÏã">
 				<Item id = "20002" name = "ÇÚÇÏÉ ÊÓãíÉ"/>
 				<Item id = "20003" name = "ÌÏíÏÉ..."/>

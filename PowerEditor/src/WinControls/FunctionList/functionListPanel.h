@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -35,6 +35,16 @@
 #endif //DOCKINGDLGINTERFACE_H
 
 #include "functionListPanel_rc.h"
+#include "functionParser.h"
+#include "TreeView.h"
+
+#define FL_PANELTITLE     TEXT("Function List")
+#define FL_SORTTIP        TEXT("sort")
+#define FL_RELOADTIP      TEXT("Reload")
+
+#define FL_FUCTIONLISTROOTNODE "FunctionList"
+#define FL_SORTLOCALNODENAME   "SortTip"
+#define FL_RELOADLOCALNODENAME "ReloadTip"
 
 class ScintillaEditView;
 
@@ -64,54 +74,82 @@ root
 
 */
 
-struct foundInfo {
-	generic_string _data;
-	generic_string _data2;
-	int _pos;
-	int _pos2;
-	//foundInfo(): /*_data(TEXT("")), _data2(TEXT("")), _pos(-1) _pos2(-1) */{};
+struct SearchParameters {
+	generic_string _text2Find;
+	bool _doSort;
+
+	SearchParameters(): _text2Find(TEXT("")), _doSort(false){
+	};
+
+	bool hasParams()const{
+		return (_text2Find != TEXT("") || _doSort);
+	};
+};
+
+struct TreeParams {
+	TreeStateNode _treeState;
+	SearchParameters _searchParameters;
 };
 
 class FunctionListPanel : public DockingDlgInterface {
 public:
-	FunctionListPanel(): DockingDlgInterface(IDD_FUNCLIST_PANEL), _ppEditView(NULL) {};
+	FunctionListPanel(): DockingDlgInterface(IDD_FUNCLIST_PANEL), _ppEditView(NULL), _pTreeView(&_treeView),
+	_reloadTipStr(TEXT("Reload")), _sortTipStr(TEXT("Sort")) {};
 
-	void init(HINSTANCE hInst, HWND hPere, ScintillaEditView **ppEditView) {
-		DockingDlgInterface::init(hInst, hPere);
-		_ppEditView = ppEditView;
-	};
+	void init(HINSTANCE hInst, HWND hPere, ScintillaEditView **ppEditView);
 
     virtual void display(bool toShow = true) const {
         DockingDlgInterface::display(toShow);
     };
 
+	virtual void setBackgroundColor(COLORREF bgColour) {
+		TreeView_SetBkColor(_treeView.getHSelf(), bgColour);
+    };
+	virtual void setForegroundColor(COLORREF fgColour) {
+		TreeView_SetTextColor(_treeView.getHSelf(), fgColour);
+    };
+
     void setParent(HWND parent2set){
         _hParent = parent2set;
     };
-
+	
 	// functionalities
+	void sortOrUnsort();
 	void reload();
-	void addEntry(const TCHAR *displayText, size_t pos);
+	void addEntry(const TCHAR *node, const TCHAR *displayText, size_t pos);
 	void removeAllEntries();
 	void removeEntry();
 	void modifyEntry();
-	void update();
-
-	void parse(std::vector<foundInfo> & foundInfos, size_t begin, size_t end, const TCHAR *regExpr2search, std::vector< generic_string > dataToSearch, std::vector< generic_string > data2ToSearch, generic_string classStructName = TEXT(""));
-	/*
-	void parse(size_t begin, size_t end, const TCHAR *wordToExclude, const TCHAR *regExpr2search, ...);
-	bool parseSubLevel(size_t begin, size_t end, const TCHAR *wordToExclude, const TCHAR *regExpr2search, ...);
-	*/
-	void parse2(std::vector<foundInfo> & foundInfos, size_t begin, size_t end, const TCHAR *block, std::vector< generic_string > blockNameToSearch,  const TCHAR *bodyOpenSymbol, const TCHAR *bodyCloseSymbol, const TCHAR *function, std::vector< generic_string > functionToSearch);
+	void searchFuncAndSwitchView();
 
 protected:
-	virtual BOOL CALLBACK FunctionListPanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
+	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
 
 private:
+	HWND _hToolbarMenu;
+	HWND _hSearchEdit;
+
+	TreeView *_pTreeView;
+	TreeView _treeView;
+	TreeView _treeViewSearchResult;
+
+	generic_string _sortTipStr;
+	generic_string _reloadTipStr;
+
 	ScintillaEditView **_ppEditView;
+	FunctionParsersManager _funcParserMgr;
 	std::vector<FuncInfo> _funcInfos;
 	std::vector< std::pair<int, int> > _skipZones;
+	std::vector<TreeParams> _treeParams;
+	HIMAGELIST _hTreeViewImaLst;
 	generic_string parseSubLevel(size_t begin, size_t end, std::vector< generic_string > dataToSearch, int & foundPos);
 	size_t getBodyClosePos(size_t begin, const TCHAR *bodyOpenSymbol, const TCHAR *bodyCloseSymbol);
+	void notified(LPNMHDR notification);
+	void addInStateArray(TreeStateNode tree2Update, const TCHAR *searchText, bool isSorted);
+	TreeParams* getFromStateArray(generic_string fullFilePath);
+	BOOL setTreeViewImageList(int root_id, int node_id, int leaf_id);
+	bool openSelection(const TreeView &treeView);
+	bool shouldSort();
+	void setSort(bool isEnabled);
 };
 #endif // FUNCLISTPANEL_H

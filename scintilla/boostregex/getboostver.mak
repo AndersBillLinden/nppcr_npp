@@ -9,7 +9,7 @@ RC=rc
 
 CXXNDEBUG=-O1 -MT -DNDEBUG -GL -nologo
 LDFLAGS=-OPT:REF -LTCG -nologo
-LIBS=KERNEL32.lib USER32.lib
+LIBS=KERNEL32.lib USER32.lib 
 CXXFLAGS=$(CXXNDEBUG)
 
 !INCLUDE boostpath.mak
@@ -22,8 +22,9 @@ CXXFLAGS=$(CXXFLAGS) -I$(BOOSTPATH)
 
 ALL: clean $(DIR_BIN)\getboostver.exe
 
-$(DIR_BIN)\getboostver.exe::
-	$(CC) $(CXXFLAGS)	getboostver.cpp /link $(LDFLAGS) $(LIBS) /OUT:$(DIR_BIN)\getboostver.exe
+$(DIR_BIN)\getboostver.exe:: 
+	$(CC) $(CXXFLAGS)	getboostver.cpp /link $(LDFLAGS) $(LIBS) /OUT:$(DIR_BIN)\getboostver.exe 
 
 clean:
     -del /q $(DIR_BIN)\getboostver.exe
+	

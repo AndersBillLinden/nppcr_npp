@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -34,6 +34,8 @@
 #endif //DOCKINGDLGINTERFACE_H
 
 #include "documentMap_rc.h"
+
+#define DM_PANELTITLE     TEXT("Document Map")
 
 #define DOCUMENTMAP_SCROLL        (WM_USER + 1)
 #define DOCUMENTMAP_MOUSECLICKED  (WM_USER + 2)
@@ -83,7 +85,7 @@ protected :
 private :
 	HWND _viewZoneCanvas;
 	WNDPROC _canvasDefaultProc;
-
+	
 	long _higherY;
 	long _lowerY;
 };
@@ -110,6 +112,8 @@ public:
 		_vzDlg.display();
     };
 
+	virtual void redraw(bool forceUpdate = false) const;
+
     void setParent(HWND parent2set){
         _hParent = parent2set;
     };
@@ -126,7 +130,8 @@ public:
 	void doMove();
 	void fold(int line, bool foldOrNot);
 	void foldAll(bool mode);
-	void setSyntaxLiliting();
+	void setSyntaxHiliting();
+	void changeTextDirection(bool isRTL);
 
 protected:
 	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);

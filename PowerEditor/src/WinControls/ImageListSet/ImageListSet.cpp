@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -29,11 +29,11 @@
 #include "precompiledHeaders.h"
 #include "ImageListSet.h"
 
-void IconList::create(HINSTANCE hInst, int iconSize)
+void IconList::create(HINSTANCE hInst, int iconSize) 
 {
 	InitCommonControls();
 	_hInst = hInst;
-	_iconSize = iconSize;
+	_iconSize = iconSize; 
 	_hImglst = ImageList_Create(iconSize, iconSize, ILC_COLOR32 | ILC_MASK, 0, nbMax);
 	if (!_hImglst)
 		throw std::runtime_error("IconList::create : ImageList_Create() function return null");
@@ -45,11 +45,11 @@ void IconList::create(int iconSize, HINSTANCE hInst, int *iconIDArray, int iconI
 	_pIconIDArray = iconIDArray;
 	_iconIDArraySize = iconIDArraySize;
 
-	for (int i = 0 ; i < iconIDArraySize ; i++)
+	for (int i = 0 ; i < iconIDArraySize ; ++i)
 		addIcon(iconIDArray[i]);
 };
 
-void IconList::addIcon(int iconID) const
+void IconList::addIcon(int iconID) const 
 {
 	HICON hIcon = ::LoadIcon(_hInst, MAKEINTRESOURCE(iconID));
 	if (!hIcon)
@@ -73,13 +73,13 @@ bool IconList::changeIcon(int index, const TCHAR *iconLocation) const
 void IconList::setIconSize(int size) const
 {
 	ImageList_SetIconSize(_hImglst, size, size);
-	for (int i = 0 ; i < _iconIDArraySize ; i++)
+	for (int i = 0 ; i < _iconIDArraySize ; ++i)
 		addIcon(_pIconIDArray[i]);
 }
 
 void ToolBarIcons::init(ToolBarButtonUnit *buttonUnitArray, int arraySize)
 {
-	for (int i = 0 ; i < arraySize ; i++)
+	for (int i = 0 ; i < arraySize ; ++i)
 		_tbiis.push_back(buttonUnitArray[i]);
 	_nbCmd = arraySize;
 }
@@ -90,7 +90,7 @@ void ToolBarIcons::reInit(int size)
 	ImageList_SetIconSize(getHotLst(), size, size);
 	ImageList_SetIconSize(getDisableLst(), size, size);
 
-	for (int i = 0 ; i < int(_tbiis.size()) ; i++)
+	for (size_t i = 0, len = _tbiis.size(); i < len; ++i)
 	{
 		if (_tbiis[i]._defaultIcon != -1)
 		{

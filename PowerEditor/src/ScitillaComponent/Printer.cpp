@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -68,7 +68,7 @@ void Printer::init(HINSTANCE hInst, HWND hwnd, ScintillaEditView *pSEView, bool 
 	// See if a range has been selected
 	_pdlg.Flags |= (_startPos != _endPos)?PD_SELECTION:PD_NOSELECTION;
 
-	if (!showDialog)
+	if (!showDialog) 
 	{
 		// Don't display dialog box, just use the default printer and options
 		_pdlg.Flags |= PD_RETURNDEFAULT;
@@ -121,7 +121,7 @@ size_t Printer::doPrint(bool justDoIt)
 		userMargins.top  = MulDiv(nppGUI._printSettings._marge.top*100, ptDpi.y, 2540);
 		userMargins.right  = MulDiv(nppGUI._printSettings._marge.right*100, ptDpi.x, 2540);
 		userMargins.bottom  = MulDiv(nppGUI._printSettings._marge.bottom*100, ptDpi.y, 2540);
-
+	
 		rectMargins.left	= max(rectPhysMargins.left, userMargins.left);
 		rectMargins.top		= max(rectPhysMargins.top, userMargins.top);
 		rectMargins.right	= max(rectPhysMargins.right, userMargins.right);
@@ -184,7 +184,7 @@ size_t Printer::doPrint(bool justDoIt)
 	::SelectObject(_pdlg.hDC, fontFooter);
 	::GetTextMetrics(_pdlg.hDC, &tm);
 	footerLineHeight = tm.tmHeight + tm.tmExternalLeading;
-
+	
 
 	::GetTextMetrics(_pdlg.hDC, &tm);
 	int printMarge = tm.tmHeight + tm.tmExternalLeading;
@@ -197,12 +197,12 @@ size_t Printer::doPrint(bool justDoIt)
 	docInfo.lpszOutput = NULL;
 	docInfo.lpszDatatype = NULL;
 
-	if (::StartDoc(_pdlg.hDC, &docInfo) < 0)
+	if (::StartDoc(_pdlg.hDC, &docInfo) < 0) 
 	{
 		MessageBox(NULL, TEXT("Can not start printer document."), 0, MB_OK);
 		return 0;
 	}
-
+	
 	// By default, we will print all the document
 	long lengthPrinted = 0;
 	long lengthDoc = _pSEView->getCurrentDocLen();
@@ -212,12 +212,12 @@ size_t Printer::doPrint(bool justDoIt)
 	// We print the range of selection
 	if ((!(_pdlg.Flags & PD_RETURNDEFAULT)) && (_pdlg.Flags & PD_SELECTION))
 	{
-		if (_startPos > _endPos)
+		if (_startPos > _endPos) 
 		{
 			lengthPrinted = _endPos;
 			lengthDoc = _startPos;
 		}
-		else
+		else 
 		{
 			lengthPrinted = _startPos;
 			lengthDoc = _endPos;
@@ -253,7 +253,7 @@ size_t Printer::doPrint(bool justDoIt)
 	TCHAR footerL[headerSize] = TEXT("");
 	TCHAR footerM[headerSize] = TEXT("");
 	TCHAR footerR[headerSize] = TEXT("");
-
+	
 
 	const TCHAR shortDateVar[] = TEXT("$(SHORT_DATE)");
 	const TCHAR longDateVar[] = TEXT("$(LONG_DATE)");
@@ -335,7 +335,7 @@ size_t Printer::doPrint(bool justDoIt)
 		}
 	}
 
-
+	
 	bool isShown = _pSEView->hasMarginShowed(ScintillaEditView::_SC_MARGE_LINENUMBER);
 	if (!nppGUI._printSettings._printLineNumber)
 		_pSEView->showMargin(ScintillaEditView::_SC_MARGE_LINENUMBER, false);
@@ -344,18 +344,18 @@ size_t Printer::doPrint(bool justDoIt)
 	bool printPage;
 	const TCHAR pageVar[] = TEXT("$(CURRENT_PRINTING_PAGE)");
 
-	while (lengthPrinted < lengthDoc)
+	while (lengthPrinted < lengthDoc) 
 	{
 		printPage = (!(_pdlg.Flags & PD_PAGENUMS) ||
 		             (pageNum >= _pdlg.nFromPage) && (pageNum <= _pdlg.nToPage));
-
+					 
 		if (!justDoIt)
-			printPage = false;
+			printPage = false;		 
 
 		TCHAR pageString[32];
 		wsprintf(pageString, TEXT("%0d"), pageNum);
-
-		if (printPage)
+		
+		if (printPage) 
 		{
 			::StartPage(_pdlg.hDC);
 
@@ -373,7 +373,7 @@ size_t Printer::doPrint(bool justDoIt)
 
 
 				SIZE size;
-
+				
 				// Left part
 				if (headerL[0] != '\0')
 				{
@@ -421,18 +421,18 @@ size_t Printer::doPrint(bool justDoIt)
 				::DeleteObject(pen);
 			}
 		}
-
+		
 		frPrint.chrg.cpMin = lengthPrinted;
 		frPrint.chrg.cpMax = lengthDoc;
 		_pSEView->execute(SCI_SETPRINTCOLOURMODE, nppGUI._printSettings._printOption);
 		lengthPrinted = long(_pSEView->execute(SCI_FORMATRANGE, printPage, reinterpret_cast<LPARAM>(&frPrint)));
 
-		if (printPage)
+		if (printPage) 
 		{
 			if (nppGUI._printSettings.isFooterPresent())
 			{
 				::SelectObject(_pdlg.hDC, fontFooter);
-
+				
 				::SetTextColor(_pdlg.hDC, RGB(0, 0, 0));
 				::SetBkColor(_pdlg.hDC, RGB(255, 255, 255));
 
@@ -441,7 +441,7 @@ size_t Printer::doPrint(bool justDoIt)
 					        frPrint.rc.right, frPrint.rc.bottom + footerLineHeight + footerLineHeight / 2};
 
 				SIZE size;
-
+				
 				// Left part
 				if (footerL[0] != '\0')
 				{
@@ -487,11 +487,11 @@ size_t Printer::doPrint(bool justDoIt)
 				::SelectObject(_pdlg.hDC, penOld);
 				::DeleteObject(pen);
 			}
-
+			
 			::EndPage(_pdlg.hDC);
 		}
 
-		pageNum++;
+		++pageNum;
 
 		if ((_pdlg.Flags & PD_PAGENUMS) && (pageNum > _pdlg.nToPage))
 			break;

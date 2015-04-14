@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -125,6 +125,7 @@
 #endif //SIZE_DLG_H
 
 #include "localization.h"
+#include <vector>
 
 
 #define MENU 0x01
@@ -162,7 +163,7 @@ struct TaskListInfo;
 struct VisibleGUIConf {
 	bool isPostIt;
 	bool isFullScreen;
-
+	
 	//Used by both views
 	bool isMenuShown;
 	//bool isToolbarShown;	//toolbar forcefully hidden by hiding rebar
@@ -197,6 +198,7 @@ class FunctionListPanel;
 class Notepad_plus {
 
 friend class Notepad_plus_Window;
+friend class FileManager;
 
 public:
 	Notepad_plus();
@@ -219,10 +221,10 @@ public:
 
 // fileOperations
 	//The doXXX functions apply to a single buffer and dont need to worry about views, with the excpetion of doClose, since closing one view doesnt have to mean the document is gone
-    BufferID doOpen(const TCHAR *fileName, bool isReadOnly = false, int encoding = -1);
+	BufferID doOpen(const TCHAR *fileName, bool isRecursive = false, bool isReadOnly = false, int encoding = -1, const TCHAR *backupFileName = NULL, time_t fileNameTimestamp = 0);
 	bool doReload(BufferID id, bool alert = true);
 	bool doSave(BufferID, const TCHAR * filename, bool isSaveCopy = false);
-	void doClose(BufferID, int whichOne);
+	void doClose(BufferID, int whichOne, bool doDeleteBackup = false);
 	//bool doDelete(const TCHAR *fileName) const {return ::DeleteFile(fileName) != 0;};
 
 	void fileOpen();
@@ -234,8 +236,11 @@ public:
     };
 
 	bool fileClose(BufferID id = BUFFER_INVALID, int curView = -1);	//use curView to override view to close from
-	bool fileCloseAll();
+	bool fileCloseAll(bool doDeleteBackup, bool isSnapshotMode = false);
 	bool fileCloseAllButCurrent();
+	bool fileCloseAllGiven(const std::vector<int> &krvecBufferIndexes);
+	bool fileCloseAllToLeft();
+	bool fileCloseAllToRight();
 	bool fileSave(BufferID id = BUFFER_INVALID);
 	bool fileSaveAll();
 	bool fileSaveAs(BufferID id = BUFFER_INVALID, bool isSaveCopy = false);
@@ -262,12 +267,14 @@ public:
         NppParameters::getInstance()->writeShortcuts();
     };
 	void saveSession(const Session & session);
+	void saveCurrentSession();
+
     void saveFindHistory(){
         _findReplaceDlg.saveFindHistory();
 	    (NppParameters::getInstance())->writeFindHistory();
     };
 
-	void getCurrentOpenedFiles(Session & session);
+	void getCurrentOpenedFiles(Session & session, bool includUntitledDoc = false);
 
 	bool fileLoadSession(const TCHAR *fn = NULL);
 	const TCHAR * fileSaveSession(size_t nbFile, TCHAR ** fileNames, const TCHAR *sessionFile2save);
@@ -278,31 +285,31 @@ public:
 	bool doStreamComment();
 	//--FLS: undoStreamComment: New function unDoStreamComment()
 	bool undoStreamComment();
-
+	
 	bool addCurrentMacro();
 	void macroPlayback(Macro);
-
-    void loadLastSession(){
-	Session lastSession = (NppParameters::getInstance())->getSession();
-	    loadSession(lastSession);
-    };
-
-	bool loadSession(Session & session);
-
-
-
+    
+    void loadLastSession();
+	bool loadSession(Session & session, bool isSnapshotMode = false);
+	
 	void notifyBufferChanged(Buffer * buffer, int mask);
 	bool findInFiles();
 	bool replaceInFiles();
 	void setFindReplaceFolderFilter(const TCHAR *dir, const TCHAR *filters);
 	vector<generic_string> addNppComponents(const TCHAR *destDir, const TCHAR *extFilterName, const TCHAR *extFilter);
     int getHtmlXmlEncoding(const TCHAR *fileName) const;
-		HACCEL getAccTable() const{
+	HACCEL getAccTable() const{
 		return _accelerator.getAccTable();
 	};
 	bool emergency(generic_string emergencySavedDir);
-
-
+	Buffer * getCurrentBuffer()	{
+		return _pEditView->getCurrentBuffer();
+	};
+	void launchDocumentBackupTask();
+	int getQuoteIndexFrom(const char *quoter) const;
+	void showQuoteFromIndex(int index) const;
+	void showQuote(const char *quote, const char *quoter, bool doTrolling) const;
+	
 private:
 	Notepad_plus_Window *_pPublicInterface;
     Window *_pMainWindow;
@@ -323,18 +330,17 @@ private:
     ScintillaEditView _mainEditView;
 	ScintillaEditView _invisibleEditView;	//for searches
 	ScintillaEditView _fileEditView;		//for FileManager
-
     ScintillaEditView *_pEditView;
 	ScintillaEditView *_pNonEditView;
 
     SplitterContainer *_pMainSplitter;
     SplitterContainer _subSplitter;
 
-    ContextMenu _tabPopupMenu, _tabPopupDropMenu;
+    ContextMenu _tabPopupMenu, _tabPopupDropMenu, _fileSwitcherMultiFilePopupMenu;
 
 	ToolBar	_toolBar;
 	IconList _docTabIconList;
-
+	
     StatusBar _statusBar;
 	bool _toReduceTabBar;
 	ReBar _rebarTop;
@@ -350,7 +356,7 @@ private:
 	WordStyleDlg _configStyleDlg;
 	PreferenceDlg _preference;
 	FindCharsInRangeDlg _findCharsInRangeDlg;
-
+	
 	// a handle list of all the Notepad++ dialogs
 	vector<HWND> _hModelessDlgs;
 
@@ -362,7 +368,7 @@ private:
 	HMENU _mainMenuHandle;
 
 	bool _sysMenuEntering;
-
+	
 
 	// For FullScreen/PostIt features
 	VisibleGUIConf	_beforeSpecialView;
@@ -390,7 +396,7 @@ private:
 	} _activeAppInf;
 
 	//Synchronized Scolling
-
+	
 	struct SyncInfo {
 		int _line;
 		int _column;
@@ -412,13 +418,12 @@ private:
     ButtonDlg _restoreButton;
 
 	bool _isFileOpening;
+	bool _isAdministrator;
 
 	ScintillaCtrls _scintillaCtrls4Plugins;
 
 	vector<pair<int, int> > _hideLinesMarks;
 	StyleArray _hotspotStyles;
-    bool _rememberThisSession; // always true. except -nosession is indicated on the launch time
-
 
 	AnsiCharPanel *_pAnsiCharPanel;
 	ClipboardHistoryPanel *_pClipboardHistoryPanel;
@@ -509,16 +514,20 @@ private:
 	void setDisplayFormat(formatType f);
 	int getCmdIDFromEncoding(int encoding) const;
 	void setUniModeText();
-
 	void checkLangsMenu(int id) const ;
     void setLanguage(LangType langType);
 	enum LangType menuID2LangType(int cmdID);
 
+	BOOL processIncrFindAccel(MSG *msg) const;
+
 	void checkMenuItem(int itemID, bool willBeChecked) const {
 		::CheckMenuItem(_mainMenuHandle, itemID, MF_BYCOMMAND | (willBeChecked?MF_CHECKED:MF_UNCHECKED));
 	};
-	void MaintainIndentation(TCHAR ch);
 
+	bool isConditionExprLine(int lineNumber);
+	int findMachedBracePos(size_t startPos, size_t endPos, char targetSymbol, char matchedSymbol);
+	void maintainIndentation(TCHAR ch);
+	
 	void addHotSpot();
 
     void bookmarkAdd(int lineno) const {
@@ -546,7 +555,7 @@ private:
 		if (bookmarkPresent(lineno))
 			bookmarkDelete(lineno);
 		else
-		bookmarkAdd(lineno);
+    		bookmarkAdd(lineno);
 	};
     void bookmarkNext(bool forwardScan);
 	void bookmarkClearAll() const {
@@ -578,9 +587,10 @@ private:
 	void showAutoComp();
 	void autoCompFromCurrentFile(bool autoInsert = true);
 	void showFunctionComp();
+	void showPathCompletion();
 
 	//void changeStyleCtrlsLang(HWND hDlg, int *idArray, const char **translatedText);
-	bool replaceAllFiles();
+	bool replaceInOpenedFiles();
 	bool findInOpenedFiles();
 	bool findInCurrentFile();
 
@@ -608,7 +618,7 @@ private:
 	bool goToPreviousIndicator(int indicID2Search, bool isWrap = true) const;
 	bool goToNextIndicator(int indicID2Search, bool isWrap = true) const;
 	int wordCount();
-
+	
 	void wsTabConvert(spaceTab whichWay);
 	void doTrim(trimOp whichPart);
 	void removeEmptyLine(bool isBlankContained);
@@ -618,8 +628,6 @@ private:
 	void launchProjectPanel(int cmdID, ProjectPanel ** pProjPanel, int panelID);
 	void launchDocMap();
 	void launchFunctionList();
-	int getQuoteIndexFrom(const char *quoter) const;
-	void showQuoteFromIndex(int index) const;
 	void showAllQuotes() const;
 	static DWORD WINAPI threadTextPlayer(void *text2display);
 	static DWORD WINAPI threadTextTroller(void *params);
@@ -627,13 +635,14 @@ private:
 	static bool deleteBack(ScintillaEditView *pCurrentView, BufferID targetBufID);
 	static bool deleteForward(ScintillaEditView *pCurrentView, BufferID targetBufID);
 	static bool selectBack(ScintillaEditView *pCurrentView, BufferID targetBufID);
-
+	
 	static int getRandomNumber(int rangeMax = -1) {
 		int randomNumber = rand();
 		if (rangeMax == -1)
 			return randomNumber;
 		return (rand() % rangeMax);
 	};
+	static DWORD WINAPI backupDocument(void *params);
 };
 
 

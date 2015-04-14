@@ -47,7 +47,7 @@ to store your update package, that's it!
 How is GUP easy to use?
 -----------------------
 
-All you have to do is point GUP to your url update page (by modifying gup.xml),
+All you have to do is point GUP to your url update page (by modifying gup.xml), 
 then work on your pointed url update page (see getDownLoadUrl.php comes with the release)
 to make sure it responds to your GUP with the correct xml data.
 

@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -41,7 +41,7 @@ BOOL CALLBACK ColourStaticTextHooker::colourStaticProc(HWND hwnd, UINT Message, 
 
             PAINTSTRUCT ps;
             HDC hdc = ::BeginPaint(hwnd, &ps);
-
+    		
             ::SetTextColor(hdc, _colour);
 
 		    // Get the default GUI font
@@ -53,7 +53,7 @@ BOOL CALLBACK ColourStaticTextHooker::colourStaticProc(HWND hwnd, UINT Message, 
             TCHAR text[MAX_PATH];
             ::GetWindowText(hwnd, text, MAX_PATH);
             ::DrawText(hdc, text, -1, &rect, DT_LEFT);
-
+    		
             ::SelectObject(hdc, hOld);
 
             ::EndPaint(hwnd, &ps);
@@ -102,16 +102,16 @@ BOOL CALLBACK WordStyleDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lPar
 			_currentThemeIndex = -1;
 			int defaultThemeIndex = 0;
 			ThemeSwitcher & themeSwitcher = nppParamInst->getThemeSwitcher();
-			for(size_t i = 0 ; i < themeSwitcher.size() ; i++)
+			for(size_t i = 0 ; i < themeSwitcher.size() ; ++i)
 			{
 				pair<generic_string, generic_string> & themeInfo = themeSwitcher.getElementFromIndex(i);
 				int j = ::SendMessage(_hSwitch2ThemeCombo, CB_ADDSTRING, 0, (LPARAM)themeInfo.first.c_str());
-				if (! themeInfo.second.compare( nppParamInst->getNppGUI()._themeName ) )
+				if (! themeInfo.second.compare( nppParamInst->getNppGUI()._themeName ) ) 
 				{
 					_currentThemeIndex = j;
 					_themeName.assign(themeInfo.second);
 				}
-				if (! themeInfo.first.compare(TEXT("Default")) )
+				if (! themeInfo.first.compare(TEXT("Default")) ) 
 				{
 					defaultThemeIndex = j;
 				}
@@ -122,11 +122,11 @@ BOOL CALLBACK WordStyleDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lPar
 			}
 			::SendMessage(_hSwitch2ThemeCombo, CB_SETCURSEL, _currentThemeIndex, 0);
 
-			for(int i = 0 ; i < sizeof(fontSizeStrs)/(3*sizeof(TCHAR)) ; i++)
+			for(int i = 0 ; i < sizeof(fontSizeStrs)/(3*sizeof(TCHAR)) ; ++i)
 				::SendMessage(_hFontSizeCombo, CB_ADDSTRING, 0, (LPARAM)fontSizeStrs[i]);
 
 			const std::vector<generic_string> & fontlist = (NppParameters::getInstance())->getFontList();
-			for (size_t i = 0 ; i < fontlist.size() ; i++)
+			for (size_t i = 0, len = fontlist.size() ; i < len ; ++i)
 			{
 				int j = ::SendMessage(_hFontNameCombo, CB_ADDSTRING, 0, (LPARAM)fontlist[i].c_str());
 				::SendMessage(_hFontNameCombo, CB_SETITEMDATA, j, (LPARAM)fontlist[i].c_str());
@@ -189,7 +189,7 @@ BOOL CALLBACK WordStyleDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lPar
 			return TRUE;
 		}
 
-		case WM_COMMAND :
+		case WM_COMMAND : 
 		{
 			if (HIWORD(wParam) == EN_CHANGE)
             {
@@ -234,21 +234,21 @@ BOOL CALLBACK WordStyleDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lPar
 						if (_isDirty)
 						{
 							NppParameters *nppParamInst = NppParameters::getInstance();
-							if (_restoreInvalid)
-							{
+							if (_restoreInvalid) 
+							{	
 								generic_string str( nppParamInst->getNppGUI()._themeName );
 								nppParamInst->reloadStylers( &str[0] );
 							}
 
 							LexerStylerArray & lsArray = nppParamInst->getLStylerArray();
 							StyleArray & globalStyles = nppParamInst->getGlobalStylers();
-
-							if (_restoreInvalid)
+							
+							if (_restoreInvalid) 
 							{
 								_lsArray = _styles2restored = lsArray;
 								_globalStyles = _gstyles2restored = globalStyles;
 							}
-							else
+							else 
 							{
 								globalStyles = _globalStyles = _gstyles2restored;
 								lsArray = _lsArray = _styles2restored;
@@ -261,7 +261,7 @@ BOOL CALLBACK WordStyleDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lPar
 							_isThemeDirty = false;
 							setVisualFromStyleList();
 
-
+							
 							//(nppParamInst->getNppGUI())._themeName
 							::SendMessage(_hSwitch2ThemeCombo, CB_SETCURSEL, _currentThemeIndex, 0);
 							::SendMessage(_hParent, WM_UPDATESCINTILLAS, 0, 0);
@@ -294,7 +294,7 @@ BOOL CALLBACK WordStyleDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lPar
 						::SendMessage(_hParent, WM_UPDATESCINTILLAS, 0, 0);
 						return TRUE;
 					}
-
+					
 					case IDC_SC_TRANSPARENT_CHECK :
 					{
 						bool isChecked = (BST_CHECKED == ::SendDlgItemMessage(_hSelf, IDC_SC_TRANSPARENT_CHECK, BM_GETCHECK, 0, 0));
@@ -352,7 +352,7 @@ BOOL CALLBACK WordStyleDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lPar
 						apply();
 						return TRUE;
 					}
-
+					
 					case IDC_GLOBAL_ITALIC_CHECK :
 					{
 						GlobalOverride & glo = (NppParameters::getInstance())->getGlobalOverrideStyle();
@@ -413,7 +413,7 @@ BOOL CALLBACK WordStyleDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lPar
 								return TRUE;
 							}
 
-							case CPN_COLOURPICKED:
+							case CPN_COLOURPICKED:	
 							{
 								if ((HWND)lParam == _pFgColour->getHSelf())
 								{
@@ -422,9 +422,7 @@ BOOL CALLBACK WordStyleDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lPar
 									int tabColourIndex;
 									if ((tabColourIndex = whichTabColourIndex()) != -1)
 									{
-										//::SendMessage(_hParent, WM_UPDATETABBARCOLOUR, tabColourIndex, _pFgColour->getColour());
 										TabBarPlus::setColour(_pFgColour->getColour(), (TabBarPlus::tabColourIndex)tabColourIndex);
-										return TRUE;
 									}
 									apply();
 									return TRUE;
@@ -438,9 +436,7 @@ BOOL CALLBACK WordStyleDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lPar
 									{
 										tabColourIndex = (int)tabColourIndex == TabBarPlus::inactiveText? TabBarPlus::inactiveBg : tabColourIndex;
 										TabBarPlus::setColour(_pBgColour->getColour(), (TabBarPlus::tabColourIndex)tabColourIndex);
-										return TRUE;
 									}
-
 									apply();
 									return TRUE;
 								}
@@ -475,7 +471,7 @@ void WordStyleDlg::loadLangListFromNppParam()
 
 	::SendDlgItemMessage(_hSelf, IDC_LANGUAGES_LIST, LB_ADDSTRING, 0, (LPARAM)TEXT("Global Styles"));
 	// All the lexers
-    for (int i = 0 ; i < _lsArray.getNbLexer() ; i++)
+    for (int i = 0, nb = _lsArray.getNbLexer() ; i < nb ; ++i)
     {
 		::SendDlgItemMessage(_hSelf, IDC_LANGUAGES_LIST, LB_ADDSTRING, 0, (LPARAM)_lsArray.getLexerDescFromIndex(i));
     }
@@ -492,7 +488,7 @@ void WordStyleDlg::updateThemeName(generic_string themeName)
 	nppGUI._themeName.assign( themeName );
 }
 
-int WordStyleDlg::whichTabColourIndex()
+int WordStyleDlg::whichTabColourIndex() 
 {
 	int i = ::SendDlgItemMessage(_hSelf, IDC_STYLES_LIST, LB_GETCURSEL, 0, 0);
 	if (i == LB_ERR)
@@ -625,7 +621,7 @@ void WordStyleDlg::switchToTheme()
 
 	generic_string prevThemeName(_themeName);
 	_themeName.clear();
-
+	
 	NppParameters *nppParamInst = NppParameters::getInstance();
     ThemeSwitcher & themeSwitcher = nppParamInst->getThemeSwitcher();
 	pair<generic_string, generic_string> & themeInfo = themeSwitcher.getElementFromIndex(iSel);
@@ -639,7 +635,7 @@ void WordStyleDlg::switchToTheme()
 		PathRemoveExtension(themeFileName);
 		int mb_response =
 			::MessageBox( _hSelf,
-				TEXT(" Unsaved changes are about to be discarded!\n")
+				TEXT(" Unsaved changes are about to be discarded!\n") 
 				TEXT(" Do you want to save your changes before switching themes?"),
 				themeFileName,
 				MB_ICONWARNING | MB_YESNO | MB_APPLMODAL | MB_SETFOREGROUND );
@@ -687,7 +683,7 @@ void WordStyleDlg::setStyleListFromLexer(int index)
 
 	StyleArray & lexerStyler = index?_lsArray.getLexerFromIndex(index-1):_globalStyles;
 
-    for (int i = 0 ; i < lexerStyler.getNbStyler() ; i++)
+    for (int i = 0, nb = lexerStyler.getNbStyler(); i < nb ; ++i)
     {
         Style & style = lexerStyler.getStyler(i);
 		::SendDlgItemMessage(_hSelf, IDC_STYLES_LIST, LB_ADDSTRING, 0, (LPARAM)style._styleDesc);
@@ -696,7 +692,7 @@ void WordStyleDlg::setStyleListFromLexer(int index)
     setVisualFromStyleList();
 }
 
-void WordStyleDlg::setVisualFromStyleList()
+void WordStyleDlg::setVisualFromStyleList() 
 {
 	showGlobalOverrideCtrls(false);
 
@@ -711,11 +707,11 @@ void WordStyleDlg::setVisualFromStyleList()
     //--Warning text
     //bool showWarning = ((_currentLexerIndex == 0) && (style._styleID == STYLE_DEFAULT));//?SW_SHOW:SW_HIDE;
 
-	COLORREF c = c = RGB(0x00, 0x00, 0xFF);
+	COLORREF c = RGB(0x00, 0x00, 0xFF);
 	TCHAR str[256];
 
 	str[0] = '\0';
-
+	
 	int i = ::SendDlgItemMessage(_hSelf, IDC_LANGUAGES_LIST, LB_GETCURSEL, 0, 0);
 	if (i == LB_ERR)
 		return;
@@ -846,7 +842,7 @@ void WordStyleDlg::create(int dialogID, bool isRTL)
 	{
 		::ShowWindow(::GetDlgItem(_hSelf, IDC_SC_TRANSPARENT_CHECK), SW_SHOW);
 		::ShowWindow(::GetDlgItem(_hSelf, IDC_SC_PERCENTAGE_SLIDER), SW_SHOW);
-
+		
 		::SendDlgItemMessage(_hSelf, IDC_SC_PERCENTAGE_SLIDER, TBM_SETRANGE, FALSE, MAKELONG(20, 200));
 		::SendDlgItemMessage(_hSelf, IDC_SC_PERCENTAGE_SLIDER, TBM_SETPOS, TRUE, 150);
 		if (!(BST_CHECKED == ::SendDlgItemMessage(_hSelf, IDC_SC_PERCENTAGE_SLIDER, BM_GETCHECK, 0, 0)))

@@ -5,13 +5,14 @@
 //Printed BABYGRID message reference and tutorial available.
 //email: mudcat@mis.net for more information.
 
-/*
+/* 
 Add WM_MOUSEWHEEL, WM_LBUTTONDBLCLK and WM_RBUTTONUP events
 Modified by Don HO <don.h@free.fr>
 */
 
 #include "precompiledHeaders.h"
 #include "babygrid.h"
+#include "Parameters.h"
 
 #define MAX_GRIDS 20
 
@@ -27,7 +28,7 @@ HFONT hfontbody,hfontheader,hfonttitle;
 
 HFONT holdfont;
 
-struct _gridhandlestruct
+struct _gridhandlestruct 
 	{
         UINT gridmenu;
 		HWND hlist1;
@@ -124,15 +125,15 @@ int         CountGrids();
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
 int HomeColumnNthVisible(int SI)
-    {
+    {  
      int j,hc,count;
      count=0;
      hc=BGHS[SI].homecol;
-     for(j=1;j<=hc;j++)
+     for(j=1;j<=hc;++j)
          {
           if(BGHS[SI].columnwidths[j]>0)
               {
-               count++;
+               ++count;
               }
          }
      return count;
@@ -219,7 +220,7 @@ int GetColOfMouse(int SI,int x)
 		  j++;
 		 }
 	 j--;
-
+	 
 	 ReturnValue = j;
      if(BGHS[SI].EXTENDLASTCOLUMN)
          {
@@ -340,7 +341,7 @@ void DisplayTitle(HWND hWnd,int SI,HFONT hfont)
      HFONT holdfont;
 
      GetClientRect(hWnd,&rect);
-
+     
 
 
      gdc=GetDC(hWnd);
@@ -368,7 +369,7 @@ void DisplayColumn(HWND hWnd,int SI,int c,int offset,HFONT hfont,HFONT hcolumnhe
 	 SetBkMode(gdc,TRANSPARENT);
      ShowHscroll(hWnd,SI);
 	 ShowVscroll(hWnd,SI);
-
+     
 
     holdfont = (HFONT)SelectObject(gdc,hcolumnheadingfont);
 	SetTextColor(gdc,BGHS[SI].textcolor);
@@ -390,7 +391,7 @@ void DisplayColumn(HWND hWnd,int SI,int c,int offset,HFONT hfont,HFONT hcolumnhe
 		         //extend this column
 		         RECT trect;
 		         GetClientRect(hWnd,&trect);
-
+		         
 		         rect.right = offset + (trect.right - rect.left);
 		        }
         }
@@ -412,7 +413,7 @@ void DisplayColumn(HWND hWnd,int SI,int c,int offset,HFONT hfont,HFONT hcolumnhe
 
              }
         }
-
+      
 	 SetCell(&BGcell,r,c);
 	 lstrcpy(buffer, TEXT(""));
 	 SendMessage(hWnd,BGM_GETCELLDATA,(WPARAM)&BGcell,(LPARAM)buffer);
@@ -470,7 +471,7 @@ void DisplayColumn(HWND hWnd,int SI,int c,int offset,HFONT hfont,HFONT hcolumnhe
 		 if(c==0)
 		 {
 		  DrawEdge(gdc,&rect,EDGE_ETCHED,BF_MIDDLE|BF_RECT|BF_ADJUST);
-
+		  
 		 }
 		 else
 		 {
@@ -1189,7 +1190,7 @@ void DisplayEditString(HWND hWnd,int SI,TCHAR* tstring)
             ah=BGHS[SI].fontascentheight;
 
             SetCaretPos(rt.right-4,rt.top+(int)(rh/2)-ah+2);
-
+       
            }
 
        SelectObject(cdc,holdfont);
@@ -1207,7 +1208,7 @@ ATOM RegisterGridClass(HINSTANCE hInstance)
    for(int j = 0 ; j < MAX_GRIDS ; j++)
    {
         BGHS[j].gridmenu = 0;
-        BGHS[j].hlist1 = NULL;
+        BGHS[j].hlist1 = NULL; 
 		lstrcpy(BGHS[j].protect, TEXT("U"));
 		BGHS[j].rows = 100;
 		BGHS[j].cols = 255;
@@ -1220,15 +1221,15 @@ ATOM RegisterGridClass(HINSTANCE hInstance)
         BGHS[j].EDITABLE = FALSE;
         BGHS[j].EDITING = FALSE;
         BGHS[j].AUTOROW = TRUE;
-		BGHS[j].cursorcol = 1;
-		BGHS[j].cursorrow = 1;
+		BGHS[j].cursorcol = 1;  
+		BGHS[j].cursorrow = 1;  
 		BGHS[j].columnwidths[0]=50;
         BGHS[j].ADVANCEROW = TRUE;
 		BGHS[j].DRAWHIGHLIGHT = TRUE;
 		BGHS[j].cursorcolor = RGB(255,255,255);
-		BGHS[j].protectcolor = RGB(255,255,255);
+		BGHS[j].protectcolor = RGB(255,255,255); 
 		BGHS[j].unprotectcolor = RGB(255,255,255);
-		BGHS[j].highlightcolor = RGB(0,0,128);
+		BGHS[j].highlightcolor = RGB(0,0,128); 
 		BGHS[j].gridlinecolor = RGB(220,220,220);
         BGHS[j].highlighttextcolor = RGB(255,255,255);
 		BGHS[j].textcolor = RGB(0,0,0);
@@ -1249,7 +1250,7 @@ ATOM RegisterGridClass(HINSTANCE hInstance)
 		{
 			BGHS[j].columnwidths[k]=50;
 		}
-
+		
     }
 
 	WNDCLASS wclass;
@@ -1262,7 +1263,7 @@ ATOM RegisterGridClass(HINSTANCE hInstance)
 	wclass.hInstance = hInstance;
 	wclass.hIcon = NULL;
 	wclass.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-
+	
 	wclass.hbrBackground = (HBRUSH)(GetStockObject(GRAY_BRUSH));
 	wclass.lpszClassName = TEXT("BABYGRID");
 	wclass.lpszMenuName = NULL;
@@ -1275,22 +1276,24 @@ void SizeGrid(HWND hWnd,int SI)
     {
      SendMessage(hWnd,WM_SIZE,SIZE_MAXIMIZED,MAKELPARAM(BGHS[SI].wannabewidth,BGHS[SI].wannabeheight));
      SendMessage(hWnd,WM_SIZE,SIZE_MAXIMIZED,MAKELPARAM(BGHS[SI].wannabewidth,BGHS[SI].wannabeheight));
-
+     
     }
 
 int FindLongestLine(HDC hdc,TCHAR* text,SIZE* size)
-    {int longest,lines,j;
+{
+	int longest, lines;
      TCHAR temptext[1000];
      TCHAR *p;
      longest=0;
      lines=1;
-     for(j=0;j<(int)lstrlen(text);j++)
-         {
-          if(text[j]=='\n')
-              {
-               lines++;
-              }
-         }
+
+     for(size_t j=0, len=lstrlen(text); j<len; j++)
+     {
+      if(text[j]=='\n')
+          {
+           lines++;
+          }
+     }
      lstrcpy(temptext,text);
      p = generic_strtok(temptext, TEXT("\n"));
      while(p)
@@ -1318,7 +1321,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	HINSTANCE hInst;
     int iDataType;
     static int ASCII;
-
+    
 
 	SelfIndex=FindGrid((UINT)GetMenu(hWnd));
     SelfMenu=BGHS[SelfIndex].gridmenu;
@@ -1326,7 +1329,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	//update the grid width and height variable
 	{
 	 RECT rect;
-
+	 
 	 GetClientRect(hWnd,&rect);
 	 BGHS[SelfIndex].gridwidth = rect.right - rect.left;
 	 BGHS[SelfIndex].gridheight = rect.bottom - rect.top;
@@ -1335,11 +1338,11 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	ReturnValue = 0;
 
-	switch (message)
+	switch (message) 
 	{
 		case WM_COMMAND:
-			wmId    = LOWORD(wParam);
-			wmEvent = HIWORD(wParam);
+			wmId    = LOWORD(wParam); 
+			wmEvent = HIWORD(wParam); 
 			// Parse the menu selections:
 			switch (wmId)
 			{
@@ -1369,7 +1372,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			          DisplayColumn(hWnd,SelfIndex,c,offset,BGHS[SelfIndex].hfont,BGHS[SelfIndex].hcolumnheadingfont);
 			          offset+=BGHS[SelfIndex].columnwidths[c];
 			         }
-
+			 
 			    }
 			EndPaint(hWnd, &ps);
 			//
@@ -1391,8 +1394,8 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
              MessageBeep(0);
             }
             break;
-        case WM_SETTEXT:
-            {
+        case WM_SETTEXT: 
+            { 
               int j,linecount;
               SIZE size;
               HDC gdc;
@@ -1405,13 +1408,13 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                   {
                     lstrcpy(BGHS[SelfIndex].title,(TCHAR*)lParam);
                   }
-
+             
              gdc=GetDC(hWnd);
              //get linecount of title;
              if(lstrlen(BGHS[SelfIndex].title) > 0)
                  {
                   linecount=1;
-                  for(j=0;j<(int)lstrlen(BGHS[SelfIndex].title);j++)
+                  for(j=0;j<(int)lstrlen(BGHS[SelfIndex].title);j++)     
                       {
                        if(BGHS[SelfIndex].title[j]=='\n')
                            {
@@ -1431,10 +1434,10 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                  }
               ReleaseDC(hWnd,gdc);
 
-
+              
 			  RefreshGrid(hWnd);
               SizeGrid(hWnd,SelfIndex);
-
+              
             }
             break;
         case BGM_GETROWS:
@@ -1563,8 +1566,8 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                   {
 			       lstrcpy(BGHS[SelfIndex].protect, TEXT("P"));
 			      }
-			      else
-                  {
+			      else      
+                  {                
 			       lstrcpy(BGHS[SelfIndex].protect, TEXT("U"));
 			      }
 			break;
@@ -1624,7 +1627,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			  lstrcat(buffer, TEXT("|"));
               lstrcat(buffer, (TCHAR*)lParam);
               FindResult=SendMessage(BGHS[SelfIndex].hlist1,LB_ADDSTRING,0,(LPARAM)buffer);
-
+              
               if(FindResult==LB_ERR)
                   {
                    MessageBeep(0);
@@ -1845,13 +1848,13 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			  }
 			break;
 		case BGM_SETHEADERROWHEIGHT:
-			  if(wParam >= 0)
+			  if(wParam >= 0)             
 			  {
                RECT rect;
 			   BGHS[SelfIndex].headerrowheight = wParam;
                SizeGrid(hWnd,SelfIndex);
                GetClientRect(hWnd,&rect);
-               InvalidateRect(hWnd,&rect,FALSE);
+               InvalidateRect(hWnd,&rect,FALSE); 
 			  }
 			break;
 
@@ -2054,9 +2057,9 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			else
 				{
 				 BGHS[SelfIndex].textcolor = RGB(0,0,0);
-				}
+				} 
 
-        case WM_MOUSEMOVE:
+        case WM_MOUSEMOVE:     
               int x,y,r,c,t,z;
               x=LOWORD(lParam);
               y=HIWORD(lParam);
@@ -2144,7 +2147,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                             }
                          BGHS[SelfIndex].columntoresize = c;
                         }
-
+                  
                   BGHS[SelfIndex].columntoresizeinitsize = BGHS[SelfIndex].columnwidths[c];
                  }
 
@@ -2160,10 +2163,10 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
              BOOL NRC,NCC;
              NRC=FALSE;
              NCC=FALSE;
-
+             
 			 if(GetFocus()==hWnd)
 				 {
-
+			      
 				  x=LOWORD(lParam);
 				  y=HIWORD(lParam);
 				  r=GetRowOfMouse(SelfIndex,y);
@@ -2189,11 +2192,11 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 							{
 						     BGHS[SelfIndex].cursorcol = c;
 							}
-
+						
 					   }
                    if(NRC){NotifyRowChanged(hWnd,SelfIndex);}
                    if(NCC){NotifyColChanged(hWnd,SelfIndex);}
-
+				   
 				   DrawCursor(hWnd,SelfIndex);
                    SetCurrentCellStatus(hWnd,SelfIndex);
 				   SetHomeRow(hWnd,SelfIndex,BGHS[SelfIndex].cursorrow,BGHS[SelfIndex].cursorcol);
@@ -2223,22 +2226,13 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
               ReturnValue = DLGC_WANTARROWS|DLGC_WANTCHARS|DLGC_DEFPUSHBUTTON;
                  if(wParam == 13)
                      {
-                   //same as arrow down
+					 NotifyCellDbClicked(hWnd, SelfIndex);
                    if(BGHS[SelfIndex].EDITING)
                        {
                         CloseEdit(hWnd,SelfIndex);
                        }
 				   DrawCursor(hWnd,SelfIndex);
-				   BGHS[SelfIndex].cursorrow ++;
-				   if(BGHS[SelfIndex].cursorrow > BGHS[SelfIndex].rows)
-					   {
-						BGHS[SelfIndex].cursorrow = BGHS[SelfIndex].rows;
-					   }
-				   else
-					   {
-						NotifyRowChanged(hWnd,SelfIndex);
-					   }
-				   DrawCursor(hWnd,SelfIndex);
+
                    SetCurrentCellStatus(hWnd,SelfIndex);
 				   SetHomeRow(hWnd,SelfIndex,BGHS[SelfIndex].cursorrow,BGHS[SelfIndex].cursorcol);
 				   RefreshGrid(hWnd);
@@ -2366,7 +2360,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				   rpp = (gridrect.bottom - (BGHS[SelfIndex].headerrowheight+BGHS[SelfIndex].titleheight))/BGHS[SelfIndex].rowheight;
 				   DrawCursor(hWnd,SelfIndex);
 				   BGHS[SelfIndex].cursorrow += rpp;
-
+				   
 				   if(BGHS[SelfIndex].cursorrow > BGHS[SelfIndex].rows)
 					   {
 						BGHS[SelfIndex].cursorrow = BGHS[SelfIndex].rows;
@@ -2408,7 +2402,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				   RefreshGrid(hWnd);
                    break;
 				  }
-			  if(wParam == VK_DOWN)
+			  if(wParam == VK_DOWN)	
 				  {
                    if(BGHS[SelfIndex].EDITING)
                        {
@@ -2512,7 +2506,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
               SetCurrentCellStatus(hWnd,SelfIndex);
 
-
+              
 
               if((BGHS[SelfIndex].CURRENTCELLPROTECTED)&&(wParam == 13))
 
@@ -2562,11 +2556,11 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                        }
 
                   }
-
+              
               //if it's not an arrow key, make an edit box in the active cell rectangle
               if((BGHS[SelfIndex].EDITABLE)&&(BGHS[SelfIndex].rows > 0))
                   {
-
+                  
 				  SetHomeRow(hWnd,SelfIndex,BGHS[SelfIndex].cursorrow,BGHS[SelfIndex].cursorcol);
 				  DrawCursor(hWnd,SelfIndex);
 				  DrawCursor(hWnd,SelfIndex);
@@ -2649,7 +2643,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                        BGHS[SelfIndex].homecol = np;
                        SetScrollPos(hWnd,SB_HORZ,cp,TRUE);
                        RefreshGrid(hWnd);
-                      }
+                      }  
                   if((LOWORD(wParam==SB_LINELEFT))||(LOWORD(wParam)==SB_PAGELEFT))
                       {
                        int cp,np;
@@ -2660,7 +2654,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                        BGHS[SelfIndex].homecol = np;
                        SetScrollPos(hWnd,SB_HORZ,cp,TRUE);
                        RefreshGrid(hWnd);
-                      }
+                      }  
                   if(LOWORD(wParam)==SB_THUMBTRACK)
                       {
                        int cp,np;
@@ -2671,7 +2665,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                        SetScrollPos(hWnd,SB_HORZ,cp,TRUE);
                        RefreshGrid(hWnd);
                       }
-
+                  
 
             break;
 
@@ -2755,7 +2749,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 
-					if(LOWORD(wParam)==SB_PAGEUP)
+				  	if(LOWORD(wParam)==SB_PAGEUP)
 					  {
 					   RECT gridrect;
 					   int min,max,sp,rpp;
@@ -2780,7 +2774,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 						   }
 
 					  }
-					if(LOWORD(wParam)==SB_LINEUP)
+				  	if(LOWORD(wParam)==SB_LINEUP)
 					  {
 					   RECT gridrect;
 					   int min,max,sp;
@@ -2829,7 +2823,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				BGHS[SelfIndex].headerrowheight = 20;
 				BGHS[SelfIndex].ROWSNUMBERED = TRUE;
 				BGHS[SelfIndex].COLUMNSNUMBERED = TRUE;
-                BGHS[SelfIndex].DRAWHIGHLIGHT = TRUE;
+                BGHS[SelfIndex].DRAWHIGHLIGHT = TRUE;                
 
 				BGHS[SelfIndex].cursorcol = 1;
 				BGHS[SelfIndex].cursorrow = 1;
@@ -2846,7 +2840,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;
 		case WM_SETFOCUS:
 			   DrawCursor(hWnd,SelfIndex);
-			   BGHS[SelfIndex].GRIDHASFOCUS	= TRUE;
+			   BGHS[SelfIndex].GRIDHASFOCUS	= TRUE; 
                DrawCursor(hWnd,SelfIndex);
                SetCurrentCellStatus(hWnd,SelfIndex);
                SetHomeRow(hWnd,SelfIndex,BGHS[SelfIndex].cursorrow,BGHS[SelfIndex].cursorcol);
@@ -2865,7 +2859,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                    }
 			   RefreshGrid(hWnd);
 			break;
-		case WM_KILLFOCUS:
+		case WM_KILLFOCUS:	
                DestroyCaret();
 			   DrawCursor(hWnd,SelfIndex);
 			   BGHS[SelfIndex].GRIDHASFOCUS	= FALSE;
@@ -2875,7 +2869,7 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                SendMessage(GetParent(hWnd),WM_COMMAND,wParam,lParam);
                RefreshGrid(hWnd);
 
-
+			   
 			break;
         case WM_SETFONT:
               BGHS[SelfIndex].hfont = (HFONT)wParam;
@@ -2959,12 +2953,13 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                        GetWindowPlacement(hWnd,&wp);
                        crect=wp.rcNormalPosition;
                        crect.bottom=intout;
+					   //crect.bottom = NppParameters::getInstance()->_dpiManager.ScaleY(intout);
                        crect.right=savewidth;
                        BGHS[SI].SIZING = TRUE;
 
                        BGHS[SI].wannabeheight = HIWORD(lParam);
                        BGHS[SI].wannabewidth = LOWORD(lParam);
-
+					   //NppParameters::getInstance()->_dpiManager.ScaleRect(&crect);
                        MoveWindow(hWnd,crect.left,crect.top,crect.right,crect.bottom,TRUE);
                       }
                  }
@@ -2974,10 +2969,10 @@ LRESULT CALLBACK GridProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_CREATE:
 			  lpcs = &cs;
 			  lpcs = (LPCREATESTRUCT)lParam;
-
+			  
 			  hInst = lpcs->hInstance;
 
-
+			  
               BG_GridIndex = AddGrid((UINT)GetMenu(hWnd));
 
               if(CountGrids()==1)
@@ -3145,7 +3140,7 @@ int BinarySearchListBox(HWND lbhWnd,TCHAR* searchtext)
 		  return ReturnValue;
 		 }
 
-
+	 
 
      //is it the tail?
      SendMessage(lbhWnd,LB_GETTEXT,tail,(LPARAM)tailtext);
@@ -3165,9 +3160,9 @@ int BinarySearchListBox(HWND lbhWnd,TCHAR* searchtext)
 		 }
 
      //is it the finger?
-     ReturnValue = LB_ERR;
+     ReturnValue = LB_ERR; 
 	 FOUND=FALSE;
-
+	 
 
      while((!FOUND)&&((tail-head)>1))
          {
@@ -3181,13 +3176,13 @@ int BinarySearchListBox(HWND lbhWnd,TCHAR* searchtext)
                       FOUND=TRUE;
                       ReturnValue = finger;
                      }
-
+         
                  if(p<0)
                      {
                       //change  tail to finger
                       head = finger;
                      }
-                 if(p>0)
+                 if(p>0)    
                          {
                           //change head to finger
                          tail = finger;
@@ -3197,4 +3192,4 @@ int BinarySearchListBox(HWND lbhWnd,TCHAR* searchtext)
          }
      return ReturnValue;
     }
-
+    

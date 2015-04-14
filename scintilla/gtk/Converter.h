@@ -30,7 +30,7 @@ public:
 	}
 	Converter(const char *charSetDestination, const char *charSetSource, bool transliterations) {
 		iconvh = iconvhBad;
-		Open(charSetDestination, charSetSource, transliterations);
+	    	Open(charSetDestination, charSetSource, transliterations);
 	}
 	~Converter() {
 		Close();

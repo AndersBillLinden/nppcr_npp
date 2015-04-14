@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <iterator>
+#include <vector>
 #include "Platform.h"
 #include "SplitVector.h"
 #include "Partitioning.h"
@@ -11,13 +12,14 @@
 #include "CharClassify.h"
 #include "Decoration.h"
 #include <ILexer.h>
+#include "CaseFolder.h"
 #include <Document.h>
 
 class UTF8DocumentIterator : public std::iterator<std::bidirectional_iterator_tag, wchar_t>
 {
 public:
-        UTF8DocumentIterator() :
-                m_doc(0),
+        UTF8DocumentIterator() : 
+                m_doc(0), 
                 m_pos(0),
                 m_end(0),
 				m_characterIndex(0),
@@ -26,7 +28,7 @@ public:
         {
         }
 
-        UTF8DocumentIterator(Document* doc, int pos, int end) :
+        UTF8DocumentIterator(Document* doc, int pos, int end) : 
                 m_doc(doc),
                 m_pos(pos),
                 m_end(end),
@@ -94,13 +96,13 @@ public:
 				else
 				{
 					m_pos += m_utf8Length;
-
+					
 					if (m_pos > m_end)
 					{
 						m_pos = m_end;
 					}
 					m_characterIndex = 0;
-					readCharacter();
+					readCharacter();		
 				}
                 return *this;
         }

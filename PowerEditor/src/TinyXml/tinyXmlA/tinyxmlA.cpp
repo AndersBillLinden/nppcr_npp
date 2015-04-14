@@ -46,7 +46,7 @@ void TiXmlBaseA::PutString( const TIXMLA_STRING& str, TIXMLA_STRING* outString )
 	{
 		int c = str[i];
 
-		if (    c == '&'
+		if (    c == '&' 
 		     && i < ( (int)str.length() - 2 )
 			 && str[i+1] == '#'
 			 && str[i+2] == 'x' )
@@ -146,7 +146,7 @@ TiXmlNodeA::~TiXmlNodeA()
 		temp = node;
 		node = node->next;
 		delete temp;
-	}
+	}	
 }
 
 
@@ -160,7 +160,7 @@ void TiXmlNodeA::Clear()
 		temp = node;
 		node = node->next;
 		delete temp;
-	}
+	}	
 
 	firstChild = 0;
 	lastChild = 0;
@@ -195,7 +195,7 @@ TiXmlNodeA* TiXmlNodeA::InsertEndChild( const TiXmlNodeA& addThis )
 
 
 TiXmlNodeA* TiXmlNodeA::InsertBeforeChild( TiXmlNodeA* beforeThis, const TiXmlNodeA& addThis )
-{
+{	
 	if ( !beforeThis || beforeThis->parent != this )
 		return 0;
 
@@ -277,7 +277,7 @@ TiXmlNodeA* TiXmlNodeA::ReplaceChild( TiXmlNodeA* replaceThis, const TiXmlNodeA&
 bool TiXmlNodeA::RemoveChild( TiXmlNodeA* removeThis )
 {
 	if ( removeThis->parent != this )
-	{
+	{	
 		assert( 0 );
 		return false;
 	}
@@ -526,7 +526,7 @@ int TiXmlElementA::QueryDoubleAttribute( const char* name, double* dval ) const
 
 
 void TiXmlElementA::SetAttribute( const char * name, int val )
-{
+{	
 	char buf[64];
 	sprintf( buf, "%d", val );
 	SetAttribute( name, buf );
@@ -611,7 +611,7 @@ void TiXmlElementA::StreamOut( TIXMLA_OSTREAM * stream ) const
 
 	TiXmlAttributeA* attrib;
 	for ( attrib = attributeSet.First(); attrib; attrib = attrib->Next() )
-	{
+	{	
 		(*stream) << " ";
 		attrib->StreamOut( stream );
 	}
@@ -620,7 +620,7 @@ void TiXmlElementA::StreamOut( TIXMLA_OSTREAM * stream ) const
 	// make it an empty tag.
 	TiXmlNodeA* node;
 	if ( firstChild )
-	{
+	{ 		
 		(*stream) << ">";
 
 		for ( node = firstChild; node; node=node->NextSibling() )
@@ -757,7 +757,7 @@ bool TiXmlDocumentA::LoadFile( const char* filename )
 
 bool TiXmlDocumentA::LoadUnicodeFilePath( const TCHAR* filename )
 {
-
+	
 	// Delete the existing data:
 	Clear();
 	location.Clear();
@@ -817,6 +817,18 @@ bool TiXmlDocumentA::SaveFile( const char * filename ) const
 {
 	// The old c stuff lives on...
 	FILE* fp = fopen( filename, "w" );
+	if ( fp )
+	{
+		Print( fp, 0 );
+		fclose( fp );
+		return true;
+	}
+	return false;
+}
+bool TiXmlDocumentA::SaveUnicodeFilePath( const TCHAR* filename ) const
+{
+	// The old c stuff lives on...
+	FILE* fp = generic_fopen( filename, TEXT("w") );
 	if ( fp )
 	{
 		Print( fp, 0 );
@@ -1005,7 +1017,7 @@ void TiXmlTextA::StreamOut( TIXMLA_OSTREAM * stream ) const
 
 
 TiXmlNodeA* TiXmlTextA::Clone() const
-{
+{	
 	TiXmlTextA* clone = 0;
 	clone = new TiXmlTextA( "" );
 
@@ -1067,7 +1079,7 @@ void TiXmlDeclarationA::StreamOut( TIXMLA_OSTREAM * stream ) const
 }
 
 TiXmlNodeA* TiXmlDeclarationA::Clone() const
-{
+{	
 	TiXmlDeclarationA* clone = new TiXmlDeclarationA();
 
 	if ( !clone )
@@ -1161,7 +1173,7 @@ TiXmlAttributeA*	TiXmlAttributeSetA::Find( const char * name ) const
 }
 
 
-#ifdef TIXMLA_USE_STL
+#ifdef TIXMLA_USE_STL	
 TIXMLA_ISTREAM & operator >> (TIXMLA_ISTREAM & in, TiXmlNodeA & base)
 {
 	TIXMLA_STRING tag;
@@ -1181,12 +1193,12 @@ TIXMLA_OSTREAM & operator<< (TIXMLA_OSTREAM & out, const TiXmlNodeA & base)
 }
 
 
-#ifdef TIXMLA_USE_STL
+#ifdef TIXMLA_USE_STL	
 std::string & operator<< (std::string& out, const TiXmlNodeA& base )
 {
    std::ostringstream os_stream( std::ostringstream::out );
    base.StreamOut( &os_stream );
-
+   
    out.append( os_stream.str() );
    return out;
 }

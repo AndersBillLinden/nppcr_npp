@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -29,6 +29,8 @@
 #include "precompiledHeaders.h"
 #include "VerticalFileSwitcher.h"
 #include "menuCmdID.h"
+#include "Parameters.h"
+//#include "localization.h"
 
 int CALLBACK ListViewCompareProc(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
 {
@@ -59,8 +61,6 @@ BOOL CALLBACK VerticalFileSwitcher::run_dlgProc(UINT message, WPARAM wParam, LPA
         case WM_INITDIALOG :
         {
 			_fileListView.init(_hInst, _hSelf, _hImaLst);
-			_fileListView.insertColumn(TEXT("Name"), 150, 0);
-			_fileListView.insertColumn(TEXT("Ext."), 50, 1);
 			_fileListView.initList();
 			_fileListView.display();
 
@@ -84,6 +84,9 @@ BOOL CALLBACK VerticalFileSwitcher::run_dlgProc(UINT message, WPARAM wParam, LPA
 
 				case NM_CLICK:
 				{
+					if ((0x80 & GetKeyState(VK_CONTROL)) || (0x80 & GetKeyState(VK_SHIFT)))
+						return TRUE;
+
 					LPNMITEMACTIVATE lpnmitem = (LPNMITEMACTIVATE) lParam;
 					int nbItem = ListView_GetItemCount(_fileListView.getHSelf());
 					int i = lpnmitem->iItem;
@@ -92,7 +95,7 @@ BOOL CALLBACK VerticalFileSwitcher::run_dlgProc(UINT message, WPARAM wParam, LPA
 
 					LVITEM item;
 					item.mask = LVIF_PARAM;
-					item.iItem = i;
+					item.iItem = i;	
 					ListView_GetItem(((LPNMHDR)lParam)->hwndFrom, &item);
 					TaskLstFnStatus *tlfs = (TaskLstFnStatus *)item.lParam;
 
@@ -105,18 +108,21 @@ BOOL CALLBACK VerticalFileSwitcher::run_dlgProc(UINT message, WPARAM wParam, LPA
 					// Switch to the right document
 					LPNMITEMACTIVATE lpnmitem = (LPNMITEMACTIVATE) lParam;
 					int nbItem = ListView_GetItemCount(_fileListView.getHSelf());
-					int i = lpnmitem->iItem;
-					if (i == -1 || i >= nbItem)
-						return TRUE;
 
-					LVITEM item;
-					item.mask = LVIF_PARAM;
-					item.iItem = i;
-					ListView_GetItem(((LPNMHDR)lParam)->hwndFrom, &item);
-					TaskLstFnStatus *tlfs = (TaskLstFnStatus *)item.lParam;
+					if (nbSelectedFiles() == 1)
+					{
+						int i = lpnmitem->iItem;
+						if (i == -1 || i >= nbItem)
+ 							return TRUE;
 
-					activateDoc(tlfs);
+						LVITEM item;
+						item.mask = LVIF_PARAM;
+						item.iItem = i;	
+						ListView_GetItem(((LPNMHDR)lParam)->hwndFrom, &item);
+						TaskLstFnStatus *tlfs = (TaskLstFnStatus *)item.lParam;
 
+						activateDoc(tlfs);
+					}
 					// Redirect NM_RCLICK message to Notepad_plus handle
 					NMHDR	nmhdr;
 					nmhdr.code = NM_RCLICK;
@@ -156,7 +162,7 @@ BOOL CALLBACK VerticalFileSwitcher::run_dlgProc(UINT message, WPARAM wParam, LPA
 
 							LVITEM item;
 							item.mask = LVIF_PARAM;
-							item.iItem = i;
+							item.iItem = i;	
 							ListView_GetItem(((LPNMHDR)lParam)->hwndFrom, &item);
 							TaskLstFnStatus *tlfs = (TaskLstFnStatus *)item.lParam;
 							activateDoc(tlfs);
@@ -179,9 +185,10 @@ BOOL CALLBACK VerticalFileSwitcher::run_dlgProc(UINT message, WPARAM wParam, LPA
             int width = LOWORD(lParam);
             int height = HIWORD(lParam);
 			::MoveWindow(_fileListView.getHSelf(), 0, 0, width, height, TRUE);
+			_fileListView.resizeColumns(width);
             break;
         }
-
+        
 		case WM_DESTROY:
         {
 			_fileListView.destroy();
@@ -198,8 +205,14 @@ BOOL CALLBACK VerticalFileSwitcher::run_dlgProc(UINT message, WPARAM wParam, LPA
 void VerticalFileSwitcher::activateDoc(TaskLstFnStatus *tlfs) const
 {
 	int view = tlfs->_iView;
-	//int bufferID = _fileListView.getBufferInfoFromIndex(i, view);
 	int bufferID = (int)tlfs->_bufID;
+	
+	int currentView = ::SendMessage(_hParent, NPPM_GETCURRENTVIEW, 0, 0);
+	int currentBufID = ::SendMessage(_hParent, NPPM_GETCURRENTBUFFERID, 0, 0);
+
+	if (bufferID == currentBufID && view == currentView)
+		return;
+	
 	int docPosInfo = ::SendMessage(_hParent, NPPM_GETPOSFROMBUFFERID, bufferID, view);
 	int view2set = docPosInfo >> 30;
 	int index2Switch = (docPosInfo << 2) >> 2 ;
@@ -233,12 +246,12 @@ int VerticalFileSwitcher::setHeaderOrder(LPNMLISTVIEW pnm_list_view)
 		SendMessage(hListView, LVM_SETCOLUMN, (WPARAM) index, (LPARAM) &lvc);
 		return SORT_DIRECTION_UP;
     }
-
+  
 	// this is the case our clicked column wasn't the one being sorted up until now
 	// so first  we need to iterate through all columns and send LVM_SETCOLUMN to them with fmt set to NOT include these HDFs
 	colHeader = (HWND)SendMessage(hListView,LVM_GETHEADER,0,0);
 	cols = SendMessage(colHeader,HDM_GETITEMCOUNT,0,0);
-	for(q=0; q<cols; q++)
+	for(q=0; q<cols; ++q)
 	{
 		//Get current fmt
 		SendMessage(hListView,LVM_GETCOLUMN,(WPARAM) q, (LPARAM) &lvc);
@@ -246,7 +259,7 @@ int VerticalFileSwitcher::setHeaderOrder(LPNMLISTVIEW pnm_list_view)
 		lvc.fmt = lvc.fmt & (~HDF_SORTUP) & (~HDF_SORTDOWN);
 		SendMessage(hListView,LVM_SETCOLUMN,(WPARAM) q, (LPARAM) &lvc);
 	}
-
+	
 	//read current fmt from clicked column
 	SendMessage(hListView,LVM_GETCOLUMN,(WPARAM) index, (LPARAM) &lvc);
 	// then set whichever arrow you feel like and send LVM_SETCOLUMN to this particular column

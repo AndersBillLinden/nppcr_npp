@@ -1,16 +1,16 @@
 // this file is part of notepad++
 // Copyright (C)2003 Harry <harrybharry@users.sourceforge.net>
-//
+// 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either
 // version 2 of the License, or (at your option) any later version.
-//
+// 
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -20,7 +20,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
+// 
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -89,11 +89,8 @@ void SmartHighlighter::highlightView(ScintillaEditView * pHighlightView)
 	int firstLine =		(int)pHighlightView->execute(SCI_GETFIRSTVISIBLELINE);
 	int nrLines =	min((int)pHighlightView->execute(SCI_LINESONSCREEN), MAXLINEHIGHLIGHT ) + 1;
 	int lastLine =		firstLine+nrLines;
-	int startPos =		0;//(int)pHighlightView->execute(SCI_POSITIONFROMLINE, firstLine);
-	int endPos =		0;//(int)pHighlightView->execute(SCI_POSITIONFROMLINE, lastLine);
-	//if (endPos == -1) {	//past EOF
-	//	endPos =		(int)pHighlightView->getCurrentDocLen() - 1;
-	//}
+	int startPos =		0;
+	int endPos =		0;
 	int currentLine = firstLine;
 	int prevDocLineChecked = -1;	//invalid start
 
@@ -104,16 +101,14 @@ void SmartHighlighter::highlightView(ScintillaEditView * pHighlightView)
 	fo._isWholeWord = true;
 
 	const TCHAR * searchText = NULL;
-#ifdef UNICODE
+
 	WcharMbcsConvertor *wmc = WcharMbcsConvertor::getInstance();
-	unsigned int cp = pHighlightView->execute(SCI_GETCODEPAGE);
+	unsigned int cp = pHighlightView->execute(SCI_GETCODEPAGE); 
 	const TCHAR * text2FindW = wmc->char2wchar(text2Find, cp);
 	searchText = text2FindW;
-#else
-	searchText = text2Find;
-#endif
 
-	for(; currentLine < lastLine; currentLine++) {
+	for(; currentLine < lastLine; ++currentLine)
+	{
 		int docLine = (int)pHighlightView->execute(SCI_DOCLINEFROMVISIBLE, currentLine);
 		if (docLine == prevDocLineChecked)
 			continue;	//still on same line (wordwrap)
@@ -136,7 +131,7 @@ void SmartHighlighter::highlightView(ScintillaEditView * pHighlightView)
 
 bool SmartHighlighter::isQualifiedWord(const char *str) const
 {
-	for (size_t i = 0 ; i < strlen(str) ; i++)
+	for (size_t i = 0, len = strlen(str) ; i < len ; ++i)
 	{
 		if (!isWordChar(str[i]))
 			return false;
@@ -146,9 +141,9 @@ bool SmartHighlighter::isQualifiedWord(const char *str) const
 
 bool SmartHighlighter::isWordChar(char ch) const
 {
-	if ((UCHAR)ch < 0x20)
+	if ((UCHAR)ch < 0x20) 
 		return false;
-
+	
 	switch(ch)
 	{
 		case ' ':

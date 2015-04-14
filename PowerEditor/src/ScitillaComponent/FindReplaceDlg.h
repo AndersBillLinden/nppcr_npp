@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -42,6 +42,7 @@
 #endif //DOCKINGDLGINTERFACE_H
 
 #include "BoostRegexSearch.h"
+#include "StatusBar.h"
 
 #define FIND_RECURSIVE 1
 #define FIND_INHIDDENDIR 2
@@ -93,7 +94,7 @@ struct FindOption
 	bool _isInHiddenDir;
 	bool _dotMatchesNewline;
 	FindOption() : _isWholeWord(true), _isMatchCase(true), _searchType(FindNormal),\
-		_isWrapAround(true), _whichDirection(DIR_DOWN), _incrementalType(NotIncremental),
+		_isWrapAround(true), _whichDirection(DIR_DOWN), _incrementalType(NotIncremental), 
 		_doPurge(false), _doMarkLine(false),
 		_isInSelection(false),  _isRecursive(true), _isInHiddenDir(false),
 		_dotMatchesNewline(false),
@@ -180,7 +181,15 @@ private:
 	static SearchResultMarking EmptySearchResultMarking;
 };
 
-enum FindStatus { FSFound, FSNotFound, FSTopReached, FSEndReached};
+
+enum FindStatus { FSFound, FSNotFound, FSTopReached, FSEndReached, FSMessage, FSNoMessage};
+
+enum FindNextType {
+	FINDNEXTTYPE_FINDNEXT,
+	FINDNEXTTYPE_REPLACENEXT,
+	FINDNEXTTYPE_FINDNEXTFORREPLACE
+};
+
 
 class FindReplaceDlg : public StaticDialog
 {
@@ -204,17 +213,17 @@ public :
 	};
 
 	virtual void create(int dialogID, bool isRTL = false);
-
+	
 	void initOptionsFromDlg();
 
 	void doDialog(DIALOG_TYPE whichType, bool isRTL = false, bool toShow = true);
-	bool processFindNext(const TCHAR *txt2find, const FindOption *options = NULL, FindStatus *oFindStatus = NULL);
+	bool processFindNext(const TCHAR *txt2find, const FindOption *options = NULL, FindStatus *oFindStatus = NULL, FindNextType findNextType = FINDNEXTTYPE_FINDNEXT);
 	bool processReplace(const TCHAR *txt2find, const TCHAR *txt2replace, const FindOption *options = NULL);
 
-	int markAll(const TCHAR *txt2find, int styleID);
+	int markAll(const TCHAR *txt2find, int styleID, bool isWholeWordSelected);
 	//int markAll2(const TCHAR *str2find);
 	int markAllInc(const FindOption *opt);
-
+	
 
 	int processAll(ProcessOperation op, const FindOption *opt, bool isEntire = false, const TCHAR *fileName = NULL, int colourStyleID = -1);
 //	int processAll(ProcessOperation op, const TCHAR *txt2find, const TCHAR *txt2replace, bool isEntire = false, const TCHAR *fileName = NULL, const FindOption *opt = NULL, int colourStyleID = -1);
@@ -267,7 +276,7 @@ public :
 
 	void focusOnFinder() {
 		// Show finder and set focus
-		if (_pFinder)
+		if (_pFinder) 
 		{
 			::SendMessage(_hParent, NPPM_DMMSHOW, 0, (LPARAM)_pFinder->getHSelf());
 			_pFinder->_scintView.getFocus();
@@ -285,8 +294,11 @@ public :
 		{
 			_pFinder->setFinderStyle();
 		}
-	}
+	};
+
 	void execSavedCommand(int cmd, int intValue, generic_string stringValue);
+	void setStatusbarMessage(const generic_string & msg, FindStatus staus);
+
 
 protected :
 	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
@@ -316,6 +328,10 @@ private :
 
 	TabBar _tab;
 	winVer _winVer;
+	StatusBar _statusBar;
+	FindStatus _statusbarFindStatus;
+
+	
 
 	void enableReplaceFunc(bool isEnable);
 	void enableFindInFilesControls(bool isEnable = true);
@@ -332,6 +348,10 @@ private :
 		if (currentIndex != _currentStatus)
 			_tab.activateAt(_currentStatus);
 	};
+	
+	FindStatus getFindStatus() {
+		return this->_statusbarFindStatus;
+	}
 
 	void updateCombos();
 	void updateCombo(int comboID) {
@@ -347,59 +367,90 @@ private :
 	static const int FR_OP_FIF = 4;
 	static const int FR_OP_GLOBAL = 8;
 	void saveInMacro(int cmd, int cmdType);
+	void drawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+
 };
 
 //FindIncrementDlg: incremental search dialog, docked in rebar
 class FindIncrementDlg : public StaticDialog
 {
 public :
-	FindIncrementDlg() : _pFRDlg(NULL), _pRebar(NULL), _FindStatus(FSFound) {};
+	FindIncrementDlg() : _pFRDlg(NULL), _pRebar(NULL), _findStatus(FSFound) {};
 	void init(HINSTANCE hInst, HWND hPere, FindReplaceDlg *pFRDlg, bool isRTL = false);
 	virtual void destroy();
 	virtual void display(bool toShow = true) const;
-#ifdef UNICODE
+
 	void setSearchText(const TCHAR * txt2find, bool) {
 		::SendDlgItemMessage(_hSelf, IDC_INCFINDTEXT, WM_SETTEXT, 0, (LPARAM)txt2find);
 	};
-#else
-	void setSearchText(const TCHAR * txt2find, bool isUTF8 = false) {
-		if (!isUTF8)
-		{
-			::SendDlgItemMessage(_hSelf, IDC_INCFINDTEXT, WM_SETTEXT, 0, (LPARAM)txt2find);
-			return;
-		}
-		const int wideBufferSize = 256;
-		WCHAR wchars[wideBufferSize];
-		::MultiByteToWideChar(CP_UTF8, 0, txt2find, -1, wchars, wideBufferSize);
-		winVer winVersion = NppParameters::getInstance()->getWinVersion();
-		if (winVersion <= WV_ME) {
-			//Cannot simply take txt2find since its UTF8
-			char ansiBuffer[wideBufferSize];	//Assuming no more than 2 bytes for each wchar (SBCS or DBCS, no UTF8 and sorts)
-			::WideCharToMultiByte(CP_ACP, 0, wchars, -1, ansiBuffer, wideBufferSize, NULL, NULL);
-			::SendDlgItemMessageA(_hSelf, IDC_INCFINDTEXT, WM_SETTEXT, 0, (LPARAM)ansiBuffer);
-		} else {
-			::SendDlgItemMessageW(_hSelf, IDC_INCFINDTEXT, WM_SETTEXT, 0, (LPARAM)wchars);
-		}
-	};
-#endif
 
-	void setFindStatus(FindStatus iStatus);
-
+	void setFindStatus(FindStatus iStatus, int nbCounted);
+	
 	FindStatus getFindStatus() {
-		return _FindStatus;
+		return _findStatus;
 	}
 
 	void addToRebar(ReBar * rebar);
 private :
 	bool _isRTL;
 	FindReplaceDlg *_pFRDlg;
-	FindStatus _FindStatus;
+	FindStatus _findStatus;
 
 	ReBar * _pRebar;
 	REBARBANDINFO _rbBand;
 
 	virtual BOOL CALLBACK run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
 	void markSelectedTextInc(bool enable, FindOption *opt = NULL);
+};
+
+
+class Progress
+{
+public:
+	Progress(HINSTANCE hInst);
+	~Progress();
+
+	HWND open(HWND hOwner = NULL, const TCHAR* header = NULL);
+	bool isCancelled() const;
+	void setPercent(unsigned percent, const TCHAR *fileName) const;
+	void setInfo(const TCHAR *info) const {
+		if (_hwnd)
+			::SendMessage(_hPText, WM_SETTEXT, 0, (LPARAM)info);
+	};
+
+	void close();
+
+private:
+	static const TCHAR cClassName[];
+	static const TCHAR cDefaultHeader[];
+	static const int cBackgroundColor;
+	static const int cPBwidth;
+	static const int cPBheight;
+	static const int cBTNwidth;
+	static const int cBTNheight;
+
+	static volatile LONG refCount;
+
+	static DWORD threadFunc(LPVOID data);
+	static LRESULT APIENTRY wndProc(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam);
+
+	// Disable copy construction and operator=
+	Progress(const Progress&);
+	const Progress& operator=(const Progress&);
+
+	int thread();
+	int createProgressWindow();
+	RECT adjustSizeAndPos(int width, int height);
+
+	HINSTANCE _hInst;
+	volatile HWND _hwnd;
+	HWND _hOwner;
+	TCHAR _header[128];
+	HANDLE _hThread;
+	HANDLE _hActiveState;
+	HWND _hPText;
+	HWND _hPBar;
+	HWND _hBtn;
 };
 
 #endif //FIND_REPLACE_DLG_H

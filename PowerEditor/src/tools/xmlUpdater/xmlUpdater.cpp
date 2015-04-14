@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -55,7 +55,7 @@ static bool isInList(const char *token2Find, char *list2Clean) {
 						list2Clean[prevPos] = list2Clean[i];
 
 					list2Clean[prevPos] = '\0';
-
+					
 					return true;
 				}
 			}
@@ -77,10 +77,10 @@ void update(TiXmlNode *modelNode, TiXmlNode *srcNode, TiXmlNode *destNode) {
 	TiXmlNode *srcChildNode = NULL;
 	TiXmlNode *destChildNode = NULL;
 	TiXmlNode *modelChildNode = modelNode->FirstChild("Node");
-
+	
 	if (!srcNode) return;
 
-	for (modelChildNode = modelNode->FirstChild("Node");
+	for (modelChildNode = modelNode->FirstChild("Node"); 
 		 modelChildNode;
 		 modelChildNode = modelChildNode->NextSibling("Node"))
 	{
@@ -147,7 +147,7 @@ void update(TiXmlNode *modelNode, TiXmlNode *srcNode, TiXmlNode *destNode) {
 
 int main(int argc, char *argv[])
 {
-	if (argc != 4)
+	if (argc != 4) 
 	{
 		printf("Syntax : xmlUpdater model.xml src.xml dest.xml");
 		return -1;
@@ -173,7 +173,7 @@ int main(int argc, char *argv[])
 		pXmlSrc = new TiXmlDocument(xmlSrcPath);
 		loadOkay = pXmlSrc->LoadFile();
 		if (!loadOkay) throw int(SRC_INVALID);
-
+		
 		pXmlDest = new TiXmlDocument(xmlDestPath);
 		loadOkay = pXmlDest->LoadFile();
 		if (!loadOkay) throw int(DEST_INVALID);
@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
 	}
 
 	pXmlDest->SaveFile();
-
+	
 	delete pXmlModel;
 	delete pXmlSrc;
 	delete pXmlDest;
@@ -229,44 +229,44 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpszCmdLine, int nCmdSh
 {
 	bool isSilentMode = isInList(FLAG_SILENT, lpszCmdLine);
 
-	int	argc=0;
-	LPSTR	argv[10];
-	LPSTR	p, q;
+ 	int	argc=0;
+ 	LPSTR	argv[10];
+ 	LPSTR	p, q;
 
-	argv[argc] = "xmlUpdater.exe";
-	// Parse command line handling quotes.
-	p = lpszCmdLine;
-	while (*p)
+ 	argv[argc] = "xmlUpdater.exe";
+ 	// Parse command line handling quotes.
+ 	p = lpszCmdLine;
+ 	while (*p) 
 	{
-	    // for each argument
-	    while ((*p) && (*p == ' '))
-			p++;	// skip over leading spaces
-	    if (*p == '\042')
+ 	    // for each argument
+ 	    while ((*p) && (*p == ' '))
+ 			p++;	// skip over leading spaces
+ 	    if (*p == '\042') 
 		{
-	       p++;		// skip "
-	       q = p;
-	       // scan to end of argument
-	       // doesn't handle embedded quotes
-	       while ((*p) && (*p != '\042'))
-		    p++;
-	       argv[++argc] = q;
-	       if (*p)
-			*p++ = '\0';
-	    }
-	    else if (*p)
+ 	       p++;		// skip "
+ 	       q = p;
+ 	       // scan to end of argument
+ 	       // doesn't handle embedded quotes
+ 	       while ((*p) && (*p != '\042'))
+ 		    p++;
+ 	       argv[++argc] = q;
+ 	       if (*p)
+ 			*p++ = '\0';
+ 	    }
+ 	    else if (*p) 
 		{
-	       // delimited by spaces
-	       q = p;
-	       while ((*p) && (*p != ' '))
-		    p++;
-	       argv[++argc] = q;
-	       if (*p)
-		    *p++ = '\0';
-	    }
-	}
-	argv[++argc] = (LPSTR)NULL;
+ 	       // delimited by spaces
+ 	       q = p;
+ 	       while ((*p) && (*p != ' '))
+ 		    p++;
+ 	       argv[++argc] = q;
+ 	       if (*p)
+ 		    *p++ = '\0';
+ 	    }
+ 	}
+ 	argv[++argc] = (LPSTR)NULL;
 
-	if (argc < 4)
+	if (argc < 4) 
 	{
 		//printf();
 		if (!isSilentMode)
@@ -294,7 +294,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpszCmdLine, int nCmdSh
 		pXmlSrc = new TiXmlDocument(xmlSrcPath);
 		loadOkay = pXmlSrc->LoadFile();
 		if (!loadOkay) throw int(SRC_INVALID);
-
+		
 		pXmlDest = new TiXmlDocument(xmlDestPath);
 		loadOkay = pXmlDest->LoadFile();
 		if (!loadOkay) throw int(DEST_INVALID);
@@ -334,7 +334,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR lpszCmdLine, int nCmdSh
 	}
 
 	pXmlDest->SaveFile();
-
+	
 	delete pXmlModel;
 	delete pXmlSrc;
 	delete pXmlDest;

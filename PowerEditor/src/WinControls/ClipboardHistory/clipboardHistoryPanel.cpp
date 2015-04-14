@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -31,11 +31,9 @@
 #include "ScintillaEditView.h"
 #include "clipboardFormats.h"
 
-#ifdef UNICODE
+
 #define CLIPBOARD_TEXTFORMAT CF_UNICODETEXT
-#else
-#define CLIPBOARD_TEXTFORMAT CF_TEXT
-#endif
+#define MAX_DISPLAY_LENGTH 64
 
 ClipboardData ClipboardHistoryPanel::getClipboadData()
 {
@@ -45,41 +43,41 @@ ClipboardData ClipboardHistoryPanel::getClipboadData()
 
 	if (!OpenClipboard(NULL))
 		return clipboardData;
-
-	HGLOBAL hglb = GetClipboardData(CLIPBOARD_TEXTFORMAT);
-	if (hglb != NULL)
-	{
+	 
+	HGLOBAL hglb = GetClipboardData(CLIPBOARD_TEXTFORMAT); 
+	if (hglb != NULL) 
+	{ 
 		char *lpchar = (char *)GlobalLock(hglb);
 		wchar_t *lpWchar = (wchar_t *)GlobalLock(hglb);
-
-		if (lpchar != NULL)
+		
+		if (lpchar != NULL) 
 		{
 			UINT cf_nppTextLen = RegisterClipboardFormat(CF_NPPTEXTLEN);
 			if (IsClipboardFormatAvailable(cf_nppTextLen))
 			{
-				HGLOBAL hglbLen = GetClipboardData(cf_nppTextLen);
-				if (hglbLen != NULL)
-				{
-					unsigned long *lpLen = (unsigned long *)GlobalLock(hglbLen);
-					if (lpLen != NULL)
+				HGLOBAL hglbLen = GetClipboardData(cf_nppTextLen); 
+				if (hglbLen != NULL) 
+				{ 
+					unsigned long *lpLen = (unsigned long *)GlobalLock(hglbLen); 
+					if (lpLen != NULL) 
 					{
-						for (size_t i = 0 ; i < (*lpLen) ; i++)
+						for (size_t i = 0 ; i < (*lpLen) ; ++i)
 						{
 							clipboardData.push_back((unsigned char)lpchar[i]);
 						}
-						GlobalUnlock(hglb);
+						GlobalUnlock(hglb); 
 					}
 				}
 			}
 			else
 			{
 				int nbBytes = (lstrlenW(lpWchar) + 1) * sizeof(wchar_t);
-				for (int i = 0 ; i < nbBytes ; i++)
+				for (int i = 0 ; i < nbBytes ; ++i)
 				{
 					clipboardData.push_back((unsigned char)lpchar[i]);
 				}
 			}
-			GlobalUnlock(hglb);
+			GlobalUnlock(hglb); 
 		}
 	}
 	CloseClipboard();
@@ -95,7 +93,7 @@ ByteArray::ByteArray(ClipboardData cd)
 		return;
 	}
 	_pBytes = new unsigned char[_length];
-	for (size_t i = 0 ; i < _length ; i++)
+	for (size_t i = 0 ; i < _length ; ++i)
 	{
 		_pBytes[i] = cd[i];
 	}
@@ -112,10 +110,10 @@ StringArray::StringArray(ClipboardData cd, size_t maxLen)
 	bool isCompleted = (cd.size() <= maxLen);
 	_length = isCompleted?cd.size():maxLen;
 
-
+	
 	_pBytes = new unsigned char[_length+(isCompleted?0:2)];
 	size_t i = 0;
-	for ( ; i < _length ; i++)
+	for ( ; i < _length ; ++i)
 	{
 		if (!isCompleted && (i == _length-5 || i == _length-3 || i == _length-1))
 			_pBytes[i] = 0;
@@ -137,12 +135,12 @@ StringArray::StringArray(ClipboardData cd, size_t maxLen)
 int ClipboardHistoryPanel::getClipboardDataIndex(ClipboardData cbd)
 {
 	int iFound = -1;
-	bool found = false;
-	for (size_t i = 0 ; i < _clipboardDataVector.size() ; i++)
+	bool found = false; 
+	for (size_t i = 0, len = _clipboardDataVector.size() ; i < len ; ++i)
 	{
 		if (cbd.size() == _clipboardDataVector[i].size())
 		{
-			for (size_t j = 0 ; j < cbd.size() ; j++)
+			for (size_t j = 0, len2 = cbd.size(); j < len2 ; ++j)
 			{
 				if (cbd[j] == _clipboardDataVector[i][j])
 					found = true;
@@ -174,9 +172,29 @@ void ClipboardHistoryPanel::addToClipboadHistory(ClipboardData cbd)
 	}
 	_clipboardDataVector.insert(_clipboardDataVector.begin(), cbd);
 
-	StringArray sa(cbd, 64);
+	StringArray sa(cbd, MAX_DISPLAY_LENGTH);
 	TCHAR *displayStr = (TCHAR *)sa.getPointer();
 	::SendDlgItemMessage(_hSelf, IDC_LIST_CLIPBOARD, LB_INSERTSTRING, 0, (LPARAM)displayStr);
+}
+
+
+void ClipboardHistoryPanel::drawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
+{
+	if (lpDrawItemStruct->itemID >= _clipboardDataVector.size())
+		return;
+
+	//printStr(TEXT("OK"));
+	COLORREF fgColor = _lbFgColor == -1?black:_lbFgColor; // fg black by default
+	COLORREF bgColor = _lbBgColor == -1?white:_lbBgColor; // bg white by default
+	
+	StringArray sa(_clipboardDataVector[lpDrawItemStruct->itemID], MAX_DISPLAY_LENGTH);
+	TCHAR *ptStr = (TCHAR *)sa.getPointer();
+
+	//printStr(ptStr);
+	::SetTextColor(lpDrawItemStruct->hDC, fgColor);
+	::SetBkColor(lpDrawItemStruct->hDC, bgColor);
+	
+	::DrawText(lpDrawItemStruct->hDC, ptStr, lstrlen(ptStr), &(lpDrawItemStruct->rcItem), DT_SINGLELINE | DT_VCENTER | DT_LEFT);
 }
 
 BOOL CALLBACK ClipboardHistoryPanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
@@ -205,12 +223,12 @@ BOOL CALLBACK ClipboardHistoryPanel::run_dlgProc(UINT message, WPARAM wParam, LP
 				::SendMessage(_hwndNextCbViewer, message, wParam, lParam);
 			return TRUE;
 		}
-
+		
 		case WM_DESTROY:
 			::ChangeClipboardChain(_hSelf, _hwndNextCbViewer);
 			break;
 
-		case WM_COMMAND :
+		case WM_COMMAND : 
 		{
 			switch (LOWORD(wParam))
             {
@@ -221,7 +239,6 @@ BOOL CALLBACK ClipboardHistoryPanel::run_dlgProc(UINT message, WPARAM wParam, LP
 						int i = ::SendDlgItemMessage(_hSelf, IDC_LIST_CLIPBOARD, LB_GETCURSEL, 0, 0);
 						if (i != LB_ERR)
 						{
-#ifdef UNICODE
 							int codepage = (*_ppEditView)->getCurrentBuffer()->getEncoding();
 							if (codepage == -1)
 							{
@@ -242,14 +259,6 @@ BOOL CALLBACK ClipboardHistoryPanel::run_dlgProc(UINT message, WPARAM wParam, LP
 							(*_ppEditView)->execute(SCI_ADDTEXT, strlen(c), (LPARAM)c);
 							(*_ppEditView)->getFocus();
 							delete [] c;
-
-#else
-							ByteArray ba(_clipboardDataVector[i]);
-							char *str = (char *)ba.getPointer();
-							(*_ppEditView)->execute(SCI_REPLACESEL, 0, (LPARAM)"");
-							(*_ppEditView)->execute(SCI_ADDTEXT, strlen(str), (LPARAM)str);
-							(*_ppEditView)->getFocus();
-#endif
 						}
 					}
 					return TRUE;
@@ -257,7 +266,7 @@ BOOL CALLBACK ClipboardHistoryPanel::run_dlgProc(UINT message, WPARAM wParam, LP
 			}
 		}
 		break;
-
+		
         case WM_SIZE:
         {
             int width = LOWORD(lParam);
@@ -277,9 +286,21 @@ BOOL CALLBACK ClipboardHistoryPanel::run_dlgProc(UINT message, WPARAM wParam, LP
 			break;
 		}
 */
+		case WM_CTLCOLORLISTBOX:
+		{
+			if (_lbBgColor != -1)
+				return (LRESULT)::CreateSolidBrush((COLORREF)_lbBgColor);
+			break;
+		}
 
+		case WM_DRAWITEM:
+		{
+			drawItem((DRAWITEMSTRUCT *)lParam);
+			break;
+		}
         default :
             return DockingDlgInterface::run_dlgProc(message, wParam, lParam);
     }
 	return DockingDlgInterface::run_dlgProc(message, wParam, lParam);
 }
+

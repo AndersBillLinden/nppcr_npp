@@ -14,40 +14,36 @@
 
 #pragma once
 
-// when using screen dimensions, this is infinite
-//const LONG INFINITY=0x7fff; // max short
-//change to DEFINE for GCC
-#define INFINITY 0x7fff // max short
 
 const SIZE SIZEZERO = {0, 0};
-const SIZE SIZEMAX = {INFINITY,INFINITY};
+const SIZE SIZEMAX = {SHRT_MAX, SHRT_MAX};
 
-inline SIZE GetSize(LONG w, LONG h) {
-	SIZE sz = {w, h}; return sz;
+inline SIZE GetSize(LONG w, LONG h) { 
+	SIZE sz = {w, h}; return sz; 
 }
 
-inline POINT GetPoint(LONG x, LONG y) {
-	POINT pt = {x, y}; return pt;
+inline POINT GetPoint(LONG x, LONG y) { 
+	POINT pt = {x, y}; return pt; 
 }
 
-inline LONG RectWidth(const RECT& rc) {
-	return rc.right - rc.left;
+inline LONG RectWidth(const RECT& rc) { 
+	return rc.right - rc.left; 
 }
 
-inline LONG RectHeight(const RECT& rc) {
-	return rc.bottom - rc.top;
+inline LONG RectHeight(const RECT& rc) { 
+	return rc.bottom - rc.top; 
 }
 
-inline SIZE RectToSize(const RECT& rc) {
+inline SIZE RectToSize(const RECT& rc) { 
 	return GetSize(RectWidth(rc), RectHeight(rc));
 }
 
-inline POINT RectToPoint(const RECT& rc) {
+inline POINT RectToPoint(const RECT& rc) { 
 	POINT pt = {rc.left, rc.top};
-	return pt;
+	return pt; 
 }
 
-inline POINT SizeToPoint(SIZE sz) {
+inline POINT SizeToPoint(SIZE sz) { 
 	return GetPoint(sz.cx, sz.cy);
 }
 
@@ -149,12 +145,12 @@ public:
 };
 
 //////////////////
-// Below are all the macros to build your window map.
+// Below are all the macros to build your window map. 
 //
 
 // Begin/end window map. 'name' can be anything you want
 #define BEGIN_WINDOW_MAP(name)	WINRECT name[] = {
-#define END_WINDOW_MAP()			WINRECT(WRCT_END,-1,0) };
+#define END_WINDOW_MAP()			WINRECT(WRCT_END,-1,0) }; 
 
 // Begin/end a group.
 // The first entry in your map must be BEGINROWS or BEGINCOLS.

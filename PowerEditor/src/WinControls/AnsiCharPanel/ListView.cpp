@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -28,32 +28,33 @@
 
 #include "precompiledHeaders.h"
 #include "ListView.h"
-
+#include "Parameters.h"
+#include "localization.h"
 
 void ListView::init(HINSTANCE hInst, HWND parent)
 {
 	Window::init(hInst, parent);
     INITCOMMONCONTROLSEX icex;
-
-    // Ensure that the common control DLL is loaded.
+    
+    // Ensure that the common control DLL is loaded. 
     icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
     icex.dwICC  = ICC_LISTVIEW_CLASSES;
     InitCommonControlsEx(&icex);
-
+    
     // Create the list-view window in report view with label editing enabled.
 	int listViewStyles = LVS_REPORT | LVS_NOSORTHEADER\
 						| LVS_SINGLESEL | LVS_AUTOARRANGE\
 						| LVS_SHAREIMAGELISTS | LVS_SHOWSELALWAYS;
 
-	_hSelf = ::CreateWindow(WC_LISTVIEW,
-                                TEXT(""),
+	_hSelf = ::CreateWindow(WC_LISTVIEW, 
+                                TEXT(""), 
                                 WS_CHILD | listViewStyles,
                                 0,
+                                0, 
                                 0,
                                 0,
-                                0,
-                                _hParent,
-                                (HMENU) NULL,
+                                _hParent, 
+                                (HMENU) NULL, 
                                 hInst,
                                 NULL);
 	if (!_hSelf)
@@ -71,13 +72,22 @@ void ListView::init(HINSTANCE hInst, HWND parent)
 	LVCOLUMN lvColumn;
 	lvColumn.mask = LVCF_TEXT|LVCF_WIDTH;
 
+	NativeLangSpeaker *pNativeSpeaker = (NppParameters::getInstance())->getNativeLangSpeaker();
+	generic_string valStr = pNativeSpeaker->getAttrNameStr(TEXT("Value"), "AsciiInsertion", "ColumnVal");
+	generic_string hexStr = pNativeSpeaker->getAttrNameStr(TEXT("Hex"), "AsciiInsertion", "ColumnHex");
+	generic_string charStr = pNativeSpeaker->getAttrNameStr(TEXT("Character"), "AsciiInsertion", "ColumnChar");
+
 	lvColumn.cx = 45;
-	lvColumn.pszText = TEXT("Value");
+	lvColumn.pszText = (TCHAR *)valStr.c_str();
 	ListView_InsertColumn(_hSelf, 0, &lvColumn);
+	
+	lvColumn.cx = 45;
+	lvColumn.pszText = (TCHAR *)hexStr.c_str();
+	ListView_InsertColumn(_hSelf, 1, &lvColumn);
 
 	lvColumn.cx = 70;
-	lvColumn.pszText = TEXT("Character");
-	ListView_InsertColumn(_hSelf, 1, &lvColumn);
+	lvColumn.pszText = (TCHAR *)charStr.c_str();
+	ListView_InsertColumn(_hSelf, 2, &lvColumn);
 }
 
 void ListView::resetValues(int codepage)
@@ -167,39 +177,37 @@ generic_string ListView::getAscii(unsigned char value)
 		default:
 		{
 			TCHAR charStr[10];
-#ifdef UNICODE
 			char ascii[2];
 			ascii[0] = value;
 			ascii[1] = '\0';
 			MultiByteToWideChar(_codepage, 0, ascii, -1, charStr, sizeof(charStr));
-#else
-			charStr[0] = (unsigned char)value;
-			charStr[1] = '\0';
-#endif
 			return charStr;
 		}
 
 	}
-	//return TEXT("");
 }
 
 void ListView::setValues(int codepage)
 {
 	_codepage = codepage;
-
-	for (int i = 0 ; i < 256 ; i++)
+	
+	for (int i = 0 ; i < 256 ; ++i)
 	{
 		LVITEM item;
 		item.mask = LVIF_TEXT;
-		TCHAR num[8];
-		generic_sprintf(num, TEXT("%d"), i);
-		item.pszText = num;
+		TCHAR dec[8];
+		TCHAR hex[8];
+		generic_sprintf(dec, TEXT("%d"), i);
+		generic_sprintf(hex, TEXT("%02X"), i);
+		item.pszText = dec;
 		item.iItem = i;
 		item.iSubItem = 0;
 		ListView_InsertItem(_hSelf, &item);
 
+		ListView_SetItemText(_hSelf, i, 1, (LPTSTR)hex);
+
 		generic_string s = getAscii((unsigned char)i);
-		ListView_SetItemText(_hSelf, i, 1, (LPTSTR)s.c_str());
+		ListView_SetItemText(_hSelf, i, 2, (LPTSTR)s.c_str());
 	}
 }
 

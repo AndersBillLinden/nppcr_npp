@@ -5,19 +5,19 @@
 // Compiles with Visual C++ 6.0. Runs on Win 98 and probably Win 2000 too.
 // Set tabsize = 3 in your editor.
 //
-// Theo - Heavily modified to remove MFC dependencies.
+// Theo - Heavily modified to remove MFC dependencies.  
 //        Replaced CWnd*/HWND, CRect/RECT, CSize/SIZE, CPoint/POINT
 
 #include "precompiledHeaders.h"
 #include "WinMgr.h"
 
 // Theo - Style Helpers
-inline static DWORD GetStyle(HWND hWnd) {
-	return (DWORD)GetWindowLongPtr(hWnd, GWL_STYLE);
+inline static DWORD GetStyle(HWND hWnd) { 
+	return (DWORD)GetWindowLongPtr(hWnd, GWL_STYLE); 
 }
 
-inline static DWORD GetExStyle(HWND hWnd) {
-	return (DWORD)GetWindowLongPtr(hWnd, GWL_EXSTYLE);
+inline static DWORD GetExStyle(HWND hWnd) { 
+	return (DWORD)GetWindowLongPtr(hWnd, GWL_EXSTYLE); 
 }
 
 const UINT WM_WINMGR = RegisterWindowMessage(TEXT("WM_WINMGR"));
@@ -40,7 +40,7 @@ void CWinMgr::InitToFitSizeFromCurrent(HWND hWnd)
 	assert(hWnd);
 	assert(m_map);
 	GetWindowPositions(hWnd);
-	for (WINRECT* w = m_map; !w->IsEnd(); w++) {
+	for (WINRECT* w = m_map; !w->IsEnd(); ++w) {
 		if (w->Type()==WRCT_TOFIT && !w->IsGroup()) {
 			w->SetToFitSize(RectToSize(w->GetRect()));
 		}
@@ -54,7 +54,7 @@ void CWinMgr::GetWindowPositions(HWND hWnd)
 {
 	assert(m_map);
 	assert(hWnd);
-	for (WINRECT* wrc=m_map; !wrc->IsEnd(); wrc++) {
+	for (WINRECT* wrc=m_map; !wrc->IsEnd(); ++wrc) {
 		if (wrc->IsWindow()) {
 			HWND HChild = GetDlgItem(hWnd, wrc->GetID());
 			if (HChild) {
@@ -76,7 +76,7 @@ CWinMgr::SetWindowPositions(HWND hWnd)
 	if (m_map && hWnd && nWindows>0) {
 		HDWP hdwp = ::BeginDeferWindowPos(nWindows);
 		int count=0;
-		for (WINRECT* wrc=m_map; !wrc->IsEnd(); wrc++) {
+		for (WINRECT* wrc=m_map; !wrc->IsEnd(); ++wrc) {
 			if (wrc->IsWindow()) {
 				assert(count < nWindows);
 				HWND hwndChild = ::GetDlgItem(hWnd, wrc->GetID());
@@ -88,7 +88,7 @@ CWinMgr::SetWindowPositions(HWND hWnd)
 						rc.left,rc.top,RectWidth(rc),RectHeight(rc),
 						SWP_NOZORDER);
 					InvalidateRect(hwndChild,NULL,TRUE); // repaint
-					count++;
+					++count;
 				}
 			} else {
 				// not a window: still need to repaint background
@@ -107,9 +107,9 @@ int CWinMgr::CountWindows()
 {
 	assert(m_map);
 	int nWin = 0;
-	for (WINRECT* w=m_map; !w->IsEnd(); w++) {
+	for (WINRECT* w=m_map; !w->IsEnd(); ++w) {
 		if (w->IsWindow())
-			nWin++;
+			++nWin;
 	}
 	return nWin;
 }
@@ -120,7 +120,7 @@ int CWinMgr::CountWindows()
 WINRECT* CWinMgr::FindRect(int nID)
 {
 	assert(m_map);
-	for (WINRECT* w=m_map; !w->IsEnd(); w++) {
+	for (WINRECT* w=m_map; !w->IsEnd(); ++w) {
 		if (w->GetID()==(UINT)nID)
 			return w;
 	}
@@ -147,7 +147,7 @@ CWinMgr::CalcGroup(WINRECT* pGroup, HWND hWnd)
 		h = min(abs(h), RectHeight(rcTotal)/2);
 		::InflateRect(&rcTotal, -w, -h);
 	}
-
+	
 	BOOL bRow = pGroup->IsRowGroup();		 // Is this a row group?
 
 	// Running height or width: start with total
@@ -223,7 +223,7 @@ CWinMgr::AdjustSize(WINRECT* wrc, BOOL bRow,
 	//
 	int hwCurrent = wrc->GetHeightOrWidth(bRow); // current size
 	int hwExtra = hw - hwCurrent;						// amount extra
-	hwExtra = min(max(hwExtra, 0), hwRemaining);	// truncate
+	hwExtra = min(max(hwExtra, 0), hwRemaining);	// truncate 
 	hw = hwCurrent + hwExtra;							// new height-or-width
 	wrc->SetHeightOrWidth(hw, bRow);				// set...
 	hwRemaining -= hwExtra;								// and adjust remaining
@@ -274,7 +274,7 @@ CWinMgr::OnGetSizeInfo(SIZEINFO& szi, WINRECT* wrc, HWND hWnd)
 {
 	szi.szMin = SIZEZERO;				// default min size = zero
 	szi.szMax = SIZEMAX;					// default max size = infinite
-	szi.szDesired = RectToSize(wrc->GetRect());	// default desired size = current
+	szi.szDesired = RectToSize(wrc->GetRect());	// default desired size = current 
 
 	if (wrc->IsGroup()) {
 		// For groups, calculate min, max, desired size as aggregate of children
@@ -290,21 +290,21 @@ CWinMgr::OnGetSizeInfo(SIZEINFO& szi, WINRECT* wrc, HWND hWnd)
 				szi.szMin.cx = max(szi.szMin.cx, szi2.szMin.cx);
 				szi.szMin.cy += szi2.szMin.cy;
 				szi.szMax.cx = min(szi.szMax.cx, szi2.szMax.cx);
-				szi.szMax.cy = min(szi.szMax.cy + szi2.szMax.cy, INFINITY);
+				szi.szMax.cy = min(szi.szMax.cy + szi2.szMax.cy, SHRT_MAX);
 				szi.szDesired.cx = max(szi.szDesired.cx, szi2.szDesired.cx);
 				szi.szDesired.cy += szi2.szDesired.cy;
 
 			} else {
 				szi.szMin.cx += szi2.szMin.cx;
 				szi.szMin.cy = max(szi.szMin.cy, szi2.szMin.cy);
-				szi.szMax.cx = min(szi.szMax.cx + szi2.szMax.cx, INFINITY);
+				szi.szMax.cx = min(szi.szMax.cx + szi2.szMax.cx, SHRT_MAX);
 				szi.szMax.cy = min(szi.szMax.cy, szi2.szMax.cy);
 				szi.szDesired.cx += szi2.szDesired.cx;
 				szi.szDesired.cy = max(szi.szDesired.cy, szi2.szDesired.cy);
 			}
 		}
 
-		// Add margins.
+		// Add margins. 
 		int w2,h2;
 		wrc->GetMargins(w2,h2);			// get margins
 		w2<<=1; h2<<=1;					// double
@@ -396,7 +396,7 @@ BOOL CWinMgr::SendGetSizeInfo(SIZEINFO& szi, HWND hWnd, UINT nID)
 	szi = nmw.sizeinfo; // copy back to caller's struct
 	return TRUE;
 }
-
+		
 //////////////////
 // Get min/max info.
 //
@@ -410,7 +410,7 @@ CWinMgr::GetMinMaxInfo(HWND hWnd, MINMAXINFO* lpMMI)
 }
 
 //////////////////
-// Get min/max info.
+// Get min/max info. 
 //
 void CWinMgr::GetMinMaxInfo(HWND hWnd, SIZEINFO& szi)
 {

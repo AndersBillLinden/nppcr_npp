@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -32,7 +32,7 @@
 
 BOOL CALLBACK FindCharsInRangeDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 {
-	switch (message)
+	switch (message) 
 	{
 		case WM_INITDIALOG :
 		{
@@ -92,9 +92,9 @@ bool FindCharsInRangeDlg::findCharInRange(unsigned char beginRange, unsigned cha
 	(*_ppEditView)->getText(content, 0, totalSize);
 	int found = -1;
 
-	for (int i = startPos-(direction == dirUp?1:0);
+	for (int i = startPos-(direction == dirUp?1:0); 
 		(direction == dirDown)?i < totalSize:i >= 0 ;
-		(direction == dirDown)?(i++):(i--))
+		(direction == dirDown)?(++i):(--i))
 	{
 		if ((unsigned char)content[i] >= beginRange && (unsigned char)content[i] <= endRange)
 		{
@@ -102,14 +102,14 @@ bool FindCharsInRangeDlg::findCharInRange(unsigned char beginRange, unsigned cha
 			break;
 		}
 	}
-
+	
 	if (found == -1)
 	{
 		if (wrap)
 		{
-			for (int i = (direction == dirUp?totalSize-1:0);
+			for (int i = (direction == dirUp?totalSize-1:0); 
 				(direction == dirDown)?i < totalSize:i >= 0 ;
-				(direction == dirDown)?(i++):(i--))
+				(direction == dirDown)?(++i):(--i))
 			{
 				if ((unsigned char)content[i] >= beginRange && (unsigned char)content[i] <= endRange)
 				{
@@ -152,7 +152,7 @@ bool FindCharsInRangeDlg::getRangeFromUI(unsigned char & startRange, unsigned ch
 		endRange = 127;
 		return true;
 	}
-
+	
 	if (isCheckedOrNot(IDC_MYRANGE_RADIO))
 	{
 		BOOL startBool, endBool;
@@ -169,6 +169,6 @@ bool FindCharsInRangeDlg::getRangeFromUI(unsigned char & startRange, unsigned ch
 		endRange = (unsigned char)end;
 		return true;
 	}
-
+	
 	return false;
 }

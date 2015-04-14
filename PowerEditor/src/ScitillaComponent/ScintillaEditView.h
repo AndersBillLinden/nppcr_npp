@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -153,7 +153,7 @@ const bool L2R = true;
 const bool R2L = false;
 
 struct ColumnModeInfo {
-	int _selLpos;
+	int _selLpos; 
 	int _selRpos;
 	int _order; // 0 based index
 	bool _direction; // L2R or R2L
@@ -199,12 +199,11 @@ struct LanguageName {
 
 class ScintillaEditView : public Window
 {
-	//friend class Notepad_plus;
-	friend class Finder;
+friend class Finder;
 public:
 	ScintillaEditView()
 		: Window(), _pScintillaFunc(NULL),_pScintillaPtr(NULL),
-		  _lineNumbersShown(false), _wrapRestoreNeeded(false)
+		  _lineNumbersShown(false), _wrapRestoreNeeded(false), _beginSelectPosition(-1)
 	{
 		++_refCount;
 	};
@@ -217,7 +216,7 @@ public:
 		{
 			::FreeLibrary(_hLib);
 
-			for (BufferStyleMap::iterator it(_hotspotStyles.begin()); it != _hotspotStyles.end(); ++it )
+			for (BufferStyleMap::iterator it(_hotspotStyles.begin()); it != _hotspotStyles.end(); ++it ) 
 			{
 				for (StyleMap::iterator it2(it->second->begin()) ; it2 != it->second->end() ; ++it2)
 				{
@@ -239,11 +238,11 @@ public:
 	LRESULT execute(UINT Msg, WPARAM wParam=0, LPARAM lParam=0) const {
 		return _pScintillaFunc(_pScintillaPtr, static_cast<int>(Msg), static_cast<int>(wParam), static_cast<int>(lParam));
 	};
-
+	
 	void activateBuffer(BufferID buffer);
 
-	void getCurrentFoldStates(std::vector<HeaderLineState> & lineStateVector);
-	void syncFoldStateWith(const std::vector<HeaderLineState> & lineStateVectorNew);
+	void getCurrentFoldStates(std::vector<size_t> & lineStateVector);
+	void syncFoldStateWith(const std::vector<size_t> & lineStateVectorNew);
 
 	void getText(char *dest, int start, int end) const;
 	void getGenericText(TCHAR *dest, size_t destlen, int start, int end) const;
@@ -273,10 +272,18 @@ public:
 	void getLine(int lineNumber, TCHAR * line, int lineBufferLen);
 	void addText(int length, const char *buf);
 
+	void insertNewLineAboveCurrentLine();
+	void insertNewLineBelowCurrentLine();
+
 	void saveCurrentPos();
 	void restoreCurrentPos();
 	void saveCurrentFold();
 	void restoreCurrentFold();
+
+	void beginOrEndSelect();
+	bool beginEndSelectedIsStarted() const {
+		return _beginSelectPosition != -1;
+	};
 
 	int getCurrentDocLen() const {
 		return int(execute(SCI_GETLENGTH));
@@ -292,7 +299,7 @@ public:
 	void getWordToCurrentPos(TCHAR * str, int strLen) const {
 		int caretPos = execute(SCI_GETCURRENTPOS);
 		int startPos = static_cast<int>(execute(SCI_WORDSTARTPOSITION, caretPos, true));
-
+		
 		str[0] = '\0';
 		if ((caretPos - startPos) < strLen)
 			getGenericText(str, strLen, startPos, caretPos);
@@ -335,6 +342,7 @@ public:
 		return (execute(SCI_GETMARGINWIDTHN, witchMarge, 0) != 0);
     };
 
+    void updateBeginEndSelectPosition(const bool is_insert, const int position, const int length);
     void marginClick(int position, int modifiers);
 
     void setMakerStyle(folderStyle style) {
@@ -348,7 +356,7 @@ public:
 		{
 			display = true;
 		}
-		for (int i = 0 ; i < NB_FOLDER_STATE ; i++)
+		for (int i = 0 ; i < NB_FOLDER_STATE ; ++i)
 			defineMarker(_markersArray[FOLDER_TYPE][i], _markersArray[style][i], white, grey, white);
 		showMargin(ScintillaEditView::_SC_MARGE_FOLDER, display);
     };
@@ -382,7 +390,7 @@ public:
 	};
 
 	void showIndentGuideLine(bool willBeShowed = true) {
-		execute(SCI_SETINDENTATIONGUIDES, (WPARAM)willBeShowed?(SC_IV_LOOKBOTH):(SC_IV_NONE));
+		execute(SCI_SETINDENTATIONGUIDES, (WPARAM)willBeShowed?(SC_IV_LOOKBOTH):(SC_IV_NONE));  
 	};
 
 	bool isShownIndentGuide() const {
@@ -438,7 +446,7 @@ public:
 	long getTextHeight()const{
 		return long(execute(SCI_TEXTHEIGHT));
 	};
-
+	
 	void gotoLine(int line){
 		if (line < execute(SCI_GETLINECOUNT))
 			execute(SCI_GOTOLINE,line);
@@ -455,15 +463,35 @@ public:
 		long start = long(execute(SCI_GETSELECTIONSTART));
 		long end = long(execute(SCI_GETSELECTIONEND));
 		selByte = (start < end)?end-start:start-end;
-
+		
 		start = long(execute(SCI_LINEFROMPOSITION, start));
 		end = long(execute(SCI_LINEFROMPOSITION, end));
 		selLine = (start < end)?end-start:start-end;
-		if (selLine)
+		if (selLine) 
 			++selLine;
-
+		
 		return true;
     };
+
+	long getSelectedLength() const {
+		// return -1 if it's multi-selection or rectangle selection
+		if ((execute(SCI_GETSELECTIONS) > 1) || execute(SCI_SELECTIONISRECTANGLE))
+			return -1;
+		long size_selected = execute(SCI_GETSELTEXT);
+		char *selected = new char[size_selected + 1];
+		execute(SCI_GETSELTEXT, (WPARAM)0, (LPARAM)selected);
+		char *c = selected;
+		long length = 0;
+		while(*c != '\0')
+		{
+			if( (*c & 0xC0) != 0x80)
+				++length;
+			++c;
+		}
+		delete [] selected;
+		return length;
+    };
+
 
 	long getLineLength(int line) const {
 		return long(execute(SCI_GETLINEENDPOSITION, line) - execute(SCI_POSITIONFROMLINE, line));
@@ -488,28 +516,7 @@ public:
 		}
 	}
 
-	void updateLineNumberWidth() {
-		if (_lineNumbersShown)
-		{
-			int linesVisible = (int) execute(SCI_LINESONSCREEN);
-			if (linesVisible)
-			{
-				int firstVisibleLineVis = (int) execute(SCI_GETFIRSTVISIBLELINE);
-				int lastVisibleLineVis = linesVisible + firstVisibleLineVis + 1;
-				int i = 0;
-				while (lastVisibleLineVis)
-				{
-					lastVisibleLineVis /= 10;
-					i++;
-				}
-				i = max(i, 3);
-				{
-					int pixelWidth = int(8 + i * execute(SCI_TEXTWIDTH, STYLE_LINENUMBER, (LPARAM)"8"));
-					execute(SCI_SETMARGINWIDTHN, _SC_MARGE_LINENUMBER, pixelWidth);
-				}
-			}
-		}
-	};
+	void updateLineNumberWidth();
 
 	void setCurrentLineHiLiting(bool isHiliting, COLORREF bgColor) const {
 		execute(SCI_SETCARETLINEVISIBLE, isHiliting);
@@ -525,7 +532,7 @@ public:
 	void performGlobalStyles();
 
 	void expand(int &line, bool doExpand, bool force = false, int visLevels = 0, int level = -1);
-
+		
 	void currentLineUp() const;
 	void currentLineDown() const;
 
@@ -551,7 +558,7 @@ public:
 		else
 			execute(SCI_UPPERCASE);
 	};
-
+    
 	void collapse(int level2Collapse, bool mode);
 	void foldAll(bool mode);
 	void fold(int line, bool mode);
@@ -564,7 +571,7 @@ public:
 	NppParameters * getParameter() {
 		return _pParameter;
 	};
-
+	
 	ColumnModeInfos getColumnModeSelectInfo();
 
 	void columnReplace(ColumnModeInfos & cmi, const TCHAR *str);
@@ -595,7 +602,7 @@ public:
 	bool isSelecting() const {
 		static CharacterRange previousSelRange = getSelection();
 		CharacterRange currentSelRange = getSelection();
-
+		
 		if (currentSelRange.cpMin == currentSelRange.cpMax)
 		{
 			previousSelRange = currentSelRange;
@@ -607,54 +614,40 @@ public:
 			previousSelRange = currentSelRange;
 			return true;
 		}
-
+		
 		previousSelRange = currentSelRange;
 		return false;
 	};
-	void setHiLiteResultWords(const TCHAR *keywords);
+
 	void defineDocType(LangType typeDoc);	//setup stylers for active document
 	void mouseWheel(WPARAM wParam, LPARAM lParam) {
 		scintillaNew_Proc(_hSelf, WM_MOUSEWHEEL, wParam, lParam);
 	};
-
+	
 	void setHotspotStyle(Style& styleToSet);
     void setTabSettings(Lang *lang);
 	bool isWrapRestoreNeeded() const {return _wrapRestoreNeeded;};
 	void setWrapRestoreNeeded(bool isWrapRestoredNeeded) {_wrapRestoreNeeded = isWrapRestoredNeeded;};
 
 	bool isCJK() const {
-		return ((_codepage == CP_CHINESE_TRADITIONAL) || (_codepage == CP_CHINESE_SIMPLIFIED) ||
+		return ((_codepage == CP_CHINESE_TRADITIONAL) || (_codepage == CP_CHINESE_SIMPLIFIED) || 
 			    (_codepage == CP_JAPANESE) || (_codepage == CP_KOREAN));
 	};
+	void scrollPosToCenter(int pos);
+	bool swapLines(size_t line1, size_t line2);
+	void quickSortLines(size_t fromLine, size_t toLine, bool isReverse = false);
+	void changeTextDirection(bool isRTL);
+	bool isTextDirectionRTL() const;
 
 protected:
 	static HINSTANCE _hLib;
 	static int _refCount;
-
+	
     static UserDefineDialog _userDefineDlg;
 
     static const int _markersArray[][NB_FOLDER_STATE];
 
-	static LRESULT CALLBACK scintillaStatic_Proc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam) {
-		ScintillaEditView *pScint = (ScintillaEditView *)(::GetWindowLongPtr(hwnd, GWL_USERDATA));
-		//
-		if (Message == WM_MOUSEWHEEL || Message == WM_MOUSEHWHEEL)
-		{
-			POINT pt;
-			POINTS pts = MAKEPOINTS(lParam);
-			POINTSTOPOINT(pt, pts);
-			HWND hwndOnMouse = WindowFromPoint(pt);
-			ScintillaEditView *pScintillaOnMouse = (ScintillaEditView *)(::GetWindowLongPtr(hwndOnMouse, GWL_USERDATA));
-			if (pScintillaOnMouse != pScint)
-				return ::SendMessage(hwndOnMouse, Message, wParam, lParam);
-		}
-		if (pScint)
-			return (pScint->scintillaNew_Proc(hwnd, Message, wParam, lParam));
-		else
-			return ::DefWindowProc(hwnd, Message, wParam, lParam);
-		//
-	};
-
+	static LRESULT CALLBACK scintillaStatic_Proc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
 	LRESULT scintillaNew_Proc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
 
 	SCINTILLA_FUNC _pScintillaFunc;
@@ -666,7 +659,7 @@ protected:
 	//Store the current buffer so it can be retrieved later
 	BufferID _currentBufferID;
 	Buffer * _currentBuffer;
-
+	
     NppParameters *_pParameter;
 	int _codepage;
 	bool _lineNumbersShown;
@@ -675,6 +668,8 @@ protected:
 	typedef std::map<int, Style> StyleMap;
 	typedef std::map<BufferID, StyleMap*> BufferStyleMap;
 	BufferStyleMap _hotspotStyles;
+
+	int _beginSelectPosition;
 
 //Lexers and Styling
 	void restyleBuffer();
@@ -690,7 +685,7 @@ protected:
 
 	//Complex lexers (same lexer, different language)
 	void setXmlLexer(LangType type);
-	void setCppLexer(LangType type);
+ 	void setCppLexer(LangType type);
 	void setTclLexer();
     void setObjCLexer(LangType type);
 	void setUserLexer(const TCHAR *userLangName = NULL);
@@ -722,7 +717,8 @@ protected:
 
 
 	void setSqlLexer() {
-		execute(SCI_SETPROPERTY, (WPARAM)"sql.backslash.escapes", (LPARAM)"1");
+		const bool kbBackSlash = NppParameters::getInstance()->getNppGUI()._backSlashIsEscapeCharacterForSql;
+		execute(SCI_SETPROPERTY, (WPARAM)"sql.backslash.escapes", kbBackSlash ? (LPARAM)"1" : (LPARAM)"0");
 		setLexer(SCLEX_SQL, L_SQL, LIST_0);
 	};
 
@@ -744,7 +740,7 @@ protected:
 	};
 
 	void setPythonLexer() {
-		setLexer(SCLEX_PYTHON, L_PYTHON, LIST_0);
+		setLexer(SCLEX_PYTHON, L_PYTHON, LIST_0 | LIST_1);
 	};
 
 	void setBatchLexer() {
@@ -752,7 +748,7 @@ protected:
 	};
 
 	void setTeXLexer() {
-		for (int i = 0 ; i < 4 ; i++)
+		for (int i = 0 ; i < 4 ; ++i)
 			execute(SCI_SETKEYWORDS, i, reinterpret_cast<LPARAM>(TEXT("")));
 		setLexer(SCLEX_TEX, L_TEX, 0);
 	};
@@ -861,6 +857,10 @@ protected:
     void setRLexer() {
 		setLexer(SCLEX_R, L_R, LIST_0 | LIST_1 | LIST_2);
 	};
+	
+    void setCoffeeScriptLexer() {
+		setLexer(SCLEX_COFFEESCRIPT, L_COFFEESCRIPT, LIST_0 | LIST_1 | LIST_2  | LIST_3);
+	};
 
     //--------------------
 
@@ -898,7 +898,7 @@ protected:
 	};
 
 	int codepage2CharSet() const {
-		switch (_codepage)
+		switch (_codepage)	
 		{
 			case CP_CHINESE_TRADITIONAL : return SC_CHARSET_CHINESEBIG5;
 			case CP_CHINESE_SIMPLIFIED : return SC_CHARSET_GB2312;
@@ -911,6 +911,12 @@ protected:
 
     pair<int, int> getWordRange();
 	bool expandWordSelection();
+
+	// For the quicksort on lines
+	size_t getLeftLineIndex(size_t leftIndex, size_t pivotIndex, bool isReverse);
+	size_t getRightLineIndex(size_t rightIndex, size_t pivotIndex, bool isReverse);
+	size_t getGreaterLineBetween(size_t l1, size_t l2);
+	size_t getRandomPivot(size_t fromLine, size_t toLine);
 };
 
 #endif //SCINTILLA_EDIT_VIEW_H

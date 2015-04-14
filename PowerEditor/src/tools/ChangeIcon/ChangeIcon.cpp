@@ -44,8 +44,8 @@
 #define IFDEBUG(x)
 #endif
 
-BOOL getMaxIconId_EnumNamesFunc(HANDLE hModule, LPCTSTR lpType, LPTSTR lpName, WORD* lpMaxID)
-{
+BOOL getMaxIconId_EnumNamesFunc(HANDLE hModule, LPCTSTR lpType, LPTSTR lpName, WORD* lpMaxID)  
+{ 
 	if(IS_INTRESOURCE(lpName) && (USHORT)lpName>*lpMaxID)
 		*lpMaxID=(USHORT)lpName;
 	return true;
@@ -57,7 +57,7 @@ WORD getMaxIconId(TCHAR* lpFileName)
 	HINSTANCE hLib = LoadLibraryEx(lpFileName,NULL,DONT_RESOLVE_DLL_REFERENCES | LOAD_LIBRARY_AS_DATAFILE);
 	if(hLib == NULL) { _tprintf(_T("Unable to load library '%s'\n"), lpFileName); return 0xFFFF; }
 	// Enumerate icon "names" (IDs) to get next available ID
-	if(!EnumResourceNames(hLib, RT_ICON, (ENUMRESNAMEPROC)getMaxIconId_EnumNamesFunc,(LONG_PTR)&nMaxID)) { _tprintf(_T("Unable to enum icons\n")); return 0xFFFF; }
+	if(!EnumResourceNames(hLib, RT_ICON, (ENUMRESNAMEPROC)getMaxIconId_EnumNamesFunc,(LONG_PTR)&nMaxID)) { _tprintf(_T("Unable to enum icons\n")); return 0xFFFF; }	
 	FreeLibrary(hLib);
 	IFDEBUG( _tprintf(_T("MaxIcon=%d\n"), nMaxID); )
 	return nMaxID;
@@ -91,7 +91,7 @@ public:
 	ICONDIR _head;
 	ICONDIRENTRY *_entries;
 	LPBYTE *_imagesData;
-
+	
 	Icon() : _entries(NULL), _imagesData(NULL) { _head.idCount = 0; }
 	void clear() {
 		if(_imagesData) { for(int i=0; i<_head.idCount; ++i) delete _imagesData[i]; delete[] _imagesData; _imagesData = 0; }
@@ -99,12 +99,12 @@ public:
 		_head.idCount = 0;
 	}
 	~Icon() { clear(); }
-
+	
 	bool readICO(TCHAR* filename);
 	bool readEXE(TCHAR* lpFileName, LPCTSTR lpResName, UINT resLangId); // Does not currently read image data
-
+	
 	bool writeToEXE(TCHAR* lpFileName, LPCTSTR lpResName, UINT resLangId);
-
+	
 	WORD count() { return _head.idCount; }
 };
 
@@ -121,7 +121,7 @@ bool Icon::readICO(TCHAR* filename)
 	_entries = new ICONDIRENTRY[count()];
 	if(!ReadFile( hFile, _entries, sizeof(*_entries)*count(), &dwBytesRead, NULL )) { _tprintf(_T("Error reading file '%s'\n"), filename); return false; }
 	// Read images
-	_imagesData=new LPBYTE[count()]; memset(_imagesData, sizeof(LPBYTE)*count(), 0);
+	_imagesData=new LPBYTE[count()]; memset(_imagesData, 0, sizeof(LPBYTE)*count());
 	for(int i=0; i<count(); ++i)
 	{
 		IFDEBUG( _tprintf(_T("%d: offset=%d, size=%d\n"), i, _entries[i].dwImageOffset, _entries[i].dwBytesInRes); )
@@ -138,7 +138,7 @@ bool Icon::readEXE(TCHAR* lpFileName, LPCTSTR lpResName, UINT resLangId)
 	clear();
 	HINSTANCE hLib = LoadLibraryEx(lpFileName, NULL, DONT_RESOLVE_DLL_REFERENCES | LOAD_LIBRARY_AS_DATAFILE);
 	if(hLib == NULL) { _tprintf(_T("Unable to load library '%s'\n"), lpFileName); goto error1; }
-
+	
 	HRSRC hRsrc = FindResourceEx(hLib, RT_GROUP_ICON, lpResName, resLangId);
 	if(hRsrc == NULL) { _tprintf(IS_INTRESOURCE(lpResName) ? _T("Icon group %d (lang %d) not found in '%s'\n") : _T("Icon group %s (lang %d) not found in '%s'\n"), lpResName, resLangId, lpFileName); goto error2; }
 
@@ -179,7 +179,7 @@ bool Icon::writeToEXE(TCHAR* lpFileName, LPCTSTR lpResName, UINT resLangId)
 
 	//lpInitGrpIconDir   is oldIcon
 	oldIcon._head.idReserved = _head.idReserved;
-
+	
 	// Set icon IDs for each icon in the group
 	WORD nMaxID = 0xFFFF;
 	for(int i=0; i<count(); ++i)
@@ -211,9 +211,12 @@ bool Icon::writeToEXE(TCHAR* lpFileName, LPCTSTR lpResName, UINT resLangId)
 #undef _myWrite
 
 	// Replace icon group
-	if(!UpdateResource(hUpdate, RT_GROUP_ICON, lpResName, resLangId, resData, cbRes)) { _tprintf(_T("Unable to update icon group\n")); delete resData; return false; }
+	if(!UpdateResource(hUpdate, RT_GROUP_ICON, lpResName, resLangId, resData, cbRes)) 
+	{
+		_tprintf(_T("Unable to update icon group\n")); delete[] resData; return false;
+	}
 	IFDEBUG( _tprintf(_T("Updated group %d (lang %d)\n"), lpResName, resLangId); )
-	delete resData;
+	delete [] resData;
 	}
 
 	// Replace/add icons
@@ -250,7 +253,7 @@ int _tmain(int argc, TCHAR* argv[], TCHAR* envp[])
 	TCHAR* szEXEname = argv[2];
 	int groupId = _ttoi(argv[3]);
 	int langId = _ttoi(argv[4]);
-
+	
 	IFDEBUG( _tprintf(_T("ICO='%s' EXE='%s' group#=%d lang#=%d\n"), szICOname, szEXEname, groupId, langId); )
 
 	Icon newIcon; if(!newIcon.readICO(szICOname)) return false;

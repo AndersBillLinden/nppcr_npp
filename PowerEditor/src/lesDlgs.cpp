@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -31,14 +31,14 @@
 #include "resource.h"
 #include "menuCmdID.h"
 
-void ValueDlg::init(HINSTANCE hInst, HWND parent, int valueToSet, const TCHAR *text)
+void ValueDlg::init(HINSTANCE hInst, HWND parent, int valueToSet, const TCHAR *text) 
 {
 	Window::init(hInst, parent);
 	_defaultValue = valueToSet;
 	_name = text;
 }
 
-int ValueDlg::doDialog(POINT p, bool isRTL)
+int ValueDlg::doDialog(POINT p, bool isRTL) 
 {
 	_p = p;
 	if (isRTL)
@@ -79,7 +79,7 @@ int ValueDlg::reSizeValueBox()
 	return extraSize;
 }
 
-BOOL CALLBACK ValueDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM)
+BOOL CALLBACK ValueDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM) 
 {
 	switch (Message)
 	{
@@ -92,11 +92,11 @@ BOOL CALLBACK ValueDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM)
 			::GetClientRect(_hSelf, &rc);
 			int size = reSizeValueBox();
 			::MoveWindow(_hSelf, _p.x, _p.y, rc.right - rc.left + size, rc.bottom - rc.top + 30, TRUE);
-
+			
 			return TRUE;
 		}
 
-		case WM_COMMAND :
+		case WM_COMMAND : 
 		{
 			switch (wParam)
 			{
@@ -122,7 +122,7 @@ BOOL CALLBACK ValueDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM)
 
 
 
-BOOL CALLBACK ButtonDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM)
+BOOL CALLBACK ButtonDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM) 
 {
 	switch (Message)
 	{
@@ -131,7 +131,7 @@ BOOL CALLBACK ButtonDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM)
 			return TRUE;
 		}
 
-		case WM_COMMAND :
+		case WM_COMMAND : 
 		{
 			switch (wParam)
 			{
@@ -171,7 +171,7 @@ BOOL CALLBACK ButtonDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM)
 
 
 
-void ButtonDlg::doDialog(bool isRTL)
+void ButtonDlg::doDialog(bool isRTL) 
 {
     if (!isCreated())
 			create(IDD_BUTTON_DLG, isRTL);

@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -30,8 +30,16 @@
 
 #include "window.h"
 
-class TreeView : public Window
-{
+struct TreeStateNode {
+	generic_string _label;
+	generic_string _extraData;
+	bool _isExpanded;
+	bool _isSelected;
+	std::vector<TreeStateNode> _children;
+};
+
+
+class TreeView : public Window {
 public:
 	TreeView() : Window(), _isItemDragged(false) {};
 
@@ -39,9 +47,11 @@ public:
 	virtual void init(HINSTANCE hInst, HWND parent, int treeViewID);
 	virtual void destroy();
 	HTREEITEM addItem(const TCHAR *itemName, HTREEITEM hParentItem, int iImage, const TCHAR *filePath = NULL);
+	bool setItemParam(HTREEITEM Item2Set, const TCHAR *paramStr);
+	HTREEITEM searchSubItemByName(const TCHAR *itemName, HTREEITEM hParentItem);
 	void removeItem(HTREEITEM hTreeItem);
 	void removeAllItems();
-
+	
 	HTREEITEM getChildFrom(HTREEITEM hTreeItem) const {
 		return TreeView_GetChild(_hSelf, hTreeItem);
 	};
@@ -63,9 +73,15 @@ public:
 	HTREEITEM getPrevSibling(HTREEITEM hItem) const {
 		return TreeView_GetPrevSibling(_hSelf, hItem);
 	};
+	
 	void expand(HTREEITEM hItem) const {
 		TreeView_Expand(_hSelf, hItem, TVE_EXPAND);
 	};
+
+	void fold(HTREEITEM hItem) const {
+		TreeView_Expand(_hSelf, hItem, TVE_COLLAPSE);
+	};
+
 	void toggleExpandCollapse(HTREEITEM hItem) const {
 		TreeView_Expand(_hSelf, hItem, TVE_TOGGLE);
 	};
@@ -89,6 +105,10 @@ public:
 	bool moveDown(HTREEITEM itemToMove);
 	bool moveUp(HTREEITEM itemToMove);
 	bool swapTreeViewItem(HTREEITEM itemGoDown, HTREEITEM itemGoUp);
+	bool restoreFoldingStateFrom(const TreeStateNode & treeState2Compare, HTREEITEM treeviewNode);
+	bool retrieveFoldingStateTo(TreeStateNode & treeState2Construct, HTREEITEM treeviewNode);
+	bool searchLeafAndBuildTree(TreeView & tree2Build, const generic_string & text2Search, int index2Search);
+	void sort(HTREEITEM hTreeItem);
 
 protected:
 	WNDPROC _defaultProc;
@@ -99,6 +119,7 @@ protected:
 	};
 	void cleanSubEntries(HTREEITEM hTreeItem);
 	void dupTree(HTREEITEM hTree2Dup, HTREEITEM hParentItem);
+	bool searchLeafRecusivelyAndBuildTree(HTREEITEM tree2Build, const generic_string & text2Search, int index2Search, HTREEITEM tree2Search);
 
 	// Drag and Drop operations
 	HTREEITEM _draggedItem;

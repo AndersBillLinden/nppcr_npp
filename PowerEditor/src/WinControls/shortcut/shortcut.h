@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -124,10 +124,10 @@ public:
 		return *this;
 	}
 	friend inline const bool operator==(const Shortcut & a, const Shortcut & b) {
-		return ((lstrcmp(a.getMenuName(), b.getMenuName()) == 0) &&
-			(a._keyCombo._isCtrl == b._keyCombo._isCtrl) &&
-			(a._keyCombo._isAlt == b._keyCombo._isAlt) &&
-			(a._keyCombo._isShift == b._keyCombo._isShift) &&
+		return ((lstrcmp(a.getMenuName(), b.getMenuName()) == 0) && 
+			(a._keyCombo._isCtrl == b._keyCombo._isCtrl) && 
+			(a._keyCombo._isAlt == b._keyCombo._isAlt) && 
+			(a._keyCombo._isShift == b._keyCombo._isShift) && 
 			(a._keyCombo._key == b._keyCombo._key)
 			);
 	};
@@ -186,7 +186,7 @@ protected :
 	TCHAR _name[nameLenMax];		//normal name is plain text (for display purposes)
 	TCHAR _menuName[nameLenMax];	//menu name has ampersands for quick keys
 };
-
+		 
 class CommandShortcut : public Shortcut {
 public:
 	CommandShortcut(Shortcut sc, long id) :	Shortcut(sc), _id(id) {};
@@ -240,12 +240,12 @@ public:
 			return false;
 		size_t i = 0;
 		while(equal && (i < a.size)) {
-			equal =
-				(a._keyCombos[i]._isCtrl	== b._keyCombos[i]._isCtrl) &&
-				(a._keyCombos[i]._isAlt		== b._keyCombos[i]._isAlt) &&
-				(a._keyCombos[i]._isShift	== b._keyCombos[i]._isShift) &&
+			equal = 
+				(a._keyCombos[i]._isCtrl	== b._keyCombos[i]._isCtrl) && 
+				(a._keyCombos[i]._isAlt		== b._keyCombos[i]._isAlt) && 
+				(a._keyCombos[i]._isShift	== b._keyCombos[i]._isShift) && 
 				(a._keyCombos[i]._key		== b._keyCombos[i]._key);
-			i++;
+			++i;
 		}
 		return equal;
 	};
@@ -273,19 +273,19 @@ class ScintillaEditView;
 
 struct recordedMacroStep {
 	enum MacroTypeIndex {mtUseLParameter, mtUseSParameter, mtMenuCommand, mtSavedSnR};
-
+	
 	int message;
 	long wParameter;
 	long lParameter;
 	generic_string sParameter;
 	MacroTypeIndex MacroType;
-
+	
 	recordedMacroStep(int iMessage, long wParam, long lParam, int codepage);
 	recordedMacroStep(int iCommandID) : message(0), wParameter(iCommandID), lParameter(0), MacroType(mtMenuCommand) {};
 
 	recordedMacroStep(int iMessage, long wParam, long lParam, const TCHAR *sParam, int type)
 		: message(iMessage), wParameter(wParam), lParameter(lParam), MacroType(MacroTypeIndex(type)){
-			sParameter = (sParam)?generic_string(sParam):TEXT("");
+			sParameter = (sParam)?generic_string(sParam):TEXT("");	
 	};
 
 	bool isValid() const {
@@ -342,10 +342,12 @@ private :
 class Accelerator { //Handles accelerator keys for Notepad++ menu, including custom commands
 friend class ShortcutMapper;
 public:
-	Accelerator():_hAccelMenu(NULL), _hMenuParent(NULL), _hAccTable(NULL), _pAccelArray(NULL), _nbAccelItems(0){};
-	~Accelerator(){
+	Accelerator() :_hAccelMenu(NULL), _hMenuParent(NULL), _hAccTable(NULL), _hIncFindAccTab(NULL), _pAccelArray(NULL), _nbAccelItems(0){};
+	~Accelerator() {
 		if (_hAccTable)
 			::DestroyAcceleratorTable(_hAccTable);
+		if (_hIncFindAccTab)
+			::DestroyAcceleratorTable(_hIncFindAccTab);
 		if (_pAccelArray)
 			delete [] _pAccelArray;
 	};
@@ -355,6 +357,7 @@ public:
 		updateShortcuts();
 	};
 	HACCEL getAccTable() const {return _hAccTable;};
+	HACCEL getIncrFindAccTable() const { return _hIncFindAccTab; };
 
 	void updateShortcuts();
 	void updateFullMenu();
@@ -363,14 +366,10 @@ private:
 	HMENU _hAccelMenu;
 	HWND _hMenuParent;
 	HACCEL _hAccTable;
+	HACCEL _hIncFindAccTab;
 	ACCEL *_pAccelArray;
 	int _nbAccelItems;
 
-	void reNew() {
-		if(_hAccTable)
-			::DestroyAcceleratorTable(_hAccTable);
-		_hAccTable = ::CreateAcceleratorTable(_pAccelArray, _nbAccelItems);
-	};
 	void updateMenuItemByCommand(CommandShortcut csc);
 };
 

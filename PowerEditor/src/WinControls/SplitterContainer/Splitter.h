@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -64,7 +64,7 @@ enum SplitterMode {
 
 class Splitter : public Window
 {
-public:
+public:	
 	Splitter();
 	~Splitter(){};
 	void destroy() {
@@ -96,7 +96,7 @@ private:
 	LRESULT CALLBACK spliterWndProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
     int getClickZone(WH which);
-	void adjustZoneToDraw(RECT & rc2def, ZONE_TYPE whichZone);
+	void adjustZoneToDraw(RECT & rc2def, ZONE_TYPE whichZone);	 
 	void drawSplitter();
 	bool isVertical() const {return (_dwFlags & SV_VERTICAL) != 0;};
 	void paintArrow(HDC hdc, const RECT &rect, Arrow arrowDir);
@@ -109,12 +109,12 @@ private:
 	};
 
 	bool isInRightBottomZone(const POINT &p) const {
-		return (((p.x >= _clickZone2BR.left) &&
+		return (((p.x >= _clickZone2BR.left) && 
 			(p.x <= _clickZone2BR.left + _clickZone2BR.right)) &&
-			(p.y >= _clickZone2BR.top) &&
+			(p.y >= _clickZone2BR.top) && 
 			(p.y <= _clickZone2BR.top + _clickZone2BR.bottom));
 	};
-
+	
 	int getSplitterFixPosX() {
 		long result = long(::SendMessage(_hParent, WM_GETSPLITTER_X, 0, 0));
 		return (LOWORD(result) - ((HIWORD(result) == RIGHT_FIX) ? _spiltterSize : 0));

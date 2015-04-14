@@ -4,7 +4,7 @@
 
 	<!-- Omsett av Thomas Bernes 2008-12
          thomas.bernes@gmail.com         -->
-
+	
         <Menu>
             <Main>
                 <!-- Main Menu Entries -->
@@ -21,7 +21,7 @@
                     <Item idName="Plugins" name="Programtillegg"/>
                     <Item idName="Window" name="Vindauge"/>
                 </Entries>
-
+             
                 <!-- Sub Menu Entries -->
                 <SubEntries>
                     <Item subMenuId="edit-copyToClipboard"  name="Kopier til utklippstavla"/>
@@ -63,7 +63,7 @@
                     <Item subMenuId="encoding-vietnamese" name="Vietnamesisk"/>
                     <Item subMenuId="settings-import"  name="Import"/>
                 </SubEntries>
-
+                
                 <!-- all menu item -->
                 <Commands>
                     <Item id="41001" name="&amp;Ny"/>
@@ -83,7 +83,7 @@
                     <Item id="41015" name="Lagre kopi som..."/>
                     <Item id="41016" name="Slett frå disken"/>
                     <Item id="41017" name="Nytt namn..."/>
-
+                    
                     <Item id="42001" name="Kl&amp;ipp ut"/>
                     <Item id="42002" name="&amp;Kopier"/>
                     <Item id="42003" name="&amp;Angre"/>
@@ -96,8 +96,8 @@
                     <Item id="42010" name="Lag kopi av den aktive linja"/>
                     <Item id="42012" name="Del opp linjer"/>
                     <Item id="42013" name="Slå saman linjer"/>
-                    <Item id="42014" name="Flytt den aktive linja opp"/>
-                    <Item id="42015" name="Flytt den aktive linja ned"/>
+                    <Item id="42014" name="Flytt den aktive linja opp"/>   
+                    <Item id="42015" name="Flytt den aktive linja ned"/>   
                     <Item id="42016" name="STORE"/>
                     <Item id="42017" name="småe"/>
                     <Item id="42018" name="&amp;Registrer"/>
@@ -131,7 +131,7 @@
 					<Item id="42037" name = "Kolonnemodus..."/>
 					<Item id="42038" name = "Lim inn HTML-innhald"/>
 					<Item id="42039" name = "Lim inn RTF-innhald"/>
-
+                    
                     <Item id="43001" name="&amp;Søk..."/>
                     <Item id="43002" name="Søk etter &amp;neste"/>
                     <Item id="43003" name="Bytt ut med..."/>
@@ -277,7 +277,7 @@
                     <Item CMID="16" name="Opne på nytt"/>
             </TabBar>
         </Menu>
-
+        
         <Dialog>
             <Find title="" titleFind="Søk" titleReplace="Bytt ut med" titleFindInFiles="Søk i filer" titleMark="Merk">
                 <Item id="1"    name="Søk etter neste"/>
@@ -346,12 +346,12 @@
 				<Item id = "2908" name = "Søkeretning"/>
 				<Item id = "2909" name = "Tekstbryting"/>
 				<Item id = "2910" name = "Søk"/>
-			</FindCharsInRange>
-
+			</FindCharsInRange>        
+			
             <StyleConfig title="Stilinnstillingar">
                 <Item id="2"    name="Avbryt"/>
                 <Item id="2301" name="&amp;Lagre &amp; lukk"/>
-                <Item id="2303" name="Gjennomsiktig"/>
+                <Item id="2303" name="Gjennomsiktig"/>       
                 <Item id="2306" name="Vel tema: "/>
                 <SubDialog>
                     <Item id="2204" name="Utheva"/>
@@ -376,10 +376,10 @@
                     <Item id="2230" name="Bruk overordna utheva skrifttype"/>
                     <Item id="2231" name="Bruk overordna kursivert skrifttype"/>
                     <Item id="2232" name="Bruk overordna understreka skrifttype"/>
-                </SubDialog>
+                </SubDialog>                
 
             </StyleConfig>
-
+            
             <UserDefine title="Brukardefinert">
 				<Item id="20001" name="Fest"/>
 				<Item id="20002" name="Gje nytt namn"/>
@@ -446,24 +446,24 @@
                     <Item id="6103" name="Småe ikon"/>
                     <Item id="6104" name="Store ikon"/>
                     <Item id="6105" name="Standardikon"/>
-
+                    
                     <Item id="6106" name="Fanelinje"/>
                     <Item id="6107" name="Mindre"/>
                     <Item id="6108" name="Lås (ikkje dra-og-slepp)"/>
                     <Item id="6109" name="Gjer inaktive faner mørkare"/>
                     <Item id="6110" name="Bruk farge på aktiv fane"/>
-
+                    
                     <Item id="6111" name="Vis statuslinje"/>
                     <Item id="6112" name="Vis lukkeknapp på kvar fane"/>
                     <Item id="6113" name="Dobbelklikk for å lukke dokument"/>
                     <Item id="6118" name="Skjul"/>
                     <Item id="6119" name="Fleirlinje"/>
                     <Item id="6120" name="Loddrett"/>
-
+                    
                     <Item id="6121" name="Menylinje"/>
                     <Item id="6122" name="Skjul (bruk Alt eller F10 til å slå på/av)"/>
                     <Item id="6123" name="Språk"/>
-					<Item id="6125" name="Dokumentliste"/>
+					<Item id="6125" name="Dokumentliste"/> 
                     <Item id="6126" name="Skjul panel"/>
                 </Global>
                 <Scintillas title="Redigering">
@@ -480,30 +480,30 @@
                     <Item id="6204" name="Sirkel"/>
                     <Item id="6205" name="Firkant"/>
                     <Item id="6226" name="Ingen"/>
-
+                    
                     <Item id="6227" name="Tekstbryting"/>
                     <Item id="6228" name="Standard"/>
                     <Item id="6229" name="Juster"/>
                     <Item id="6230" name="Innrykk"/>
 					<Item id="6231" name ="Kanttjukkleik:"/>
-
+                    
                     <Item id="6206" name="Vis linjenummer"/>
                     <Item id="6207" name="Vis bokmerke"/>
                     <Item id="6208" name="Vis loddrett kant"/>
                     <Item id="6209" name="Tal på kolonner: "/>
-
+                    
                     <Item id="6211" name="Innstillingar for loddrett kant"/>
                     <Item id="6212" name="Linjemodus"/>
                     <Item id="6213" name="Bakgrunnsmodus"/>
                     <Item id="6214" name="Framhev aktiv linje"/>
                 </Scintillas>
                 <NewDoc title="Nytt dokument">
-
+				
 					<Item id="6304" name="Nyleg brukte filer"/>
 					<Item id="6305" name="Ikkje sjekk ved oppstart"/>
 					<Item id="6306" name="Ikkje vis fleire enn:"/>
 
-                    <Item id = "-1"   name = "Vis"/>
+                    <Item id = "-1"   name = "Vis"/>				
                     <Item id="6401" name="Format"/>
                     <Item id="6402" name="Windows"/>
                     <Item id="6403" name="Unix"/>
@@ -520,9 +520,9 @@
                     <Item id="6415" name="Husk mappa som blei brukt sist"/>
                     <Item id="6419" name="Nytt dokument"/>
                     <Item id="6420" name="Bruk på opna ANSI-filer"/>
-					<Item id = "6424" name = "I undermeny"/>
-                    <Item id = "6425" name = "Berre filnamn"/>
-                    <Item id = "6426" name = "Fullstendig filsti og -namn"/>
+					<Item id = "6424" name = "I undermeny"/> 
+                    <Item id = "6425" name = "Berre filnamn"/> 
+                    <Item id = "6426" name = "Fullstendig filsti og -namn"/> 
                     <Item id = "6427" name = "Ikkje lengre enn:"/>
 
                 </NewDoc>
@@ -591,12 +591,12 @@
                     <Item id="6327" name="Bruk Ctrl+TAB"/>
                     <Item id="6328" name="Framhev attributtane til taggar"/>
                     <Item id="6330" name="Framhev kommentarar/php/asp-sone"/>
-
+                    
                     <Item id="6331" name="Berre vis filnamn på tittellinja"/>
                     <Item id="6114" name="Bruk"/>
                     <Item id="6115" name="Automatisk innrykk"/>
                     <Item id="6117" name="Bruk funksjonar for nylege element"/>
-
+                    
                 </MISC>
                 <Backup title="Tryggingskopiering og autofullføring">
                     <Item id="6801" name="Lag tryggingskopi"/>
@@ -655,7 +655,7 @@
             <FileLockedWarning title="Klarte ikkje å lagre" message="Sjekk om denne fila er open i eit anna program"/>
             <FileAlreadyOpenedInNpp title="" message="Denne fila er allereie open i Notepad++."/>
             <DeleteFileFailed title="Slett fil" message="Klarte ikkje å slette fila"/>
-
+            
             <!-- $INT_REPLACE$ is a place holder, don't translate it -->
             <NbFileToOpenImportantWarning title="Amount of files to open is too large" message="$INT_REPLACE$ files are about to be opened.\rAre you sure to open them?"/>
         </MessageBox>

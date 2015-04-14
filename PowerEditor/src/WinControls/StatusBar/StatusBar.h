@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -38,7 +38,7 @@ class StatusBar : public Window
 public :
 	StatusBar() : Window(), _partWidthArray(NULL), _hloc(NULL), _lpParts(NULL) {};
 	virtual ~StatusBar(){
-        if (_hloc)
+        if (_hloc) 
         {
             ::LocalUnlock(_hloc);
             ::LocalFree(_hloc);
@@ -73,10 +73,16 @@ public :
 		return Window::getHeight();
 	};
 
-    bool setText(const TCHAR *str, int whichPart) const {
-        if (whichPart > _nbParts)
+    bool setText(const TCHAR *str, int whichPart) {
+        if (whichPart > _nbParts) 
             return false;
-		return (::SendMessage(_hSelf, SB_SETTEXT, whichPart, (LPARAM)str) == TRUE);
+		_lastSetText = str;
+		return (::SendMessage(_hSelf, SB_SETTEXT, whichPart, (LPARAM)_lastSetText.c_str()) == TRUE);
+    };
+
+	bool setOwnerDrawText(const TCHAR *str) {
+		_lastSetText = str;
+		return (::SendMessage(_hSelf, SB_SETTEXT, SBT_OWNERDRAW, (LPARAM)_lastSetText.c_str()) == TRUE);
     };
 
 	void adjustParts(int clientWidth);
@@ -87,6 +93,7 @@ private :
 
     HLOCAL _hloc;
     LPINT _lpParts;
+	generic_string _lastSetText;
 };
 
 #endif // STATUS_BAR_H

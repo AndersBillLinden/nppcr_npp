@@ -30,18 +30,18 @@
                     <Item subMenuId="edit-comment" name = "Ко&amp;ммент кошуу/алыпсалуу"/>
                     <Item subMenuId="edit-autoCompletion" name = "А&amp;втотолуктоо"/>
 					<Item subMenuId="edit-eolConversion" name="EOL өзгөртүү"/>
-
+					
 					<Item subMenuId="search-markAll" name = "Тандалганды же сапты &amp;белгиле"/>
                     <Item subMenuId="search-unmarkAll" name = "Белгилерди &amp;кайтар"/>
 					<Item subMenuId="search-jumpUp" name = "Жогору чык"/>
 					<Item subMenuId="search-jumpDown" name = "Төмөн түш"/>
-
+                    
 					<Item subMenuId="view-showSymbol" name = "Бел&amp;гилерди көрсөтүү"/>
                     <Item subMenuId="view-zoom" name = "Мас&amp;штаб"/>
                     <Item subMenuId="view-moveCloneDocument" name = "Документти жылды&amp;руу/клондоо"/>
                     <Item subMenuId="view-collapseLevel" name = "Дэңгээлди &amp;бүктө"/>
                     <Item subMenuId="view-uncollapseLevel" name = "Дэңгээлди &amp;жаз"/>
-
+					
 					<Item subMenuId="encoding-characterSets" name = "Кодулоолор"/>
 					<Item subMenuId="encoding-arabic"  name="Араб"/>
                     <Item subMenuId="encoding-baltic"  name="Балтиялык"/>
@@ -270,25 +270,25 @@
                 <Item id = "1608" name = "Алмаштыр"/>
                 <Item id = "1609" name = "Бардыгын алмаштыр"/>
 				<Item id = "1660" name = "Файлдарда алмаштыр"/>
-				<Item id = "1686" name = "Тунуктук"/>
-				<Item id = "1687" name = "Колдонбогондо"/>
-				<Item id = "1688" name = "Дайыма"/>
+			 	<Item id = "1686" name = "Тунуктук"/>
+			 	<Item id = "1687" name = "Колдонбогондо"/>
+			 	<Item id = "1688" name = "Дайыма"/>
 				<Item id = "1632" name = "Тандалганда"/>
-				<Item id = "1633" name = "Тазала"/>
-				<Item id = "1635" name = "Бардык ачык файлдарда алмаштыр"/>
-				<Item id = "1636" name = "Бардык ачык файлдарда изде"/>
-				<Item id = "1637" name = "Файлдарда изде"/>
+			 	<Item id = "1633" name = "Тазала"/>
+			 	<Item id = "1635" name = "Бардык ачык файлдарда алмаштыр"/>
+			 	<Item id = "1636" name = "Бардык ачык файлдарда изде"/>
+			 	<Item id = "1637" name = "Файлдарда изде"/>
 				<Item id = "1640" name = "Изде/Алмаштыр"/>
-				<Item id = "1641" name = "Азыркы документте бардыгын тап"/>
+			 	<Item id = "1641" name = "Азыркы документте бардыгын тап"/>
 				<Item id = "1654" name = "Чыпкалар:"/>
 				<Item id = "1655" name = "Баштык:"/>
 				<Item id = "1656" name = "Бардыгын тап!"/>
 				<Item id = "1658" name = "Ички баштык-да"/>
 				<Item id = "1661" name = "ушул док-ти көзөмөлдө"/>
 				<Item id = "1659" name = "Жашыр-ан баштык-да"/>
-				<Item id = "1624" name = "Издөө жолу"/>
-				<Item id = "1625" name = "Жөнөкөй"/>
-				<Item id = "1626" name = "Кеңейтилген (\n, \r, \t, \0, \x...)"/>
+			 	<Item id = "1624" name = "Издөө жолу"/>
+			 	<Item id = "1625" name = "Жөнөкөй"/>
+			 	<Item id = "1626" name = "Кеңейтилген (\n, \r, \t, \0, \x...)"/>
 
             </Find>
             <GoToLine title = "Ушуга өт:">
@@ -313,9 +313,9 @@
 				<Item id = "2" name = "Кайтар"/>
 				<Item id = "2301" name = "OK"/>
 				<Item id = "2303" name = "Тунуктугу"/>
-
+				
                   <SubDialog>
-			<Item id = "2204" name = "Талпагай"/>
+                	<Item id = "2204" name = "Талпагай"/>
                     <Item id = "2205" name = "Кыйгач"/>
                     <Item id = "2206" name = "Бетки түсү"/>
                     <Item id = "2207" name = "Фондун түсү"/>
@@ -470,7 +470,7 @@
 					<Item id = "6505" name = "Колалдындагылар"/>
 					<Item id = "6506" name = "Өчүрүлгөн тилдер"/>
 					<Item id = "6507" name = "Синтаксис менюсун кичирейт"/>
-					<Item id = "6508" name = "Синтаксис менюсу"/>
+					<Item id = "6508" name = "Синтаксис менюсу"/>	
 					<Item id = "6301" name = "Табуляция тескөөсү"/>
 					<Item id = "6302" name = "Боштук менен алмашытр"/>
 					<Item id = "6303" name = "Табуляция көлөмү:"/>

@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -35,7 +35,6 @@ void DocumentMap::reloadMap()
 {
 	if (_pScintillaEditView && _ppEditView)
 	{
-
 		Document currentDoc = (*_ppEditView)->execute(SCI_GETDOCPOINTER);
 		_pScintillaEditView->execute(SCI_SETDOCPOINTER, 0, (LPARAM)currentDoc);
 
@@ -47,7 +46,7 @@ void DocumentMap::reloadMap()
 		_pScintillaEditView->setCurrentBuffer(editBuf);
 
 		// folding
-		std::vector<HeaderLineState> lineStateVector;
+		std::vector<size_t> lineStateVector;
 		(*_ppEditView)->getCurrentFoldStates(lineStateVector);
 		_pScintillaEditView->syncFoldStateWith(lineStateVector);
 
@@ -61,7 +60,7 @@ void DocumentMap::reloadMap()
 	}
 }
 
-void DocumentMap::setSyntaxLiliting()
+void DocumentMap::setSyntaxHiliting()
 {
 	Buffer *buf = _pScintillaEditView->getCurrentBuffer();
 	_pScintillaEditView->defineDocType(buf->getLangType());
@@ -90,7 +89,16 @@ void DocumentMap::initWrapMap()
 		::MoveWindow(_pScintillaEditView->getHSelf(), 0, 0, rect.right - rect.left, rect.bottom-rect.top, TRUE);
 		_pScintillaEditView->wrap(false);
 		_pScintillaEditView->redraw(true);
+
+		bool isRTL = (*_ppEditView)->isTextDirectionRTL();
+		if (_pScintillaEditView->isTextDirectionRTL() != isRTL)
+			_pScintillaEditView->changeTextDirection(isRTL);
 	}
+}
+
+void DocumentMap::changeTextDirection(bool isRTL)
+{
+	_pScintillaEditView->changeTextDirection(isRTL);
 }
 
 /*
@@ -98,7 +106,7 @@ double ddd = (double)Xlength1/(double)Xlength2;
 char dchar[256];
 sprintf(dchar, "%f", ddd);
 ::MessageBoxA(NULL, dchar, "", MB_OK);
-
+		
 		// -10    => 1
 		// -9     => 1
 		// -8     => 1
@@ -166,7 +174,7 @@ int DocumentMap::getEditorTextZoneWidth()
 	(*_ppEditView)->getClientRect(editorRect);
 
 	int marginWidths = 0;
-	for (int m = 0; m < 4; m++)
+	for (int m = 0; m < 4; ++m)
 	{
 		marginWidths += (*_ppEditView)->execute(SCI_GETMARGINWIDTHN, m);
 	}
@@ -219,7 +227,7 @@ void DocumentMap::scrollMap()
 		}
 
 		// Update view zone in map
-		_vzDlg.drawZone(higherY, lowerY);
+		_vzDlg.drawZone(higherY, lowerY);		
 	}
 }
 
@@ -253,6 +261,10 @@ void DocumentMap::scrollMap(bool direction, moveMode whichMode)
 	scrollMap();
 }
 
+void DocumentMap::redraw(bool) const
+{
+	_pScintillaEditView->execute(SCI_COLOURISE, 0, -1);
+}
 
 BOOL CALLBACK DocumentMap::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -268,20 +280,20 @@ BOOL CALLBACK DocumentMap::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 
 			_pScintillaEditView->showIndentGuideLine(false);
 			_pScintillaEditView->display();
-
+			
 			reloadMap();
 
 			_vzDlg.init(::GetModuleHandle(NULL), _hSelf);
 			_vzDlg.doDialog();
 			(NppParameters::getInstance())->SetTransparent(_vzDlg.getHSelf(), 50); // 0 <= transparancy < 256
 
-			setSyntaxLiliting();
-
+			setSyntaxHiliting();
+			
 			_pScintillaEditView->showMargin(0, false);
 			_pScintillaEditView->showMargin(1, false);
 			_pScintillaEditView->showMargin(2, false);
 			_pScintillaEditView->showMargin(3, false);
-
+			
             return TRUE;
         }
 
@@ -298,7 +310,7 @@ BOOL CALLBACK DocumentMap::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 					::ClientToScreen(_hSelf, &pt);
 					if (!_pScintillaEditView->isWrap())
 						::MoveWindow(_pScintillaEditView->getHSelf(), 0, 0, width, height, TRUE);
-
+						
 					::MoveWindow(_vzDlg.getHSelf(), pt.x, pt.y, width, height, TRUE);
 				}
 			}
@@ -311,8 +323,7 @@ BOOL CALLBACK DocumentMap::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 			{
 				case DMN_CLOSE:
 				{
-					::SendMessage(_hParent, NPPM_INTERNAL_SETDOCMAPCHECK, 0, FALSE);
-					_vzDlg.display(false);
+					::SendMessage(_hParent, WM_COMMAND, IDM_VIEW_DOC_MAP, 0);
 					return TRUE;
 				}
 
@@ -320,12 +331,12 @@ BOOL CALLBACK DocumentMap::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 				{
 					_vzDlg.display();
 					reloadMap();
+					setSyntaxHiliting();
 					return TRUE;
 				}
 
 				case DMN_SWITCHOFF:
 				{
-					::SendMessage(_hParent, NPPM_INTERNAL_SETDOCMAPCHECK, 0, FALSE);
 					_vzDlg.display(false);
 					return TRUE;
 				}
@@ -356,9 +367,9 @@ BOOL CALLBACK DocumentMap::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 
 				default:
 					break;
-
+				
 			}
-
+	
 		}
 		return TRUE;
 
@@ -374,7 +385,7 @@ BOOL CALLBACK DocumentMap::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 		{
 			int newPosY = HIWORD(lParam);
 			int currentCenterPosY = _vzDlg.getCurrentCenterPosY();
-			int pixelPerLine = _pScintillaEditView->execute(SCI_TEXTHEIGHT, 0);
+			int pixelPerLine = _pScintillaEditView->execute(SCI_TEXTHEIGHT, 0); 
 			int jumpDistance = newPosY - currentCenterPosY;
 			int nbLine2jump = jumpDistance/pixelPerLine;
 			(*_ppEditView)->execute(SCI_LINESCROLL, 0, nbLine2jump);
@@ -400,17 +411,17 @@ BOOL CALLBACK DocumentMap::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 void ViewZoneDlg::drawPreviewZone(DRAWITEMSTRUCT *pdis)
 {
 	RECT rc = pdis->rcItem;
-
+	
 	const COLORREF orange = RGB(0xFF, 0x80, 0x00);
 	const COLORREF white = RGB(0xFF, 0xFF, 0xFF);
 	HBRUSH hbrushFg = CreateSolidBrush(orange);
-	HBRUSH hbrushBg = CreateSolidBrush(white);
+	HBRUSH hbrushBg = CreateSolidBrush(white);					
 	FillRect(pdis->hDC, &rc, hbrushBg);
 
 	rc.top = _higherY;
 	rc.bottom = _lowerY;
 	FillRect(pdis->hDC, &rc, hbrushFg);
-
+	
 	DeleteObject(hbrushFg);
 	DeleteObject(hbrushBg);
 }
@@ -424,7 +435,7 @@ void ViewZoneDlg::doDialog()
 
 BOOL CALLBACK ViewZoneDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam)
 {
-	switch (message)
+	switch (message) 
 	{
         case WM_INITDIALOG :
 		{
@@ -479,7 +490,7 @@ BOOL CALLBACK ViewZoneDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 	return FALSE;
 }
 
-BOOL CALLBACK ViewZoneDlg::canvasStaticProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK ViewZoneDlg::canvasStaticProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
 	ViewZoneDlg *pViewZoneDlg = reinterpret_cast<ViewZoneDlg *>(::GetWindowLongPtr(hwnd, GWL_USERDATA));
 	if (!pViewZoneDlg)

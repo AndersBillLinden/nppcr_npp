@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -40,10 +40,10 @@ DWORD colourItems[] = {
 	RGB(255, 128, 255),	RGB(255,   0, 255), RGB(255,   0, 128),	RGB(128,   0, 255), RGB( 64,   0, 128),	RGB(255, 255, 255),
 };
 
-void ColourPopup::create(int dialogID)
+void ColourPopup::create(int dialogID) 
 {
 	_hSelf = ::CreateDialogParam(_hInst, MAKEINTRESOURCE(dialogID), _hParent,  (DLGPROC)dlgProc, (LPARAM)this);
-
+	
 	if (!_hSelf)
 	{
 		throw std::runtime_error("ColourPopup::create : CreateDialogParam() function return null");
@@ -52,16 +52,16 @@ void ColourPopup::create(int dialogID)
 	display();
 }
 
-BOOL CALLBACK ColourPopup::dlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK ColourPopup::dlgProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) 
 {
-	switch (message)
+	switch (message) 
 	{
 		case WM_MEASUREITEM:
 		{
 			RECT rc;
-			LPMEASUREITEMSTRUCT lpmis =  (LPMEASUREITEMSTRUCT) lParam;
+			LPMEASUREITEMSTRUCT lpmis =  (LPMEASUREITEMSTRUCT) lParam; 
 			::GetWindowRect(::GetDlgItem(hwnd, lpmis->CtlID), &rc);
-			lpmis->itemHeight = (rc.bottom-rc.top)/6;
+			lpmis->itemHeight = (rc.bottom-rc.top)/6; 
 			lpmis->itemWidth = (rc.right-rc.left)/8;
 			return TRUE;
 		}
@@ -93,14 +93,14 @@ BOOL CALLBACK ColourPopup::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 		case WM_INITDIALOG:
 		{
 			int nColor;
-			for (nColor = 0 ; nColor < int(sizeof(colourItems)/sizeof(DWORD)) ; nColor++)
+			for (nColor = 0 ; nColor < int(sizeof(colourItems)/sizeof(DWORD)) ; ++nColor)
 			{
 				::SendDlgItemMessage(_hSelf, IDC_COLOUR_LIST, LB_ADDSTRING, nColor, (LPARAM) "");
 				::SendDlgItemMessage(_hSelf, IDC_COLOUR_LIST, LB_SETITEMDATA , nColor, (LPARAM) colourItems[nColor]);
 			}
 			return TRUE;
 		}
-
+		
 		case WM_CTLCOLORLISTBOX:
 			return (LRESULT) CreateSolidBrush(GetSysColor(COLOR_3DFACE));
 
@@ -109,16 +109,16 @@ BOOL CALLBACK ColourPopup::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 			HDC hdc;
 			COLORREF	cr;
 			HBRUSH		hbrush;
-
+	
 			DRAWITEMSTRUCT *pdis = (DRAWITEMSTRUCT *)lParam;
 			hdc = pdis->hDC;
 			RECT rc = pdis->rcItem;
-
+	
 			// Transparent.
 			SetBkMode(hdc,TRANSPARENT);
-
+	
 			// NULL object
-			if (pdis->itemID == UINT(-1)) return 0;
+			if (pdis->itemID == UINT(-1)) return 0; 
 
 			switch (pdis->itemAction)
 			{
@@ -158,7 +158,7 @@ BOOL CALLBACK ColourPopup::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 						SelectObject(hdc, holdPen);
 						DeleteObject(hpen);
 					}
-					else
+					else 
 					{
 						hbrush = CreateSolidBrush(GetSysColor(COLOR_3DFACE));
 						FrameRect(hdc, &rc, hbrush);
@@ -181,16 +181,16 @@ BOOL CALLBACK ColourPopup::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
             {
                 case IDOK :
 			    {
-					isColourChooserLaunched = true;
-					CHOOSECOLOR cc;                 // common dialog box structure
+					//isColourChooserLaunched = true;
+					CHOOSECOLOR cc;                 // common dialog box structure 
 					static COLORREF acrCustClr[16] = {
 						RGB(0xFF,0xFF,0xFF),RGB(0xFF,0xFF,0xFF),RGB(0xFF,0xFF,0xFF),RGB(0xFF,0xFF,0xFF),\
 						RGB(0xFF,0xFF,0xFF),RGB(0xFF,0xFF,0xFF),RGB(0xFF,0xFF,0xFF),RGB(0xFF,0xFF,0xFF),\
 						RGB(0xFF,0xFF,0xFF),RGB(0xFF,0xFF,0xFF),RGB(0xFF,0xFF,0xFF),RGB(0xFF,0xFF,0xFF),\
 						RGB(0xFF,0xFF,0xFF),RGB(0xFF,0xFF,0xFF),RGB(0xFF,0xFF,0xFF),RGB(0xFF,0xFF,0xFF),\
-					}; // array of custom colors
+					}; // array of custom colors 
 
-					// Initialize CHOOSECOLOR
+					// Initialize CHOOSECOLOR 
 					::ZeroMemory(&cc, sizeof(cc));
 					cc.lStructSize = sizeof(cc);
 					cc.hwndOwner = _hParent;
@@ -200,8 +200,8 @@ BOOL CALLBACK ColourPopup::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 					cc.Flags = CC_FULLOPEN | CC_RGBINIT;
 
 					display(false);
-
-					if (ChooseColor(&cc)==TRUE)
+					 
+					if (ChooseColor(&cc)==TRUE) 
 					{
 						::SendMessage(_hParent, WM_PICKUP_COLOR, cc.rgbResult, 0);
 					}
@@ -224,19 +224,19 @@ BOOL CALLBACK ColourPopup::run_dlgProc(UINT message, WPARAM wParam, LPARAM lPara
 					    return TRUE;
 		            }
                 }
-
+			    
                 default :
                     return FALSE;
             }
-
+		
 		case WM_ACTIVATE :
         {
 			if (LOWORD(wParam) == WA_INACTIVE)
-				if (!isColourChooserLaunched)
+				//if (!isColourChooserLaunched)
 					::SendMessage(_hParent, WM_PICKUP_CANCEL, 0, 0);
 			return TRUE;
 		}
-
+		
 	}
 	return FALSE;
 }

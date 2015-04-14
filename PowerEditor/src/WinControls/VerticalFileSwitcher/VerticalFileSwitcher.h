@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -37,6 +37,8 @@
 #include "VerticalFileSwitcher_rc.h"
 #include "VerticalFileSwitcherListView.h"
 
+#define FS_PROJECTPANELTITLE		TEXT("Doc Switcher")
+
 class VerticalFileSwitcher : public DockingDlgInterface {
 public:
 	VerticalFileSwitcher(): DockingDlgInterface(IDD_FILESWITCHER_PANEL) {};
@@ -53,7 +55,7 @@ public:
     void setParent(HWND parent2set){
         _hParent = parent2set;
     };
-
+	
 	//Activate document in scintilla by using the internal index
 	void activateDoc(TaskLstFnStatus *tlfs) const;
 
@@ -78,6 +80,28 @@ public:
 	};
 
 	int setHeaderOrder(LPNMLISTVIEW pnm_list_view);
+
+	int nbSelectedFiles() const {
+		return _fileListView.nbSelectedFiles();
+	};
+
+	std::vector<SwitcherFileInfo> getSelectedFiles(bool reverse = false) const {
+		return _fileListView.getSelectedFiles(reverse);
+	};
+
+	void reload(){
+		_fileListView.deleteColumn(1);
+		_fileListView.deleteColumn(0);
+		_fileListView.reload();
+	};
+
+	virtual void setBackgroundColor(COLORREF bgColour) {
+		_fileListView.setBackgroundColor(bgColour);
+    };
+
+	virtual void setForegroundColor(COLORREF fgColour) {
+		_fileListView.setForegroundColor(fgColour);
+    };
 
 protected:
 	virtual BOOL CALLBACK VerticalFileSwitcher::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);

@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -50,7 +50,7 @@ TCHAR defExtArray[nbSupportedLang][nbExtMax][extNameMax] = {
 	{TEXT("customize")}
 };
 
-void RegExtDlg::doDialog(bool isRTL)
+void RegExtDlg::doDialog(bool isRTL) 
 {
 	if (isRTL)
 	{
@@ -87,7 +87,7 @@ BOOL CALLBACK RegExtDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam)
 			return TRUE;
 		}
 
-		case WM_COMMAND :
+		case WM_COMMAND : 
 		{
 			switch (wParam)
 			{
@@ -107,7 +107,7 @@ BOOL CALLBACK RegExtDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam)
 					{
 						::SendDlgItemMessage(_hSelf, IDC_CUSTOMEXT_EDIT, WM_GETTEXT, extNameMax, (LPARAM)ext2Add);
 						int i = ::SendDlgItemMessage(_hSelf, IDC_REGEXT_REGISTEREDEXTS_LIST, LB_FINDSTRINGEXACT, 0, (LPARAM)ext2Add);
-						if (i != LB_ERR)
+						if (i != LB_ERR) 
 							return TRUE;
 						addExt(ext2Add);
 						::SendDlgItemMessage(_hSelf, IDC_CUSTOMEXT_EDIT, WM_SETTEXT, 0, (LPARAM)TEXT(""));
@@ -130,7 +130,7 @@ BOOL CALLBACK RegExtDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam)
 
 					if (langIndex != LB_ERR)
 					{
-						for (int i = 1 ; i < nbExtMax ; i++)
+						for (int i = 1 ; i < nbExtMax ; ++i)
 						{
 							if (!generic_stricmp(ext2Sup, defExtArray[langIndex][i]))
 							{
@@ -186,14 +186,14 @@ BOOL CALLBACK RegExtDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam)
 							{
 								::ShowWindow(::GetDlgItem(_hSelf, IDC_REGEXT_LANGEXT_LIST), SW_SHOW);
 								::ShowWindow(::GetDlgItem(_hSelf, IDC_CUSTOMEXT_EDIT), SW_HIDE);
-
+								
 								_isCustomize = false;
 							}
 							int count = ::SendDlgItemMessage(_hSelf, IDC_REGEXT_LANGEXT_LIST, LB_GETCOUNT, 0, 0);
 							for (count -= 1 ; count >= 0 ; count--)
 								::SendDlgItemMessage(_hSelf, IDC_REGEXT_LANGEXT_LIST, LB_DELETESTRING, count, 0);
 
-							for (int j = 1 ; j < nbExtMax ; j++)
+							for (int j = 1 ; j < nbExtMax ; ++j)
 								if (lstrcmp(TEXT(""), defExtArray[i][j]))
 								{
 									int index = ::SendDlgItemMessage(_hSelf, IDC_REGEXT_REGISTEREDEXTS_LIST, LB_FINDSTRINGEXACT, 0, (LPARAM)defExtArray[i][j]);
@@ -205,7 +205,7 @@ BOOL CALLBACK RegExtDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam)
 						::EnableWindow(::GetDlgItem(_hSelf, IDC_ADDFROMLANGEXT_BUTTON), false);
 					}
 				}
-
+				
 				else if (LOWORD(wParam) == IDC_REGEXT_LANGEXT_LIST)
 				{
 					if (i != LB_ERR)
@@ -229,7 +229,7 @@ BOOL CALLBACK RegExtDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam)
 void RegExtDlg::getRegisteredExts()
 {
 	int nbRegisteredKey = getNbSubKey(HKEY_CLASSES_ROOT);
-	for (int i = 0 ; i < nbRegisteredKey ; i++)
+	for (int i = 0 ; i < nbRegisteredKey ; ++i)
 	{
 		TCHAR extName[extNameLen];
 		//FILETIME fileTime;
@@ -255,7 +255,7 @@ void RegExtDlg::getRegisteredExts()
 
 void RegExtDlg::getDefSupportedExts()
 {
-	for (int i = 0 ; i < nbSupportedLang ; i++)
+	for (int i = 0 ; i < nbSupportedLang ; ++i)
 		::SendDlgItemMessage(_hSelf, IDC_REGEXT_LANG_LIST, LB_ADDSTRING, 0, (LPARAM)defExtArray[i][0]);
 }
 
@@ -265,7 +265,7 @@ void RegExtDlg::addExt(TCHAR *ext)
     HKEY  hKey;
     DWORD dwDisp;
     long  nRet;
-
+    
 	nRet = ::RegCreateKeyEx(HKEY_CLASSES_ROOT,
                 ext,
                 0,
@@ -275,11 +275,11 @@ void RegExtDlg::addExt(TCHAR *ext)
                 NULL,
                 &hKey,
                 &dwDisp);
-
+    
     if (nRet == ERROR_SUCCESS)
     {
 		TCHAR valData[MAX_PATH];
-		int valDataLen = MAX_PATH * sizeof(TCHAR);
+		int valDataLen = MAX_PATH * sizeof(TCHAR);		
 
 		if (dwDisp == REG_OPENED_EXISTING_KEY)
 		{
@@ -394,4 +394,4 @@ void RegExtDlg::writeNppPath()
 		}
 		RegCloseKey(hKey);
 	}
-}
+} 

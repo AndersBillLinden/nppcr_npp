@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -37,6 +37,8 @@
 #include "clipboardHistoryPanel_rc.h"
 #include <vector>
 
+#define CH_PROJECTPANELTITLE		TEXT("Clipboard History")
+
 typedef std::vector<unsigned char> ClipboardData;
 
 class ScintillaEditView;
@@ -45,7 +47,7 @@ class ByteArray {
 public:
 	ByteArray():_pBytes(NULL), _length(0) {};
 	ByteArray(ClipboardData cd);
-
+	
 	~ByteArray() {
 		if (_pBytes)
 			delete [] _pBytes;
@@ -66,16 +68,17 @@ public:
 
 class ClipboardHistoryPanel : public DockingDlgInterface {
 public:
-	ClipboardHistoryPanel(): DockingDlgInterface(IDD_CLIPBOARDHISTORY_PANEL), _ppEditView(NULL), _hwndNextCbViewer(NULL) {};
+	ClipboardHistoryPanel(): DockingDlgInterface(IDD_CLIPBOARDHISTORY_PANEL), _ppEditView(NULL), _hwndNextCbViewer(NULL), _lbBgColor(-1), _lbFgColor(-1) {};
 
 	void init(HINSTANCE hInst, HWND hPere, ScintillaEditView **ppEditView) {
 		DockingDlgInterface::init(hInst, hPere);
 		_ppEditView = ppEditView;
 	};
-
+/*
     virtual void display(bool toShow = true) const {
         DockingDlgInterface::display(toShow);
     };
+*/
 
     void setParent(HWND parent2set){
         _hParent = parent2set;
@@ -86,6 +89,15 @@ public:
 	void addToClipboadHistory(ClipboardData cbd);
 	int getClipboardDataIndex(ClipboardData cbd);
 
+	virtual void setBackgroundColor(COLORREF bgColour) {
+		_lbBgColor = bgColour;
+    };
+	virtual void setForegroundColor(COLORREF fgColour) {
+		_lbFgColor = fgColour;
+    };
+
+	void drawItem(LPDRAWITEMSTRUCT lpDrawItemStruct);
+
 protected:
 	virtual BOOL CALLBACK ClipboardHistoryPanel::run_dlgProc(UINT message, WPARAM wParam, LPARAM lParam);
 
@@ -93,5 +105,8 @@ private:
 	ScintillaEditView **_ppEditView;
 	std::vector<ClipboardData> _clipboardDataVector;
 	HWND _hwndNextCbViewer;
+	int _lbBgColor;
+	int _lbFgColor;
+
 };
 #endif // CLIPBOARDHISTORYPANEL_H

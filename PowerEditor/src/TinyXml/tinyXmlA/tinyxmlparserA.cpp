@@ -2,23 +2,23 @@
 www.sourceforge.net/projects/tinyxml
 Original code (2.0 and earlier )copyright (c) 2000-2002 Lee Thomason (www.grinninglizard.com)
 
-This software is provided 'as-is', without any express or implied
-warranty. In no event will the authors be held liable for any
+This software is provided 'as-is', without any express or implied 
+warranty. In no event will the authors be held liable for any 
 damages arising from the use of this software.
 
-Permission is granted to anyone to use this software for any
-purpose, including commercial applications, and to alter it and
+Permission is granted to anyone to use this software for any 
+purpose, including commercial applications, and to alter it and 
 redistribute it freely, subject to the following restrictions:
 
-1. The origin of this software must not be misrepresented; you must
+1. The origin of this software must not be misrepresented; you must 
 not claim that you wrote the original software. If you use this
 software in a product, an acknowledgment in the product documentation
 would be appreciated but is not required.
 
-2. Altered source versions must be plainly marked as such, and
+2. Altered source versions must be plainly marked as such, and 
 must not be misrepresented as being the original software.
 
-3. This notice may not be removed or altered from any source
+3. This notice may not be removed or altered from any source 
 distribution.
 */
 
@@ -29,8 +29,8 @@ distribution.
 
 // Note tha "PutString" hardcodes the same list. This
 // is less flexible than it appears. Changing the entries
-// or order will break putstring.
-TiXmlBaseA::Entity TiXmlBaseA::entity[ NUM_ENTITY ] =
+// or order will break putstring.	
+TiXmlBaseA::Entity TiXmlBaseA::entity[ NUM_ENTITY ] = 
 {
 	{ "&amp;",  5, '&' },
 	{ "&lt;",   4, '<' },
@@ -95,7 +95,7 @@ void TiXmlParsingDataA::Stamp( const char* now )
 			case '\r':
 				// bump down to the next line
 				++row;
-				col = 0;
+				col = 0;				
 				// Eat the character
 				++p;
 
@@ -202,11 +202,11 @@ const char* TiXmlBaseA::ReadName( const char* p, TIXMLA_STRING * name )
 	// After that, they can be letters, underscores, numbers,
 	// hyphens, or colons. (Colons are valid ony for namespaces,
 	// but tinyxml can't tell namespaces from names.)
-	if (    p && *p
+	if (    p && *p 
 		 && ( isalpha( (unsigned char) *p ) || *p == '_' ) )
 	{
 		while(		p && *p
-				&&	(		isalnum( (unsigned char ) *p )
+				&&	(		isalnum( (unsigned char ) *p ) 
 						 || *p == '_'
 						 || *p == '-'
 						 || *p == '.'
@@ -227,9 +227,9 @@ const char* TiXmlBaseA::GetEntity( const char* p, char* value )
 	int i;
 
 	// Handle the &#x entities.
-	if (    strncmp( "&#x", p, 3 ) == 0
-	     && *(p+3)
-		 && *(p+4)
+	if (    strncmp( "&#x", p, 3 ) == 0 
+	     && *(p+3) 
+		 && *(p+4) 
 		 && ( *(p+4) == ';' || *(p+5) == ';' )
 	   )
 	{
@@ -238,9 +238,9 @@ const char* TiXmlBaseA::GetEntity( const char* p, char* value )
 		if ( *(p+4) == ';' )
 		{
 			// Short, one value entity.
-			if ( isalpha( *(p+3) ) )
+			if ( isalpha( *(p+3) ) ) 
 				*value += ( (char)tolower( *(p+3) ) - 'a' + 10 );
-			else
+			else				     
 				*value += ( (char)*(p+3) - '0' );
 
 			return p+5;
@@ -251,9 +251,9 @@ const char* TiXmlBaseA::GetEntity( const char* p, char* value )
 			if ( isalpha( *(p+3) ) ) *value += ((char) tolower( *(p+3) ) - 'a' + 10 ) * 16;
 			else				     *value += ((char) *(p+3) - '0' ) * 16;
 
-			if ( isalpha( *(p+4) ) )
+			if ( isalpha( *(p+4) ) ) 
 				*value += ((char) tolower( *(p+4) ) - 'a' + 10 );
-			else
+			else				     
 				*value += ((char) *(p+4) - '0' );
 
 			return p+6;
@@ -322,10 +322,10 @@ bool TiXmlBaseA::StringEqual( const char* p,
 	return false;
 }
 
-const char* TiXmlBaseA::ReadText(	const char* p,
-									TIXMLA_STRING * text,
-									bool trimWhiteSpace,
-									const char* endTag,
+const char* TiXmlBaseA::ReadText(	const char* p, 
+									TIXMLA_STRING * text, 
+									bool trimWhiteSpace, 
+									const char* endTag, 
 									bool caseInsensitive )
 {
     *text = "";
@@ -390,7 +390,7 @@ void TiXmlDocumentA::StreamIn( TIXMLA_ISTREAM * in, TIXMLA_STRING * tag )
 	// This "pre-streaming" will never read the closing ">" so the
 	// sub-tag can orient itself.
 
-	if ( !StreamTo( in, '<', tag ) )
+	if ( !StreamTo( in, '<', tag ) ) 
 	{
 		SetError( TIXMLA_ERROR_PARSING_EMPTY, 0, 0 );
 		return;
@@ -407,7 +407,7 @@ void TiXmlDocumentA::StreamIn( TIXMLA_ISTREAM * in, TIXMLA_STRING * tag )
 
 		if ( in->good() )
 		{
-			// We now have something we presume to be a node of
+			// We now have something we presume to be a node of 
 			// some sort. Identify it, and call the node to
 			// continue streaming.
 			TiXmlNodeA* node = Identify( tag->c_str() + tagIndex );
@@ -496,7 +496,7 @@ const char* TiXmlDocumentA::Parse( const char* p, TiXmlParsingDataA* prevData )
 }
 
 void TiXmlDocumentA::SetError( int err, const char* pError, TiXmlParsingDataA* data )
-{
+{	
 	// The first error in a chain is more accurate - don't set again!
 	if ( error )
 		return;
@@ -534,7 +534,7 @@ TiXmlNodeA* TiXmlNodeA::Identify( const char* p )
 		return 0;
 	}
 
-	// What is this thing?
+	// What is this thing? 
 	// - Elements start with a letter or underscore, but xml is reserved.
 	// - Comments: <!--
 	// - Decleration: <?xml
@@ -597,7 +597,7 @@ void TiXmlElementA::StreamIn (TIXMLA_ISTREAM * in, TIXMLA_STRING * tag)
 	{
 		int c = in->get();
 		(*tag) += (char) c ;
-
+		
 		if ( c == '>' )
 			break;
 	}
@@ -607,7 +607,7 @@ void TiXmlElementA::StreamIn (TIXMLA_ISTREAM * in, TIXMLA_STRING * tag)
 	// Okay...if we are a "/>" tag, then we're done. We've read a complete tag.
 	// If not, identify and stream.
 
-	if (    tag->at( tag->length() - 1 ) == '>'
+	if (    tag->at( tag->length() - 1 ) == '>' 
 		 && tag->at( tag->length() - 2 ) == '/' )
 	{
 		// All good!
@@ -624,7 +624,7 @@ void TiXmlElementA::StreamIn (TIXMLA_ISTREAM * in, TIXMLA_STRING * tag)
 			StreamWhiteSpace( in, tag );
 
 			// Do we have text?
-			if ( in->good() && in->peek() != '<' )
+			if ( in->good() && in->peek() != '<' ) 
 			{
 				// Yep, text.
 				TiXmlTextA text( "" );
@@ -650,7 +650,7 @@ void TiXmlElementA::StreamIn (TIXMLA_ISTREAM * in, TIXMLA_STRING * tag)
 					return;
 
 				int c = in->peek();
-
+				
 				if ( c == '>' )
 					break;
 
@@ -750,7 +750,7 @@ const char* TiXmlElementA::Parse( const char* p, TiXmlParsingDataA* data )
 			// Empty tag.
 			if ( *p  != '>' )
 			{
-				if ( document ) document->SetError( TIXMLA_ERROR_PARSING_EMPTY, p, data );
+				if ( document ) document->SetError( TIXMLA_ERROR_PARSING_EMPTY, p, data );		
 				return 0;
 			}
 			return (p+1);
@@ -839,8 +839,8 @@ const char* TiXmlElementA::ReadValue( const char* p, TiXmlParsingDataA* data )
 				LinkEndChild( textNode );
 			else
 				delete textNode;
-		}
-		else
+		} 
+		else 
 		{
 			// We hit a '<'
 			// Have we hit a new element or an end tag?
@@ -855,7 +855,7 @@ const char* TiXmlElementA::ReadValue( const char* p, TiXmlParsingDataA* data )
 				{
 					p = node->Parse( p, data );
 					LinkEndChild( node );
-				}
+				}				
 				else
 				{
 					return 0;
@@ -868,7 +868,7 @@ const char* TiXmlElementA::ReadValue( const char* p, TiXmlParsingDataA* data )
 	if ( !p )
 	{
 		if ( document ) document->SetError( TIXMLA_ERROR_READING_ELEMENT_VALUE, 0, 0 );
-	}
+	}	
 	return p;
 }
 
@@ -878,13 +878,13 @@ void TiXmlUnknownA::StreamIn( TIXMLA_ISTREAM * in, TIXMLA_STRING * tag )
 {
 	while ( in->good() )
 	{
-		int c = in->get();
+		int c = in->get();	
 		(*tag) += (char)c;
 
 		if ( c == '>' )
 		{
 			// All is well.
-			return;
+			return;		
 		}
 	}
 }
@@ -930,15 +930,15 @@ void TiXmlCommentA::StreamIn( TIXMLA_ISTREAM * in, TIXMLA_STRING * tag )
 {
 	while ( in->good() )
 	{
-		int c = in->get();
+		int c = in->get();	
 		(*tag) += (char)c;
 
-		if ( c == '>'
+		if ( c == '>' 
 			 && tag->at( tag->length() - 2 ) == '-'
 			 && tag->at( tag->length() - 3 ) == '-' )
 		{
 			// All is well.
-			return;
+			return;		
 		}
 	}
 }
@@ -1009,7 +1009,7 @@ const char* TiXmlAttributeA::Parse( const char* p, TiXmlParsingDataA* data )
 		if ( document ) document->SetError( TIXMLA_ERROR_READING_ATTRIBUTES, p, data );
 		return 0;
 	}
-
+	
 	const char* end;
 
 	if ( *p == '\'' )
@@ -1046,7 +1046,7 @@ void TiXmlTextA::StreamIn( TIXMLA_ISTREAM * in, TIXMLA_STRING * tag )
 {
 	while ( in->good() )
 	{
-		int c = in->peek();
+		int c = in->peek();	
 		if ( c == '<' )
 			return;
 
@@ -1126,19 +1126,19 @@ const char* TiXmlDeclarationA::Parse( const char* p, TiXmlParsingDataA* data )
 		if ( StringEqual( p, "version", true ) )
 		{
 			TiXmlAttributeA attrib;
-			p = attrib.Parse( p, data );
+			p = attrib.Parse( p, data );		
 			version = attrib.Value();
 		}
 		else if ( StringEqual( p, "encoding", true ) )
 		{
 			TiXmlAttributeA attrib;
-			p = attrib.Parse( p, data );
+			p = attrib.Parse( p, data );		
 			encoding = attrib.Value();
 		}
 		else if ( StringEqual( p, "standalone", true ) )
 		{
 			TiXmlAttributeA attrib;
-			p = attrib.Parse( p, data );
+			p = attrib.Parse( p, data );		
 			standalone = attrib.Value();
 		}
 		else
@@ -1153,7 +1153,7 @@ const char* TiXmlDeclarationA::Parse( const char* p, TiXmlParsingDataA* data )
 
 bool TiXmlTextA::Blank() const
 {
-	for ( unsigned i=0; i<value.length(); i++ )
+	for ( unsigned int i=0, len=value.length(); i<len; i++ )
 		if ( !isspace( value[i] ) )
 			return false;
 	return true;

@@ -52,7 +52,7 @@ static const char * const emptyWordListDesc[] = {
 	0
 };
 
-static void ColouriseSearchResultLine(SearchResultMarkings* pMarkings, char *lineBuffer, unsigned int lengthLine, unsigned int startLine, unsigned int endPos, Accessor &styler, int linenum)
+static void ColouriseSearchResultLine(SearchResultMarkings* pMarkings, char *lineBuffer, unsigned int lengthLine, unsigned int startLine, unsigned int endPos, Accessor &styler, int linenum) 
 {
 	// startLine and endPos are the absolute positions.
 
@@ -68,14 +68,14 @@ static void ColouriseSearchResultLine(SearchResultMarkings* pMarkings, char *lin
 	{
 		const unsigned int firstTokenLen = 4;
 		unsigned int currentPos;
-
+		
 		PLATFORM_ASSERT(lengthLine >= firstTokenLen + 2);
 
 		styler.ColourTo(startLine + firstTokenLen, SCE_SEARCHRESULT_DEFAULT);
 
 		for (currentPos = firstTokenLen; lineBuffer[currentPos] != ':' ; currentPos++) PLATFORM_ASSERT(currentPos < lengthLine);
 		styler.ColourTo(startLine + currentPos - 1, SCE_SEARCHRESULT_LINE_NUMBER);
-
+		
 		int currentStat = SCE_SEARCHRESULT_DEFAULT;
 
 		PLATFORM_ASSERT(linenum < pMarkings->_length);
@@ -87,9 +87,9 @@ static void ColouriseSearchResultLine(SearchResultMarkings* pMarkings, char *lin
 
 		if  (match_start <= endPos) {
 			styler.ColourTo(match_start, SCE_SEARCHRESULT_DEFAULT);
-			if  (match_end <= endPos)
+			if  (match_end <= endPos) 
 				styler.ColourTo(match_end, SCE_SEARCHRESULT_WORD2SEARCH);
-			else
+			else 
 				currentStat = SCE_SEARCHRESULT_WORD2SEARCH;
 		}
 		styler.ColourTo(endPos, currentStat);
@@ -148,11 +148,11 @@ static void FoldSearchResultDoc(unsigned int startPos, int length, int, WordList
 		styleNext = styler.StyleAt(i + 1);
 		bool atEOL = (ch == '\n') || (ch == '\r' && chNext != '\n');
 
-		if (style == SCE_SEARCHRESULT_FILE_HEADER)
+		if (style == SCE_SEARCHRESULT_FILE_HEADER) 
 		{
 			headerPoint = fileHeaderLevel;
 		}
-		else if (style == SCE_SEARCHRESULT_SEARCH_HEADER)
+		else if (style == SCE_SEARCHRESULT_SEARCH_HEADER) 
 		{
 			headerPoint = searchHeaderLevel;
 		}

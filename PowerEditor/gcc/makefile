@@ -191,7 +191,7 @@ NotepadPP: $(OBJS) $(OBJ_RES)
 
 NotepadPPUnicode: $(OBJS) $(OBJ_RES)
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(LDFLAGS) $(OBJS) $(OBJ_RES) -o $(EXEC) $(LIBS)
-
+	
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 

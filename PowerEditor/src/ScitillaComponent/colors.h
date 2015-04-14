@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -65,7 +65,7 @@ const COLORREF veryLitePurple           = RGB(0xE7, 0xD8, 0xE9);
 const COLORREF liteBerge				= RGB(0xFE, 0xFC, 0xF5);
 const COLORREF berge					= RGB(0xFD, 0xF8, 0xE3);
 /*
-#define RGB2int(color)
+#define RGB2int(color) 
     (((((long)color) & 0x0000FF) << 16) | ((((long)color) & 0x00FF00)) | ((((long)color) & 0xFF0000) >> 16))
 */
 #endif //COLORS_H

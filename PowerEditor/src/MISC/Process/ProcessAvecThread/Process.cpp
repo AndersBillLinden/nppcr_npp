@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -51,7 +51,7 @@ BOOL Process::run()
 		// Create stdout pipe
 		if (!::CreatePipe(&_hPipeOutR, &hPipeOutW, &sa, 0))
 			error(TEXT("CreatePipe"), result, 1000);
-
+		
 		// Create stderr pipe
 		if (!::CreatePipe(&_hPipeErrR, &hPipeErrW, &sa, 0))
 			error(TEXT("CreatePipe"), result, 1001);
@@ -76,7 +76,7 @@ BOOL Process::run()
 						_curDir,        // inherit directory
 						&startup,    // STARTUPINFO
 						&procinfo);  // PROCESS_INFORMATION
-
+		
 		_hProcess = procinfo.hProcess;
 		_hProcessThread = procinfo.hThread;
 
@@ -94,7 +94,7 @@ BOOL Process::run()
 		hListenerStdOutThread = ::CreateThread(NULL, 0, staticListenerStdOut, this, 0, NULL);
 		if (!hListenerStdOutThread)
 			error(TEXT("CreateThread"), result, 1005);
-
+		
 		hListenerStdErrThread = ::CreateThread(NULL, 0, staticListenerStdErr, this, 0, NULL);
 		if (!hListenerStdErrThread)
 			error(TEXT("CreateThread"), result, 1006);
@@ -141,7 +141,7 @@ void Process::listenerStdOut()
 	//TCHAR bufferErr[MAX_LINE_LENGTH + 1];
 
 	int nExitCode = STILL_ACTIVE;
-
+	
 	DWORD outbytesRead;
 
 	::ResumeThread(_hProcessThread);
@@ -149,13 +149,13 @@ void Process::listenerStdOut()
     bool goOn = true;
 	while (goOn)
 	{ // got data
-		memset(bufferOut,0x00,MAX_LINE_LENGTH + 1);
+		memset(bufferOut,0x00,MAX_LINE_LENGTH + 1); 
 		//memset(bufferErr,0x00,MAX_LINE_LENGTH + 1);
 		taille = sizeof(bufferOut) - sizeof(TCHAR);
-
+		
 		Sleep(50);
 
-		if (!::PeekNamedPipe(_hPipeOutR, bufferOut, taille, &outbytesRead, &bytesAvail, NULL))
+		if (!::PeekNamedPipe(_hPipeOutR, bufferOut, taille, &outbytesRead, &bytesAvail, NULL)) 
 		{
 			bytesAvail = 0;
             goOn = false;
@@ -209,12 +209,12 @@ void Process::listenerStdErr()
 	TCHAR bufferErr[MAX_LINE_LENGTH + 1];
 
 	int nExitCode = STILL_ACTIVE;
-
+	
 	DWORD errbytesRead;
 
 	::ResumeThread(_hProcessThread);
 
-    bool goOn = true;
+    bool goOn = true; 
 	while (goOn)
 	{ // got data
 		memset(bufferErr, 0x00, MAX_LINE_LENGTH + 1);
@@ -222,7 +222,7 @@ void Process::listenerStdErr()
 
 		Sleep(50);
 
-		if (!::PeekNamedPipe(_hPipeErrR, bufferErr, taille, &errbytesRead, &bytesAvail, NULL))
+		if (!::PeekNamedPipe(_hPipeErrR, bufferErr, taille, &errbytesRead, &bytesAvail, NULL)) 
 		{
 			bytesAvail = 0;
             goOn = false;

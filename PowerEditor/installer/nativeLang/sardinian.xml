@@ -4,22 +4,22 @@
 	Last modified Sat, December 24th, 2011 01:10 GMT by Marco Solinas.
 	Please e-mail errors, suggestions etc. to solinas.marco(at)libero.it.
 	For updates, see https://sourceforge.net/projects/notepad-plus/forums/forum/558104/topic/1853765
-
+	
 	Custa tradutzioni est fata sighendu is arrégulas de sa "Limba Sarda Comuna". Custu scioberu
 	ndi benit de sa necessidadi de dhi donai a sa comunidadi informàtica sarda un'aina chi potzat
 	essi imperada de totus, in Sardu, sentza de fai distintzioni peruna tra variantis. Ammarolla, ca
-	dèu etotu soi unu "cabesutesu", sa basi de su Sardu chi dhui at, in custa faina, a suta de sa LSC
+	dèu etotu soi unu "cabesutesu", sa basi de su Sardu chi dhui at, in custa faina, a suta de sa LSC 
 	est cussu chi apu sempri intèndiu allegai dèu: s'Olliastrinu de costera. In dónnia manera, ca
 	dèu soi unu de cussus chi funt cumbintus chi totugantu su Sardu apartenit a totus is Sardus, timoria
 	de is préstitus internus no ndi tèngiu: tandu, candu apu agatau una calisisiat paràulas de una
 	calisiollat de is atras variantis chi fut sa mellus po sa craresa de unu cuncetu informàticu,
 	dh'apu scioberada sentza de nci pensai mancu pagu pagu.
-
+	
 	Ia a bolli torrai gràtzias a totus is amigus chi m'ant donau una manu de agiudu in custa
-	faina de tradutzioni. Mescamenti, unu gràtzias mannu meda tocat a si dhu torrai a su
-	prof. Roberto Bolognesi e a su dot. Cristiano Becciu, po sa passiéntzia chi ant tentu in
+	faina de tradutzioni. Mescamenti, unu gràtzias mannu meda tocat a si dhu torrai a su 
+	prof. Roberto Bolognesi e a su dot. Cristiano Becciu, po sa passiéntzia chi ant tentu in 
 	su processu de curretzioni de custu file.
-
+	
 	Gràtzias de coru!
 	Marco
 -->
@@ -134,8 +134,8 @@
                     <Item id = "42032" name = "Esecuta una macro medas bortas..."/>
                     <Item id = "42033" name = "Lìmpia su flag de letura isceti"/>
 					<Item id = "42034" name = "Editor a culunnas..."/>
-					<Item id = "42035" name = "Pone a cummentu su blocu (onni riga)"/>
-					<Item id = "42036" name = "Pone sena cummentu su blocu (onni riga)"/>
+					<Item id = "42035" name = "Pone a cummentu su blocu (onni riga)"/> 
+					<Item id = "42036" name = "Pone sena cummentu su blocu (onni riga)"/> 
 					<Item id = "42037" name = "Modalidade culunna..."/>
 					<Item id = "42038" name = "Apìtziga càbidu HTML"/>
 					<Item id = "42039" name = "Apìtziga càbidu RTF"/>
@@ -182,7 +182,7 @@
 					<Item id = "43027" name = "Iscantzella 3º istile"/>
 					<Item id = "43029" name = "Iscantzella 4º istile"/>
 					<Item id = "43031" name = "Iscantzella 5º istile"/>
-					<Item id = "43032" name = "Iscantzella totus is istiles"/>
+					<Item id = "43032" name = "Iscantzella totus is istiles"/>  					
 					<Item id = "43033" name = "1º istile"/>
 					<Item id = "43034" name = "2º istile"/>
 					<Item id = "43035" name = "3º istile"/>
@@ -236,7 +236,7 @@
                     <Item id = "45006" name = "Codìfica in UCS-2 Big Endian"/>
                     <Item id = "45007" name = "Codìfica in UCS-2 Little Endian"/>
                     <Item id = "45008" name = "Codìfica in UTF-8 (sena BOM)"/>
-					<Item id = "45009" name = "Cunverte in ANSI"/>
+					<Item id = "45009" name = "Cunverte in ANSI"/> 
 					<Item id = "45010" name = "Cunverte in UTF-8 (sena BOM)"/>
 					<Item id = "45011" name = "Cunverte in UTF-8"/>
 					<Item id = "45012" name = "Cunverte in UCS-2 Big Endian"/>
@@ -466,7 +466,7 @@
 					<Item id = "6113" name = "Dòpiu click serrat un'ischeda"/>
 					<Item id = "6118" name = "Cua"/>
 					<Item id = "6119" name = "Imprea prus rigas"/>
-					<Item id = "6120" name = "Verticale"/>
+					<Item id = "6120" name = "Verticale"/>					
 					<Item id = "6121" name = "Barra de is menus"/>
 					<Item id = "6122" name = "Cua (Alt o F10 pro ammustrare)"/>
 					<Item id = "6123" name = "Seletziona Limba"/>
@@ -479,27 +479,27 @@
 					<Item id = "6219" name = "Lestresa:"/>
 					<Item id = "6221" name = "V"/>
 					<Item id = "6222" name = "L"/>
-
+					
 					<Item id = "6303" name = "Dimensione: "/>
-
+					
 					<Item id = "6201" name = "Istile de s'acàbidu"/>
 					<Item id = "6202" name = "Simple"/>
 					<Item id = "6203" name = "Fritza"/>
 					<Item id = "6204" name = "Chircu"/>
 					<Item id = "6205" name = "Cuadradu"/>
-
+					
 					<Item id = "6206" name = "Faghe a bìdere is nùmeros de riga"/>
 					<Item id = "6207" name = "Faghe a bìdere is sinnalibros"/>
 					<Item id = "6208" name = "Faghe a bìdere làcana de culunna"/>
 					<Item id = "6209" name = "Nùmeru de culunna: "/>
-
+					
 					<Item id = "6211" name = "Impostatzione de sa làcana de culunna"/>
 					<Item id = "6212" name = "Modalidade 'lìnia'"/>
 					<Item id = "6213" name = "Modalidade 'isfundu'"/>
 					<Item id = "6214" name = "Evidèntzia custa riga"/>
 					<Item id = "6224" name = "Impostatziones sèberu mùltiplu"/>
 					<Item id = "6225" name = "Abìlita (Ctrl+Click/seletzione)"/>
-                    <Item id = "6226" name = "Perunu"/>
+                    <Item id = "6226" name = "Perunu"/>			
                     <Item id = "6227" name = "A capu automàticu"/>
                     <Item id = "6228" name = "Default"/>
                     <Item id = "6229" name = "Alliniadu"/>
@@ -538,7 +538,7 @@
 				<LangMenu title = "Menù Limbàgiu/Impostatziones tabulatziones">
 					<Item id = "6505" name = "A disponimentu"/>
 					<Item id = "6506" name = "No abilitados"/>
-					<Item id = "6507" name = "Abbàtziga su menù"/>
+					<Item id = "6507" name = "Abbàtziga su menù"/> 
 					<Item id = "6508" name = "Menù &quot;Limbàgios&quot;" />
 					<Item id = "6510" name = "Imprea predefinidu" />
 					<Item id = "6301" name = "Impostatziones Tabulatziones" />
@@ -605,8 +605,8 @@
 					<Item id = "6808" name = "Ativa s'auto-cumprimentu pro cada input"/>
 					<Item id = "6809" name = "Cumprimentu funtzione"/>
 					<Item id = "6810" name = "Cumprimentu paràula"/>
-					<Item id = "6811" name = "Dae"/>
-					<Item id = "6813" name = "º caràtere"/>
+					<Item id = "6811" name = "Dae"/> 
+					<Item id = "6813" name = "º caràtere"/> 
 					<Item id = "6814" name = "Valores vàlidos: 1 - 9"/>
 					<Item id = "6815" name = "Ammustra paràm. funtziones insertende·ddos"/>
 					<Item id = "6315" name = "Perunu"/>

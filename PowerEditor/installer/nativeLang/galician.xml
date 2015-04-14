@@ -23,13 +23,13 @@
 					<Item idName = "Plugins" name = "Engadidos"/>
 					<Item idName = "Window" name = "Xanelas"/>
 				</Entries>
-
+             
                 <!-- Entradas de Sub-menú -->
                 <SubEntries>
                     <Item subMenuId="view-collapseLevel" name = "Encoller nivel"/>
                     <Item subMenuId="view-uncollapseLevel" name = "Expandir nivel"/>
                 </SubEntries>
-
+                
                 <!-- opcións de menú -->
                 <Commands>
                     <Item id = "41001" name = "&amp;Novo"/>
@@ -46,7 +46,7 @@
 					<Item id = "41012" name = "Cargar sesión..."/>
                     <Item id = "41013" name = "Gardar sesión..."/>
                     <Item id = "41014" name = "Recargar dendo disco"/>
-
+					
                     <Item id = "42001" name = "Cor&amp;tar"/>
                     <Item id = "42002" name = "&amp;Copiar"/>
                     <Item id = "42003" name = "&amp;Desfacer"/>
@@ -59,8 +59,8 @@
                     <Item id = "42010" name = "Duplicar liña actual"/>
                     <Item id = "42012" name = "Dividir liñas"/>
                     <Item id = "42013" name = "Xuntar liñas"/>
-                    <Item id = "42014" name = "Subir liña actual"/>
-                    <Item id = "42015" name = "Baixar liña actual"/>
+                    <Item id = "42014" name = "Subir liña actual"/>   
+                    <Item id = "42015" name = "Baixar liña actual"/>   
                     <Item id = "42016" name = "Converter a MAIÚSCULAS"/>
                     <Item id = "42017" name = "Converter a minúsculas"/>
                     <Item id = "42018" name = "&amp;Encetar gravación"/>
@@ -80,7 +80,7 @@
                     <Item id = "42033" name = "Quitar marca de só letura"/>
 					<Item id = "42035" name = "Comentar selección"/>
 					<Item id = "42036" name = "Descomentar selección"/>
-
+					
                     <Item id = "43001" name = "&amp;Buscar..."/>
                     <Item id = "43002" name = "Buscar &amp;seguinte"/>
                     <Item id = "43003" name = "Reemprazar..."/>
@@ -116,7 +116,7 @@
                     <Item id = "44035" name = "Sincronización vertical"/>
                     <Item id = "44036" name = "Sincronización horizontal"/>
                     <Item id = "44041" name = "Amosar símbolo de axuste"/>
-
+                    
                     <Item id = "45001" name = "Converter a formato Windows"/>
                     <Item id = "45002" name = "Converter a formato UNIX"/>
                     <Item id = "45003" name = "Converter a formato MAC"/>
@@ -130,12 +130,12 @@
 			<Item id = "45011" name = "Converter en UTF-8"/>
 			<Item id = "45012" name = "Converter en UCS-2 Big Endian"/>
 			<Item id = "45013" name = "Converter en UCS-2 Little Endian"/>
-
+					
                     <Item id = "10001" name = "Ir a outra vista"/>
                     <Item id = "10002" name = "Clonar noutra vista"/>
                     <Item id = "10003" name = "Mover a nova xanela"/>
                     <Item id = "10004" name = "Abrir en nova xanela"/>
-
+                    
                     <Item id = "46001" name = "Configurador de estilo..."/>
                     <Item id = "47000" name = "Sobre o Notepad++..."/>
                     <Item id = "47001" name = "Web de Notepad++"/>
@@ -143,18 +143,18 @@
                     <Item id = "47003" name = "Axuda en liña"/>
                     <Item id = "47004" name = "Foro"/>
                     <Item id = "47005" name = "Descargar máis 'engadidos'"/>
-
+					
                     <Item id = "48009" name = "Xestor de atallos de teclado..."/>
                     <Item id = "48011" name = "Preferencias..."/>
                     <Item id = "49000" name = "&amp;Executar..."/>
-
+					
 					<Item id = "50000" name = "Completar función"/>
                     <Item id = "50001" name = "Completar verba"/>
                     <Item id = "42034" name = "Editor de columnas..."/>
                     <Item id = "44042" name = "Agochar liñas"/>
                     <Item id = "42040" name = "Abrir tódolos arquivos recentes"/>
                     <Item id = "42041" name = "Borrar historial de recentes"/>
-
+					
                 </Commands>
             </Main>
             <Splitter>
@@ -169,7 +169,7 @@
                     <Item CMID = "6" name = "Clonar noutra vista"/>
             </TabBar>
         </Menu>
-
+        
         <Dialog>
             <Find title = "" titleFind = "Buscar" titleReplace = "Reemprazar" titleFindInFiles = "Buscar en arquivos">
                 <Item id = "1" name = "Buscar seguinte"/>
@@ -190,19 +190,19 @@
                 <Item id = "1611" name = "Reem&amp;prazar con:"/>
                 <Item id = "1608" name = "&amp;Reemprazar"/>
                 <Item id = "1609" name = "Reemprazar &amp;todo"/>
-				<Item id = "1623" name = "Transparencia"/>
-				<Item id = "1687" name = "Na selección"/>
-				<Item id = "1688" name = "Sempre"/>
-				<Item id = "1632" name = "Na selección"/>
-				<Item id = "1633" name = "Limpar"/>
-				<Item id = "1635" name = "Reemprazar en tódolos documentos abertos"/>
-				<Item id = "1636" name = "Buscar en tódolos documentos abertos"/>
-				<Item id = "1637" name = "Atopar nos arquivos"/>
-				<Item id = "1640" name = "Diálogo"/>
-				<Item id = "1654" name = "Filtros:"/>
-				<Item id = "1655" name = "Cartafol:"/>
-				<Item id = "1656" name = "Buscar todo"/>
-				<Item id = "1658" name = "En tódolos subcartafoles"/>
+			 	<Item id = "1623" name = "Transparencia"/>
+			 	<Item id = "1687" name = "Na selección"/>
+			 	<Item id = "1688" name = "Sempre"/>
+			 	<Item id = "1632" name = "Na selección"/>
+			 	<Item id = "1633" name = "Limpar"/>
+			 	<Item id = "1635" name = "Reemprazar en tódolos documentos abertos"/>
+			 	<Item id = "1636" name = "Buscar en tódolos documentos abertos"/>
+			 	<Item id = "1637" name = "Atopar nos arquivos"/>
+			 	<Item id = "1640" name = "Diálogo"/>
+			 	<Item id = "1654" name = "Filtros:"/>
+			 	<Item id = "1655" name = "Cartafol:"/>
+			 	<Item id = "1656" name = "Buscar todo"/>
+			 	<Item id = "1658" name = "En tódolos subcartafoles"/>
             </Find>
             <GoToLine title = "Ir á liña #">
                 <Item id = "1" name = "&amp;Ir"/>
@@ -218,15 +218,15 @@
                 <Item id = "2" name = "Esquecer"/>
                 <Item id = "1904" name = "Gardar..."/>
             </Run>
-
+            
             <StyleConfig title = "Configurador de estilo">
 				<Item id = "1" name = "Probar!"/>
 				<Item id = "2" name = "Esquecer"/>
 				<Item id = "2301" name = "Gardar &amp;&amp; Pechar"/>
-				<Item id = "2303" name = "Transparencia"/>
-
+				<Item id = "2303" name = "Transparencia"/>		
+				
                 <SubDialog>
-			<Item id = "2204" name = "Grosa"/>
+                	<Item id = "2204" name = "Grosa"/>
                     <Item id = "2205" name = "Cursiva"/>
                     <Item id = "2206" name = "Cor da tipografía"/>
                     <Item id = "2207" name = "Cor do fondo"/>
@@ -251,10 +251,10 @@
                     <Item id = "2230" name = "Activar tipografía xeral en grosa"/>
                     <Item id = "2231" name = "Activar tipografía xeral en cursiva"/>
                     <Item id = "2232" name = "Activar tipografía xeral en subliñar"/>
-                </SubDialog>
-
+                </SubDialog>                
+				
             </StyleConfig>
-
+            
             <UserDefine title = "Definido polo usuario">
 				<Item id = "20002" name = "Renomear"/>
 				<Item id = "20003" name = "Crear novo..."/>
@@ -317,13 +317,13 @@
 					<Item id = "6103" name = "Iconas pequenas"/>
 	                <Item id = "6104" name = "Iconas grandes"/>
 					<Item id = "6105" name = "Iconas pequenas predeterminadas"/>
-
+					
 					<Item id = "6106" name = "Barra de lapelas"/>
 					<Item id = "6107" name = "Reducir texto"/>
 					<Item id = "6108" name = "Bloquear (impedir arrastrar e soltar)"/>
 					<Item id = "6109" name = "Amosar xanelas inactivas"/>
 					<Item id = "6110" name = "Amosar liña laranxa na activa"/>
-
+					
 					<Item id = "6111" name = "Amosar barra de estado"/>
 					<Item id = "6112" name = "Botón de peche en cada lapela"/>
 					<Item id = "6113" name = "Duplo click para pechar un documento"/>
@@ -337,12 +337,12 @@
 					<Item id = "6203" name = "Frechas"/>
 	                <Item id = "6204" name = "Cercos"/>
 					<Item id = "6205" name = "Cadros"/>
-
+					
 					<Item id = "6206" name = "Amosar número de liña"/>
 					<Item id = "6207" name = "Amosar marcas"/>
 					<Item id = "6208" name = "Amosar limite vertical"/>
 					<Item id = "6209" name = "Número de columna: "/>
-
+					
 					<Item id = "6211" name = "Límite vertical"/>
 					<Item id = "6212" name = "Xeito liñal"/>
 					<Item id = "6213" name = "Xeito de fondo"/>
@@ -413,7 +413,7 @@
 					<Item id = "6320" name = "Non debuxar subliñado"/>
 					<Item id = "6323" name = "Activar actualización automática"/>
 					<Item id = "6324" name = "Alternar documentos (Ctrl+TAB)"/>
-
+					
 					<Item id = "6114" name = "Permitir alternar documentos (Ctrl+Tab)"/>
 					<Item id = "6115" name = "Sangría automática"/>
 					<Item id = "6116" name = "Lembrar o último cartafol usado"/>

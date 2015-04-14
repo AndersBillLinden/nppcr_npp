@@ -1,16 +1,16 @@
 // this file is part of docking functionality for Notepad++
 // Copyright (C)2005 Jens Lorenz <jens.plugin.npp@gmx.de>
-//
+// 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either
 // version 2 of the License, or (at your option) any later version.
-//
+// 
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -20,7 +20,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
+// 
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -37,6 +37,7 @@
 #include "Docking.h"
 #endif //DOCKING_H
 
+
 using namespace std;
 
 
@@ -45,8 +46,6 @@ using namespace std;
 #define POPUP_EXSTYLES		(WS_EX_CONTROLPARENT|WS_EX_WINDOWEDGE|WS_EX_TOOLWINDOW)
 #define CHILD_STYLES		(WS_CHILD)
 #define CHILD_EXSTYLES		(0x00000000L)
-
-#define MIN_TABWIDTH		24
 
 
 enum eMousePos {
@@ -57,7 +56,6 @@ enum eMousePos {
 
 // some fix modify values for GUI
 #define	HIGH_CAPTION		18
-#define HIGH_TAB			20
 #define CAPTION_GAP			2
 #define CLOSEBTN_POS_LEFT	3
 #define CLOSEBTN_POS_TOP	3
@@ -74,7 +72,7 @@ public:
 	HWND getTabWnd() {
 		return _hContTab;
 	};
-	HWND getCaptionWnd() {
+	HWND getCaptionWnd() { 
 		if (_isFloating == false)
 			return _hCaption;
 		else
@@ -89,7 +87,7 @@ public:
 	void showToolbar(tTbData *pTbData, BOOL state);
 
 	BOOL updateInfo(HWND hClient) {
-		for (size_t iTb = 0; iTb < _vTbData.size(); iTb++)
+		for (size_t iTb = 0; iTb < _vTbData.size(); ++iTb)
 		{
 			if (_vTbData[iTb]->hClient == hClient)
 			{
@@ -210,7 +208,7 @@ private:
 	BOOL					_isMouseClose;
 	BOOL					_isMouseOver;
 	RECT					_rcCaption;
-
+	
 	// tab style
 	BOOL					_bDrawOgLine;
 
@@ -226,7 +224,6 @@ private:
 	// for moving and reordering
 	UINT					_prevItem;
 	BOOL					_beginDrag;
-	HIMAGELIST				_hImageList;
 
 	// Is tooltip
 	BOOL					_bTabTTHover;

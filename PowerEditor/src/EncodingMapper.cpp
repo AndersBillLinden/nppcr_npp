@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -41,15 +41,15 @@ EncodingUnit encodings[] = {
     {1256,  "windows-1256"},                                                                    //IDM_FORMAT_WIN_1256
     {1257,  "windows-1257"},                                                                    //IDM_FORMAT_WIN_1257
     {1258,  "windows-1258"},                                                                    //IDM_FORMAT_WIN_1258
-    {28591, "latin1 ISO_8859-1 ISO-8859-1 CP819 IBM819 csISOLatin1 iso-ir-100 l1"},             //IDM_FORMAT_ISO_8859_1
-    {28592, "latin2 ISO_8859-2 ISO-8859-2 csISOLatin2 iso-ir-101 l2"},                          //IDM_FORMAT_ISO_8859_2
-    {28593, "latin3 ISO_8859-3 ISO-8859-3 csISOLatin3 iso-ir-109 l3"},                          //IDM_FORMAT_ISO_8859_3
-    {28594, "latin4 ISO_8859-4 ISO-8859-4 csISOLatin4 iso-ir-110 l4"},                          //IDM_FORMAT_ISO_8859_4
-    {28595, "cyrillic ISO_8859-5 ISO-8859-5 csISOLatinCyrillic iso-ir-144"},                    //IDM_FORMAT_ISO_8859_5
-    {28596, "arabic ISO_8859-6 ISO-8859-6 csISOLatinArabic iso-ir-127 ASMO-708 ECMA-114"},      //IDM_FORMAT_ISO_8859_6
-    {28597, "greek ISO_8859-7 ISO-8859-7 csISOLatinGreek greek8 iso-ir-126 ELOT_928 ECMA-118"}, //IDM_FORMAT_ISO_8859_7
-    {28598, "hebrew ISO_8859-8 ISO-8859-8 csISOLatinHebrew iso-ir-138"},                        //IDM_FORMAT_ISO_8859_8
-    {28599, "latin5 ISO_8859-9 ISO-8859-9 csISOLatin5 iso-ir-148 l5"},                          //IDM_FORMAT_ISO_8859_9
+    {28591, "latin1 ISO_8859-1 ISO-8859-1 CP819 IBM819 csISOLatin1 iso-ir-100 l1"},             //IDM_FORMAT_ISO_8859_1 
+    {28592, "latin2 ISO_8859-2 ISO-8859-2 csISOLatin2 iso-ir-101 l2"},                          //IDM_FORMAT_ISO_8859_2 
+    {28593, "latin3 ISO_8859-3 ISO-8859-3 csISOLatin3 iso-ir-109 l3"},                          //IDM_FORMAT_ISO_8859_3 
+    {28594, "latin4 ISO_8859-4 ISO-8859-4 csISOLatin4 iso-ir-110 l4"},                          //IDM_FORMAT_ISO_8859_4 
+    {28595, "cyrillic ISO_8859-5 ISO-8859-5 csISOLatinCyrillic iso-ir-144"},                    //IDM_FORMAT_ISO_8859_5 
+    {28596, "arabic ISO_8859-6 ISO-8859-6 csISOLatinArabic iso-ir-127 ASMO-708 ECMA-114"},      //IDM_FORMAT_ISO_8859_6 
+    {28597, "greek ISO_8859-7 ISO-8859-7 csISOLatinGreek greek8 iso-ir-126 ELOT_928 ECMA-118"}, //IDM_FORMAT_ISO_8859_7 
+    {28598, "hebrew ISO_8859-8 ISO-8859-8 csISOLatinHebrew iso-ir-138"},                        //IDM_FORMAT_ISO_8859_8 
+    {28599, "latin5 ISO_8859-9 ISO-8859-9 csISOLatin5 iso-ir-148 l5"},                          //IDM_FORMAT_ISO_8859_9 
     {28600, ""/*"latin6 ISO_8859-10 ISO-8859-10 csISOLatin6 iso-ir-157 l6"*/},                        //IDM_FORMAT_ISO_8859_10
     {28601, ""/*"ISO_8859-11 ISO-8859-11"*/},                                                         //IDM_FORMAT_ISO_8859_11
     {28603, "ISO_8859-13 ISO-8859-13"},                                                         //IDM_FORMAT_ISO_8859_13
@@ -73,7 +73,7 @@ EncodingUnit encodings[] = {
     {866,   "IBM866 cp866 oem866 866"},                                                         //IDM_FORMAT_DOS_866
     {869,   "IBM869 cp869 oem869 869"},                                                         //IDM_FORMAT_DOS_869
     {950,   "big5 csBig5"},                                                                     //IDM_FORMAT_BIG5
-    {936,   "gb2312 gbk csGB2312"},                                                             //IDM_FORMAT_GB2312
+    {936,   "gb2312 gbk csGB2312 gb18030"},                                                     //IDM_FORMAT_GB2312
     {932,   "Shift_JIS MS_Kanji csShiftJIS csWindows31J"},                                      //IDM_FORMAT_SHIFT_JIS
     {949,   "windows-949 korean"},                                                              //IDM_FORMAT_KOREAN_WIN
     {51949, "euc-kr csEUCKR"},                                                                  //IDM_FORMAT_EUC_KR
@@ -89,9 +89,9 @@ bool isInListA(const char *token, const char *list) {
 	if ((!token) || (!list))
 		return false;
 	char word[64];
-	int i = 0;
-	int j = 0;
-	for (; i <= int(strlen(list)) ; i++)
+	size_t i = 0;
+	size_t j = 0;
+	for (size_t len = strlen(list); i <= len; ++i)
 	{
 		if ((list[i] == ' ')||(list[i] == '\0'))
 		{
@@ -99,15 +99,15 @@ bool isInListA(const char *token, const char *list) {
 			{
 				word[j] = '\0';
 				j = 0;
-
+				
 				if (!stricmp(token, word))
 					return true;
 			}
 		}
-		else
+		else 
 		{
 			word[j] = list[i];
-			j++;
+			++j;
 		}
 	}
 	return false;
@@ -126,7 +126,7 @@ int EncodingMapper::getIndexFromEncoding(int encoding) const
 	bool found = false;
 	size_t nbItem = sizeof(encodings)/sizeof(EncodingUnit);
 	size_t i = 0;
-	for ( ; i < nbItem ; i++)
+	for ( ; i < nbItem ; ++i)
 	{
 		if (encodings[i]._codePage == encoding)
 		{
@@ -144,7 +144,7 @@ int EncodingMapper::getEncodingFromString(const char *encodingAlias) const
 
 	size_t nbItem = sizeof(encodings)/sizeof(EncodingUnit);
 	int enc = -1;
-	for (size_t i = 0 ; i < nbItem ; i++)
+	for (size_t i = 0 ; i < nbItem ; ++i)
 	{
 		if (isInListA(encodingAlias, encodings[i]._aliasList))
 		{

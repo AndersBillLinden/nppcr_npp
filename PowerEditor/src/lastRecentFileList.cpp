@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -48,7 +48,7 @@ void LastRecentFileList::initMenu(HMENU hMenu, int idBase, int posBase, bool doS
 	_posBase = posBase;
 	_nativeLangEncoding = NPP_CP_WIN_1252;
 
-	for (int i = 0 ; i < sizeof(_idFreeArray) ; i++)
+	for (int i = 0 ; i < sizeof(_idFreeArray) ; ++i)
 		_idFreeArray[i] = true;
 }
 
@@ -59,7 +59,7 @@ void LastRecentFileList::switchMode()
 	::RemoveMenu(_hMenu, IDM_OPEN_ALL_RECENT_FILE, MF_BYCOMMAND);
 	::RemoveMenu(_hMenu, IDM_CLEAN_RECENT_FILE_LIST, MF_BYCOMMAND);
 
-	for(int i = 0; i < _size; i++)
+	for(int i = 0; i < _size; ++i)
 	{
 		::RemoveMenu(_hMenu, _lrfl.at(i)._id, MF_BYCOMMAND);
 	}
@@ -94,8 +94,8 @@ void LastRecentFileList::updateMenu()
 {
 	NppParameters *pNppParam = NppParameters::getInstance();
 
-	if (!_hasSeparators && _size > 0)
-	{
+	if (!_hasSeparators && _size > 0) 
+	{	
 		//add separators
 		NativeLangSpeaker *pNativeLangSpeaker = pNppParam->getNativeLangSpeaker();
 
@@ -144,20 +144,20 @@ void LastRecentFileList::updateMenu()
 	}
 
 	//Remove all menu items
-	for(int i = 0; i < _size; i++)
+	for(int i = 0; i < _size; ++i) 
 	{
 		::RemoveMenu(_hMenu, _lrfl.at(i)._id, MF_BYCOMMAND);
 	}
 	//Then readd them, so everything stays in sync
-	for(int j = 0; j < _size; j++)
+	for(int j = 0; j < _size; ++j)
 	{
 		generic_string strBuffer(BuildMenuFileName(pNppParam->getRecentFileCustomLength(), j, _lrfl.at(j)._name));
 		::InsertMenu(_hMenu, _posBase + j, MF_BYPOSITION, _lrfl.at(j)._id, strBuffer.c_str());
 	}
-
+	
 }
 
-void LastRecentFileList::add(const TCHAR *fn)
+void LastRecentFileList::add(const TCHAR *fn) 
 {
 	if (_userMax == 0 || _locked)
 		return;
@@ -174,20 +174,20 @@ void LastRecentFileList::add(const TCHAR *fn)
 		_lrfl.pop_back();	//remove oldest
 	} else {
 		itemToAdd._id = popFirstAvailableID();
-		_size++;
+		++_size;
 	}
 	_lrfl.push_front(itemToAdd);
 	updateMenu();
 };
 
-void LastRecentFileList::remove(const TCHAR *fn)
-{
+void LastRecentFileList::remove(const TCHAR *fn) 
+{ 
 	int index = find(fn);
 	if (index != -1)
 		remove(index);
 };
 
-void LastRecentFileList::remove(int index)
+void LastRecentFileList::remove(int index) 
 {
 	if (_size == 0 || _locked)
 		return;
@@ -196,18 +196,18 @@ void LastRecentFileList::remove(int index)
 		::RemoveMenu(_hMenu, _lrfl.at(index)._id, MF_BYCOMMAND);
 		setAvailable(_lrfl.at(index)._id);
 		_lrfl.erase(_lrfl.begin() + index);
-		_size--;
+		--_size;
 		updateMenu();
 	}
 };
 
 
-void LastRecentFileList::clear()
+void LastRecentFileList::clear() 
 {
 	if (_size == 0)
 		return;
 
-	for(int i = (_size-1); i >= 0; i--)
+	for(int i = (_size-1); i >= 0; i--) 
 	{
 		::RemoveMenu(_hMenu, _lrfl.at(i)._id, MF_BYCOMMAND);
 		setAvailable(_lrfl.at(i)._id);
@@ -218,10 +218,10 @@ void LastRecentFileList::clear()
 }
 
 
-generic_string & LastRecentFileList::getItem(int id)
+generic_string & LastRecentFileList::getItem(int id) 
 {
 	int i = 0;
-	for(; i < _size; i++)
+	for(; i < _size; ++i)
 	{
 		if (_lrfl.at(i)._id == id)
 			break;
@@ -240,10 +240,10 @@ generic_string & LastRecentFileList::getIndex(int index)
 void LastRecentFileList::setUserMaxNbLRF(int size)
 {
 	_userMax = size;
-	if (_size > _userMax)
+	if (_size > _userMax) 
 	{	//start popping items
 		int toPop = _size-_userMax;
-		while(toPop > 0)
+		while(toPop > 0) 
 		{
 			::RemoveMenu(_hMenu, _lrfl.back()._id, MF_BYCOMMAND);
 			setAvailable(_lrfl.back()._id);
@@ -273,7 +273,7 @@ void LastRecentFileList::saveLRFL()
 
 int LastRecentFileList::find(const TCHAR *fn)
 {
-	for(int i = 0; i < _size; i++)
+	for(int i = 0; i < _size; ++i)
 	{
 		if (!lstrcmpi(_lrfl.at(i)._name.c_str(), fn))
 		{
@@ -283,9 +283,9 @@ int LastRecentFileList::find(const TCHAR *fn)
 	return -1;
 }
 
-int LastRecentFileList::popFirstAvailableID()
+int LastRecentFileList::popFirstAvailableID() 
 {
-	for (int i = 0 ; i < NB_MAX_LRF_FILE ; i++)
+	for (int i = 0 ; i < NB_MAX_LRF_FILE ; ++i)
 	{
 		if (_idFreeArray[i])
 		{

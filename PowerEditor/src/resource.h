@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -29,18 +29,13 @@
 #ifndef RESOURCE_H
 #define RESOURCE_H
 
-#define NOTEPAD_PLUS_VERSION TEXT("Notepad++ v6.2.2")
+#define NOTEPAD_PLUS_VERSION TEXT("Notepad++ v6.7.5")
+//#define NOTEPAD_PLUS_VERSION TEXT("Notepad++ Je suis Charlie edition")
 
-// should be X.Y : ie. if VERSION_DIGITALVALUE == 4, 7, 1, 0 , then X = 4, Y = 71
+// should be X.Y : ie. if VERSION_DIGITALVALUE == 4, 7, 1, 0 , then X = 4, Y = 71 
 // ex : #define VERSION_VALUE TEXT("5.63\0")
-#define VERSION_VALUE TEXT("6.22\0")
-#define VERSION_DIGITALVALUE 6, 2, 2, 0
-
-#ifdef UNICODE
-#define UNICODE_ANSI_MODE TEXT("(UNICODE)")
-#else
-#define UNICODE_ANSI_MODE TEXT("(ANSI)")
-#endif
+#define VERSION_VALUE TEXT("6.75\0")
+#define VERSION_DIGITALVALUE 6, 7, 5, 0
 
 #ifndef IDC_STATIC
 #define IDC_STATIC	-1
@@ -48,6 +43,7 @@
 
 #define	IDI_M30ICON				100
 #define	IDI_CHAMELEON			101
+//#define	IDI_JESUISCHARLIE		102
 #define IDR_RT_MANIFEST         103
 
 #define	IDI_NEW_OFF_ICON      201
@@ -56,12 +52,12 @@
 #define	IDI_CLOSEALL_OFF_ICON 204
 #define	IDI_SAVE_OFF_ICON     205
 #define	IDI_SAVEALL_OFF_ICON  206
-#define	IDI_CUT_OFF_ICON      207
-#define	IDI_COPY_OFF_ICON     208
-#define	IDI_PASTE_OFF_ICON    209
+#define	IDI_CUT_OFF_ICON      207   
+#define	IDI_COPY_OFF_ICON     208   
+#define	IDI_PASTE_OFF_ICON    209   
 #define	IDI_UNDO_OFF_ICON     210
-#define	IDI_REDO_OFF_ICON     211
-#define	IDI_FIND_OFF_ICON     212
+#define	IDI_REDO_OFF_ICON     211   
+#define	IDI_FIND_OFF_ICON     212   
 #define	IDI_REPLACE_OFF_ICON  213
 #define	IDI_ZOOMIN_OFF_ICON   214
 #define	IDI_ZOOMOUT_OFF_ICON  215
@@ -70,6 +66,7 @@
 #define	IDI_VIEW_ALL_CHAR_ON_ICON  218
 #define	IDI_VIEW_INDENT_ON_ICON 219
 #define	IDI_VIEW_WRAP_ON_ICON 220
+
 
 #define	IDI_STARTRECORD_OFF_ICON     221
 #define	IDI_STARTRECORD_ON_ICON      222
@@ -112,7 +109,7 @@
 
 //#define	IDI_NEW_DISABLE_ICON  401
 //#define	IDI_OPEN_ON_ICON      402
-#define	IDI_SAVE_DISABLE_ICON   403
+#define	IDI_SAVE_DISABLE_ICON   403  
 #define	IDI_SAVEALL_DISABLE_ICON 404
 //#define	IDI_CLOSE_ON_ICON       405
 //#define	IDI_CLOSEALL_ON_ICON    406
@@ -143,6 +140,13 @@
 #define	IDI_PROJECT_FOLDERCLOSE		605
 #define	IDI_PROJECT_FILE			606
 #define	IDI_PROJECT_FILEINVALID		607
+
+#define	IDI_FUNCLIST_ROOT			620
+#define	IDI_FUNCLIST_NODE			621
+#define	IDI_FUNCLIST_LEAF			622
+
+#define	IDI_FUNCLIST_SORTBUTTON		631
+#define	IDI_FUNCLIST_RELOADBUTTON	632
 
 #define	IDC_MY_CUR     1402
 #define	IDC_UP_ARROW  1403
@@ -180,11 +184,19 @@
 #define	IDR_UNDO		1524
 #define	IDR_REDO		1525
 #define IDR_M_PLAYRECORD	1526
-
+#define	IDR_DOCMAP		1527
+#define IDR_FUNC_LIST	1528
 #define	IDR_CLOSETAB     1530
 #define	IDR_CLOSETAB_INACT     1531
 #define	IDR_CLOSETAB_HOVER     1532
 #define	IDR_CLOSETAB_PUSH     1533
+
+#define IDR_FUNC_LIST_ICO	1534
+#define	IDR_DOCMAP_ICO		1535
+#define	IDR_PROJECTPANEL_ICO		1536
+#define	IDR_CLIPBOARDPANEL_ICO		1537
+#define	IDR_ASCIIPANEL_ICO		1538
+#define	IDR_DOCSWITCHER_ICO		1539
 
 #define ID_MACRO 20000
 #define ID_MACRO_LIMIT 20200
@@ -196,7 +208,7 @@
 #define ID_PLUGINS_CMD_LIMIT 22500
 
 #define ID_PLUGINS_CMD_DYNAMIC       23000
-#define ID_PLUGINS_CMD_DYNAMIC_LIMIT 24999
+#define ID_PLUGINS_CMD_DYNAMIC_LIMIT 24999 
 
 #define MARKER_PLUGINS          3
 #define MARKER_PLUGINS_LIMIT   19
@@ -211,7 +223,7 @@
 #define IDCMD 50000
 	//#define	IDM_EDIT_AUTOCOMPLETE    			(IDCMD+0)
 	//#define	IDM_EDIT_AUTOCOMPLETE_CURRENTFILE	(IDCMD+1)
-
+	
 	#define	IDC_PREV_DOC					(IDCMD+3)
 	#define	IDC_NEXT_DOC					(IDCMD+4)
 	#define	IDC_EDIT_TOGGLEMACRORECORDING	(IDCMD+5)
@@ -219,10 +231,10 @@
 	//#define	IDC_KEY_END						(IDCMD+7)
 	//#define	IDC_KEY_SELECT_2_HOME			(IDCMD+8)
 	//#define	IDC_KEY_SELECT_2_END			(IDCMD+9)
-
+	
 #define	IDCMD_LIMIT		    			(IDCMD+20)
 
-#define IDSCINTILLA 60000
+#define IDSCINTILLA 60000				
 	#define	IDSCINTILLA_KEY_HOME        (IDSCINTILLA+0)
 	#define	IDSCINTILLA_KEY_HOME_WRAP   (IDSCINTILLA+1)
 	#define	IDSCINTILLA_KEY_END         (IDSCINTILLA+2)
@@ -378,7 +390,9 @@
 	#define	NPPM_INTERNAL_RECENTFILELIST_UPDATE 	(NOTEPADPLUS_USER_INTERNAL + 35)
 	#define	NPPM_INTERNAL_RECENTFILELIST_SWITCH 	(NOTEPADPLUS_USER_INTERNAL + 36)
 	#define	NPPM_INTERNAL_GETSCINTEDTVIEW       	(NOTEPADPLUS_USER_INTERNAL + 37)
-	#define NPPM_INTERNAL_SETDOCMAPCHECK			(NOTEPADPLUS_USER_INTERNAL + 38)
+	#define NPPM_INTERNAL_ENABLESNAPSHOT			(NOTEPADPLUS_USER_INTERNAL + 38) 
+	#define NPPM_INTERNAL_SAVECURRENTSESSION		(NOTEPADPLUS_USER_INTERNAL + 39)
+
 
 	//wParam: 0
 	//lParam: document new index
@@ -442,7 +456,7 @@
 #define MENUINDEX_SETTINGS 6
 #define MENUINDEX_MACRO    7
 #define MENUINDEX_RUN      8
-#define MENUINDEX_PLUGINS  9
+#define MENUINDEX_PLUGINS  9 
 
 #endif // RESOURCE_H
 

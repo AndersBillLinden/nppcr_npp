@@ -17,13 +17,13 @@
 					<Item idName = "Plugins" name = "Dodaci"/>
 					<Item idName = "Window" name = "Prozor"/>
 				</Entries>
-
+             
                 <!-- Sub Menu Entries -->
                 <SubEntries>
                     <Item subMenuId="view-collapseLevel" name = "Sakrij nivo"/>
                     <Item subMenuId="view-uncollapseLevel" name = "Otkrij nivo"/>
                 </SubEntries>
-
+                
                 <!-- all menu item -->
                 <Commands>
                     <Item id = "41001" name = "&amp;Novi	Ctrl+N"/>
@@ -40,7 +40,7 @@
                     <Item id = "41012" name = "Uèitaj sesiju..."/>
                     <Item id = "41013" name = "Snimi sesiju..."/>
                     <Item id = "41014" name = "Ponovo uèitaj s diska"/>
-
+					
                     <Item id = "42001" name = "Is&amp;eci	Ctrl+X"/>
                     <Item id = "42002" name = "&amp;Kopiraj	Ctrl+C"/>
                     <Item id = "42003" name = "&amp;Poništi	Ctrl+Z"/>
@@ -54,8 +54,8 @@
                     <Item id = "42011" name = "Transpondiraj trenutnu liniju	Ctrl+T"/>
                     <Item id = "42012" name = "Podeli linije	Ctrl+I"/>
                     <Item id = "42013" name = "Spoji linije	Ctrl+J"/>
-                    <Item id = "42014" name = "Pomakni trenutnu liniju u red iznad	Ctrl+Shift+Up"/>
-                    <Item id = "42015" name = "Pomakni trenutnu liniju u red ispod	Ctrl+Shift+Down"/>
+                    <Item id = "42014" name = "Pomakni trenutnu liniju u red iznad	Ctrl+Shift+Up"/>   
+                    <Item id = "42015" name = "Pomakni trenutnu liniju u red ispod	Ctrl+Shift+Down"/>   
                     <Item id = "42016" name = "Promeni oznaèena slova u velika	Ctrl+Shift+U"/>
                     <Item id = "42017" name = "Promeni oznaèena slova u mala	Ctrl+U"/>
                     <Item id = "42018" name = "&amp;Poèni snimanje	Ctrl+Shift+R"/>
@@ -73,7 +73,7 @@
                     <Item id = "42031" name = "Prebaci celu putanju foldera u klipbord"/>
                     <Item id = "42032" name = "Pokreni makro više puta..."/>
                     <Item id = "42033" name = "Ukloni oznaku samo za èitanje"/>
-
+					
                     <Item id = "43001" name = "&amp;Pronaði...	Ctrl+F"/>
                     <Item id = "43002" name = "Pronaði &amp;Sledeæe	F3"/>
                     <Item id = "43003" name = "Zameni...	Ctrl+H"/>
@@ -109,7 +109,7 @@
                     <Item id = "44035" name = "Sinhronizuj vertikalni skrol"/>
                     <Item id = "44036" name = "Sinhronizuj horizontalni skrol"/>
                     <Item id = "44041" name = "Prikaži wrap simbol "/>
-
+					
                     <Item id = "45001" name = "Promeni u Windows Format"/>
                     <Item id = "45002" name = "Promeni u UNIX Format"/>
                     <Item id = "45003" name = "Promeni u MAC Format"/>
@@ -118,10 +118,10 @@
                     <Item id = "45006" name = "Kodiraj u UCS-2 Big Endian"/>
                     <Item id = "45007" name = "Kodiraj u UCS-2 Little Endian"/>
                     <Item id = "45008" name = "Kodiraj u UTF-8 (bez BOM)"/>
-
+                    
                     <Item id = "10001" name = "Prikaz u drugom delu"/>
                     <Item id = "10002" name = "Dvostruki prikaz"/>
-
+                    
                     <Item id = "46001" name = "Postavke stilova..."/>
                     <Item id = "47000" name = "O programu...	F1"/>
                     <Item id = "47001" name = "Notepad++ Internet stranica"/>
@@ -129,11 +129,11 @@
                     <Item id = "47003" name = "Pomoæ preko interneta"/>
                     <Item id = "47004" name = "Forum"/>
                     <Item id = "47005" name = "Dodaj nove prikljuèke"/>
-
+                                        
                     <Item id = "48009" name = "Kombinacije tastera..."/>
                     <Item id = "48011" name = "Postavke..."/>
                     <Item id = "49000" name = "&amp;Pokreni..."/>
-
+					
 					<Item id = "50000" name = "Dopuna funkcija	Ctrl+Space"/>
                     <Item id = "50001" name = "Dopuna reèi Ctrl+Shift+Space"/>
                     <Item id = "42034" name = "Editor kolona...	Alt+C"/>
@@ -153,7 +153,7 @@
                     <Item CMID = "6" name = "Dvostruki prikaz"/>
             </TabBar>
         </Menu>
-
+        
         <Dialog>
             <Find title = "Pronaði...">
                 <Item id = "1" name = "Pronaði sledeæe"/>
@@ -174,19 +174,19 @@
                 <Item id = "1611" name = "Zame &amp;ni sa:"/>
                 <Item id = "1608" name = "&amp;Zameni"/>
                 <Item id = "1609" name = "Zameni &amp;sve"/>
-				<Item id = "1623" name = "Prozirnost"/>
+			 	<Item id = "1623" name = "Prozirnost"/>
 				<Item id = "1687" name = "Kad nije u fokusu"/>
-				<Item id = "1688" name = "Uvek"/>
-				<Item id = "1632" name = "U selekciji"/>
-				<Item id = "1633" name = "Oèisti"/>
-				<Item id = "1635" name = "Zameni sve u svim otvorenim dokumentima"/>
-				<Item id = "1636" name = "Pronaði sve u svim otvorenim dokumentima"/>
-				<Item id = "1637" name = "Pronaði u dokumentima"/>
+			 	<Item id = "1688" name = "Uvek"/>
+			 	<Item id = "1632" name = "U selekciji"/>
+			 	<Item id = "1633" name = "Oèisti"/>
+			 	<Item id = "1635" name = "Zameni sve u svim otvorenim dokumentima"/>
+			 	<Item id = "1636" name = "Pronaði sve u svim otvorenim dokumentima"/>
+			 	<Item id = "1637" name = "Pronaði u dokumentima"/>
 				<Item id = "1640" name = "Zameni dijalog"/>
-				<Item id = "1654" name = "Filteri :"/>
-				<Item id = "1655" name = "Folder :"/>
-				<Item id = "1656" name = "Naði sve"/>
-				<Item id = "1658" name = "U svim pod-folderima"/>
+			 	<Item id = "1654" name = "Filteri :"/>
+			 	<Item id = "1655" name = "Folder :"/>
+			 	<Item id = "1656" name = "Naði sve"/>
+			 	<Item id = "1658" name = "U svim pod-folderima"/>
             </Find>
             <GoToLine title = "Idi u red #">
                 <Item id = "1" name = "&amp;Kreni !"/>
@@ -202,15 +202,15 @@
                 <Item id = "2" name = "Odustani"/>
                 <Item id = "1904" name = "Spremi..."/>
             </Run>
-
+            
             <StyleConfig title = "Postavke stilova">
 				<Item id = "1" name = "Pokušaj!"/>
 				<Item id = "2" name = "Odustani"/>
 				<Item id = "2301" name = "Spremi &amp;&amp; Zatvori"/>
-				<Item id = "2303" name = "Prozirnost"/>
-
+				<Item id = "2303" name = "Prozirnost"/>		
+				
                 <SubDialog>
-			<Item id = "2204" name = "Masno"/>
+                	<Item id = "2204" name = "Masno"/>
                     <Item id = "2205" name = "Koso"/>
                     <Item id = "2206" name = "Boja slova"/>
                     <Item id = "2207" name = "Pozadinska boja"/>
@@ -234,9 +234,9 @@
                     <Item id = "2231" name = "Omoguæi globalni italik font stil"/>
                     <Item id = "2232" name = "Omoguæi globalni podvuèeni font stil"/>
                 </SubDialog>
-
+				
             </StyleConfig>
-
+            
             <UserDefine title = "Korisnièki definisano">
 				<Item id = "20002" name = "Preimenuj"/>
 				<Item id = "20003" name = "Napravi nov..."/>
@@ -299,13 +299,13 @@
 					<Item id = "6103" name = "Male ikone"/>
 	                <Item id = "6104" name = "Velike ikone"/>
 					<Item id = "6105" name = "Male standardne ikone"/>
-
+					
 					<Item id = "6106" name = "Tab bar"/>
 					<Item id = "6107" name = "Smanji"/>
 					<Item id = "6108" name = "Zakljuèaj (Bez Prevlaèenja)"/>
 					<Item id = "6109" name = "Nacrtaj neaktivne tabove"/>
 					<Item id = "6110" name = "Nacrtaj oranž top bar"/>
-
+					
 					<Item id = "6111" name = "Prikaži statusbu liniju"/>
 					<Item id = "6112" name = "Prikaži dugme za zatvaranje na svakom tabu"/>
 					<Item id = "6113" name = "Dupli klik za zatvaranje dokumenta"/>
@@ -320,12 +320,12 @@
 					<Item id = "6203" name = "Strelica"/>
 	                <Item id = "6204" name = "Kružni tok"/>
 					<Item id = "6205" name = "Kvadrat"/>
-
+					
 					<Item id = "6206" name = "Prikaži marginu za broj linije"/>
 					<Item id = "6207" name = "Prikaži marginu za bookmarke"/>
 					<Item id = "6208" name = "Prikaži vertikalnu granicu"/>
 					<Item id = "6209" name = "Broj kolone : "/>
-
+					
 					<Item id = "6211" name = "Podešavanje vertikalne granice"/>
 					<Item id = "6212" name = "Linijski mod"/>
 					<Item id = "6213" name = "Pozadinski mod"/>
@@ -411,7 +411,7 @@
 					<Item id = "6810" name = "Kompletiraj reèi"/>
                 </Backup>
             </Preference>
-
+			
 			<MultiMacro title = "Pokreni makro više puta">
                 <Item id = "1" name = "Pokreni"/>
                 <Item id = "2" name = "Otkaži"/>

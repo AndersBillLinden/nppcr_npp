@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -31,20 +31,91 @@
 
 WcharMbcsConvertor * WcharMbcsConvertor::_pSelf = new WcharMbcsConvertor;
 
-void printInt(int int2print)
+void printInt(int int2print) 
 {
 	TCHAR str[32];
 	wsprintf(str, TEXT("%d"), int2print);
 	::MessageBox(NULL, str, TEXT(""), MB_OK);
 };
 
-void printStr(const TCHAR *str2print)
+void printStr(const TCHAR *str2print) 
 {
 	::MessageBox(NULL, str2print, TEXT(""), MB_OK);
 };
 
-void writeLog(const TCHAR *logFileName, const char *log2write)
+std::string getFileContent(const TCHAR *file2read)
 {
+	const size_t blockSize = 1024;
+	char data[blockSize];
+	std::string wholeFileContent = "";
+	FILE *fp = generic_fopen(file2read, TEXT("rb"));
+
+	size_t lenFile = 0;
+	do {
+		lenFile = fread(data, 1, blockSize - 1, fp);
+		if (lenFile <= 0) break;
+
+		if (lenFile >= blockSize - 1)
+			data[blockSize - 1] = '\0';
+		else
+			data[lenFile - 1] = '\0';
+
+		wholeFileContent += data;
+
+	} while (lenFile > 0);
+
+	fclose(fp);
+	return wholeFileContent;
+}
+
+
+char getDriveLetter()
+{
+	char drive = '\0';
+	TCHAR current[MAX_PATH];
+
+	::GetCurrentDirectory(MAX_PATH, current);
+	int driveNbr = ::PathGetDriveNumber(current);
+	if (driveNbr != -1)
+		drive = 'A' + char(driveNbr);
+
+	return drive;
+}
+
+generic_string relativeFilePathToFullFilePath(const TCHAR *relativeFilePath)
+{
+	generic_string fullFilePathName = TEXT("");
+	TCHAR fullFileName[MAX_PATH];
+	BOOL isRelative = ::PathIsRelative(relativeFilePath);
+
+	if (isRelative)
+	{
+		::GetFullPathName(relativeFilePath, MAX_PATH, fullFileName, NULL);
+		fullFilePathName += fullFileName;
+	}
+	else
+	{
+		if ((relativeFilePath[0] == '\\' && relativeFilePath[1] != '\\') || relativeFilePath[0] == '/')
+		{
+			fullFilePathName += getDriveLetter();
+			fullFilePathName += ':';
+		}
+		fullFilePathName += relativeFilePath;
+	}
+
+	return fullFilePathName;
+}
+
+void writeFileContent(const TCHAR *file2write, const char *content2write)
+{	
+	FILE *f = generic_fopen(file2write, TEXT("w+"));
+	fwrite(content2write, sizeof(content2write[0]), strlen(content2write), f);
+	fflush(f);
+	fclose(f);
+}
+
+void writeLog(const TCHAR *logFileName, const char *log2write)
+{	
 	FILE *f = generic_fopen(logFileName, TEXT("a+"));
 	fwrite(log2write, sizeof(log2write[0]), strlen(log2write), f);
 	fputc('\n', f);
@@ -85,7 +156,9 @@ void folderBrowser(HWND parent, int outputCtrlID, const TCHAR *defaultStr)
 		info.ulFlags = 0;
 		info.lpfn = BrowseCallbackProc;
 		TCHAR directory[MAX_PATH];
-		::GetDlgItemText(parent, outputCtrlID, directory, sizeof(directory));
+		::GetDlgItemText(parent, outputCtrlID, directory, _countof(directory));
+		directory[_countof(directory) - 1] = '\0';
+
 		if (!directory[0] && defaultStr)
 			info.lParam = reinterpret_cast<LPARAM>(defaultStr);
 		else
@@ -96,7 +169,7 @@ void folderBrowser(HWND parent, int outputCtrlID, const TCHAR *defaultStr)
 
 		// pidl will be null if they cancel the browse dialog.
 		// pidl will be not null when they select a folder.
-		if (pidl)
+		if (pidl) 
 		{
 			// Try to convert the pidl to a display generic_string.
 			// Return is true if success.
@@ -133,7 +206,7 @@ generic_string getFolderName(HWND parent, const TCHAR *defaultDir)
 
 		// pidl will be null if they cancel the browse dialog.
 		// pidl will be not null when they select a folder.
-		if (pidl)
+		if (pidl) 
 		{
 			// Try to convert the pidl to a display generic_string.
 			// Return is true if success.
@@ -204,7 +277,7 @@ void ScreenRectToClientRect(HWND hWnd, RECT* rect)
 	rect->bottom = pt.y;
 };
 
-int filter(unsigned int code, struct _EXCEPTION_POINTERS *)
+int filter(unsigned int code, struct _EXCEPTION_POINTERS *) 
 {
     if (code == EXCEPTION_ACCESS_VIOLATION)
         return EXCEPTION_EXECUTE_HANDLER;
@@ -216,9 +289,9 @@ bool isInList(const TCHAR *token, const TCHAR *list) {
 	if ((!token) || (!list))
 		return false;
 	TCHAR word[64];
-	int i = 0;
-	int j = 0;
-	for (; i <= int(lstrlen(list)) ; i++)
+	size_t i = 0;
+	size_t j = 0;
+	for (size_t len = lstrlen(list); i <= len; ++i)
 	{
 		if ((list[i] == ' ')||(list[i] == '\0'))
 		{
@@ -226,15 +299,15 @@ bool isInList(const TCHAR *token, const TCHAR *list) {
 			{
 				word[j] = '\0';
 				j = 0;
-
+				
 				if (!generic_stricmp(token, word))
 					return true;
 			}
 		}
-		else
+		else 
 		{
 			word[j] = list[i];
-			j++;
+			++j;
 		}
 	}
 	return false;
@@ -246,7 +319,7 @@ generic_string purgeMenuItemString(const TCHAR * menuItemStr, bool keepAmpersand
 	TCHAR cleanedName[64] = TEXT("");
 	size_t j = 0;
 	size_t menuNameLen = lstrlen(menuItemStr);
-	for(size_t k = 0 ; k < menuNameLen ; k++)
+	for(size_t k = 0 ; k < menuNameLen ; ++k) 
 	{
 		if (menuItemStr[k] == '\t')
 		{
@@ -359,9 +432,9 @@ const wchar_t * WcharMbcsConvertor::char2wchar(const char * mbcs2Convert, UINT c
 		*mend = 0;
 	}
 	return _wideCharStr;
-}
+} 
 
-const char * WcharMbcsConvertor::wchar2char(const wchar_t * wcharStr2Convert, UINT codepage, int lenWc, int *pLenMbcs)
+const char * WcharMbcsConvertor::wchar2char(const wchar_t * wcharStr2Convert, UINT codepage, int lenWc, int *pLenMbcs) 
 {
 	// Do not process NULL pointer
 	if (!wcharStr2Convert) return NULL;
@@ -379,7 +452,7 @@ const char * WcharMbcsConvertor::wchar2char(const wchar_t * wcharStr2Convert, UI
 	return _multiByteStr;
 }
 
-const char * WcharMbcsConvertor::wchar2char(const wchar_t * wcharStr2Convert, UINT codepage, long *mstart, long *mend)
+const char * WcharMbcsConvertor::wchar2char(const wchar_t * wcharStr2Convert, UINT codepage, long *mstart, long *mend) 
 {
 	// Do not process NULL pointer
 	if (!wcharStr2Convert) return NULL;
@@ -411,7 +484,7 @@ std::wstring string2wstring(const std::string & rString, UINT codepage)
 {
 	int len = MultiByteToWideChar(codepage, 0, rString.c_str(), -1, NULL, 0);
 	if(len > 0)
-	{
+	{		
 		std::vector<wchar_t> vw(len);
 		MultiByteToWideChar(codepage, 0, rString.c_str(), -1, &vw[0], len);
 		return &vw[0];
@@ -424,7 +497,7 @@ std::string wstring2string(const std::wstring & rwString, UINT codepage)
 {
 	int len = WideCharToMultiByte(codepage, 0, rwString.c_str(), -1, NULL, 0, NULL, NULL);
 	if(len > 0)
-	{
+	{		
 		std::vector<char> vw(len);
 		WideCharToMultiByte(codepage, 0, rwString.c_str(), -1, &vw[0], len, NULL, NULL);
 		return &vw[0];
@@ -482,7 +555,7 @@ generic_string uintToString(unsigned int val)
 	return generic_string(vt.rbegin(), vt.rend());
 }
 
-// Build Recent File menu entries from given
+// Build Recent File menu entries from given 
 generic_string BuildMenuFileName(int filenameLen, unsigned int pos, const generic_string &filename)
 {
 	generic_string strTemp;
@@ -501,7 +574,7 @@ generic_string BuildMenuFileName(int filenameLen, unsigned int pos, const generi
 		strTemp.append(uintToString(pos + 1));
 	}
 	strTemp.append(TEXT(": "));
-
+	
 	if (filenameLen > 0)
 	{
 		std::vector<TCHAR> vt(filenameLen + 1);
@@ -555,7 +628,7 @@ generic_string PathRemoveFileSpec(generic_string & path)
 	return path;
 }
 
-generic_string PathAppend(generic_string &strDest, const generic_string str2append)
+generic_string PathAppend(generic_string &strDest, const generic_string & str2append)
 {
 	if (strDest == TEXT("") && str2append == TEXT("")) // "" + ""
 	{
@@ -589,3 +662,48 @@ generic_string PathAppend(generic_string &strDest, const generic_string str2appe
 
 	return strDest;
 }
+
+COLORREF getCtrlBgColor(HWND hWnd)
+{
+	COLORREF crRet = CLR_INVALID;
+	if (hWnd && IsWindow(hWnd))
+	{
+		RECT rc;
+		if (GetClientRect(hWnd, &rc))
+		{
+			HDC hDC = GetDC(hWnd);
+			if (hDC)
+			{
+				HDC hdcMem = CreateCompatibleDC(hDC);
+				if (hdcMem)
+				{
+					HBITMAP hBmp = CreateCompatibleBitmap(hDC,
+					rc.right, rc.bottom);
+					if (hBmp)
+					{
+						HGDIOBJ hOld = SelectObject(hdcMem, hBmp);
+						if (hOld)
+						{
+							if (SendMessage(hWnd,	WM_ERASEBKGND, (WPARAM)hdcMem, 0))
+							{
+								crRet = GetPixel(hdcMem, 2, 2); // 0, 0 is usually on the border
+							}
+							SelectObject(hdcMem, hOld);
+						}
+						DeleteObject(hBmp);
+					}
+					DeleteDC(hdcMem);
+				}
+				ReleaseDC(hWnd, hDC);
+			}
+		}
+	}
+	return crRet;
+}
+
+generic_string stringToUpper(generic_string strToConvert)
+{
+    std::transform(strToConvert.begin(), strToConvert.end(), strToConvert.begin(), ::toupper);
+    return strToConvert;
+}
+

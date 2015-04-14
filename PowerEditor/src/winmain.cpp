@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -35,17 +35,6 @@
 
 typedef std::vector<const TCHAR*> ParamVector;
 
-char getDriveLetter(){
-	char drive = '\0';
-	TCHAR current[MAX_PATH];
-
-	::GetCurrentDirectory(MAX_PATH, current);
-	int driveNbr = ::PathGetDriveNumber(current);
-	if (driveNbr != -1)
-		drive = 'A' + char(driveNbr);
-
-	return drive;
-}
 
 bool checkSingleFile(const TCHAR * commandLine) {
 	TCHAR fullpath[MAX_PATH];
@@ -59,17 +48,17 @@ bool checkSingleFile(const TCHAR * commandLine) {
 
 //commandLine should contain path to n++ executable running
 void parseCommandLine(TCHAR * commandLine, ParamVector & paramVector) {
-	//params.erase(params.begin());
+	//params.erase(params.begin());	
 	//remove the first element, since thats the path the the executable (GetCommandLine does that)
 	TCHAR stopChar = TEXT(' ');
 	if (commandLine[0] == TEXT('\"')) {
 		stopChar = TEXT('\"');
-		commandLine++;
+		++commandLine;
 	}
 	//while this is not really DBCS compliant, space and quote are in the lower 127 ASCII range
 	while(commandLine[0] && commandLine[0] != stopChar)
     {
-		commandLine++;
+		++commandLine;
     }
 
     // For unknown reason, the following command :
@@ -77,11 +66,11 @@ void parseCommandLine(TCHAR * commandLine, ParamVector & paramVector) {
     // (without quote) will give string "notepad++\0notepad++\0"
     // To avoid the unexpected behaviour we check the end of string before increasing the pointer
     if (commandLine[0] != '\0')
-	    commandLine++;	//advance past stopChar
+	    ++commandLine;	//advance past stopChar
 
 	//kill remaining spaces
 	while(commandLine[0] == TEXT(' '))
-		commandLine++;
+		++commandLine;
 
 	bool isFile = checkSingleFile(commandLine);	//if the commandline specifies only a file, open it as such
 	if (isFile) {
@@ -92,7 +81,8 @@ void parseCommandLine(TCHAR * commandLine, ParamVector & paramVector) {
 	bool isInWhiteSpace = true;
 	paramVector.clear();
 	size_t commandLength = lstrlen(commandLine);
-	for(size_t i = 0; i < commandLength; i++) {
+	for (size_t i = 0; i < commandLength; ++i)
+	{
 		switch(commandLine[i]) {
 			case '\"': {										//quoted filename, ignore any following whitespace
 				if (!isInFile) {	//" will always be treated as start or end of param, in case the user forgot to add an space
@@ -111,7 +101,7 @@ void parseCommandLine(TCHAR * commandLine, ParamVector & paramVector) {
 				break; }
 			default: {											//default TCHAR, if beginning of word, add it
 				if (!isInFile && isInWhiteSpace) {
-					paramVector.push_back(commandLine+i);	//add next param
+					paramVector.push_back(commandLine+i);	//add next param 
 					isInWhiteSpace = false;
 				}
 				break; }
@@ -123,7 +113,7 @@ void parseCommandLine(TCHAR * commandLine, ParamVector & paramVector) {
 bool isInList(const TCHAR *token2Find, ParamVector & params) {
 	int nrItems = params.size();
 
-	for (int i = 0; i < nrItems; i++)
+	for (int i = 0; i < nrItems; ++i)
 	{
 		if (!lstrcmp(token2Find, params.at(i))) {
 			params.erase(params.begin() + i);
@@ -133,11 +123,12 @@ bool isInList(const TCHAR *token2Find, ParamVector & params) {
 	return false;
 };
 
-bool getParamVal(TCHAR c, ParamVector & params, generic_string & value) {
+bool getParamVal(TCHAR c, ParamVector & params, generic_string & value)
+{
 	value = TEXT("");
 	int nrItems = params.size();
 
-	for (int i = 0; i < nrItems; i++)
+	for (int i = 0; i < nrItems; ++i)
 	{
 		const TCHAR * token = params.at(i);
 		if (token[0] == '-' && lstrlen(token) >= 2 && token[1] == c) {	//dash, and enough chars
@@ -149,12 +140,41 @@ bool getParamVal(TCHAR c, ParamVector & params, generic_string & value) {
 	return false;
 }
 
-LangType getLangTypeFromParam(ParamVector & params) {
+bool getParamValFromString(const TCHAR *str, ParamVector & params, generic_string & value)
+{
+	value = TEXT("");
+	int nrItems = params.size();
+
+	for (int i = 0; i < nrItems; ++i)
+	{
+		const TCHAR * token = params.at(i);
+		generic_string tokenStr = token;
+		int pos = tokenStr.find(str);
+		if (pos != -1 && pos == 0)
+		{
+			value = (token + lstrlen(str));
+			params.erase(params.begin() + i);
+			return true;
+		}
+	}
+	return false;
+}
+
+LangType getLangTypeFromParam(ParamVector & params)
+{
 	generic_string langStr;
 	if (!getParamVal('l', params, langStr))
 		return L_EXTERNAL;
 	return NppParameters::getLangIDFromStr(langStr.c_str());
-};
+}
+
+generic_string getLocalizationPathFromParam(ParamVector & params)
+{
+	generic_string locStr;
+	if (!getParamVal('L', params, locStr))
+		return TEXT("");
+	return NppParameters::getLocPathFromStr(locStr.c_str());
+}
 
 int getNumberFromParam(char paramName, ParamVector & params, bool & isParamePresent) {
 	generic_string numStr;
@@ -167,6 +187,38 @@ int getNumberFromParam(char paramName, ParamVector & params, bool & isParamePres
 	return generic_atoi(numStr.c_str());
 };
 
+generic_string getEasterEggNameFromParam(ParamVector & params, unsigned char & type)
+{
+	generic_string EasterEggName;
+	if (!getParamValFromString(TEXT("-qn"), params, EasterEggName))  // get internal easter egg
+	{
+		if (!getParamValFromString(TEXT("-qt"), params, EasterEggName)) // get user quote from cmdline argument
+		{
+			if (!getParamValFromString(TEXT("-qf"), params, EasterEggName)) // get user quote from a content of file
+				return TEXT("");
+			else
+			{
+				EasterEggName = relativeFilePathToFullFilePath(EasterEggName.c_str());
+				type = 2; // quote content in file
+			}
+		}
+		else
+			type = 1; // commandline quote
+	}
+	else
+		type = 0; // easter egg
+
+	generic_string percentTwentyStr = TEXT("%20");
+	generic_string spaceStr = TEXT(" ");
+	size_t start_pos = 0;
+	while ((start_pos = EasterEggName.find(percentTwentyStr, start_pos)) != std::string::npos)
+	{
+		EasterEggName.replace(start_pos, percentTwentyStr.length(), spaceStr);
+		start_pos += spaceStr.length(); // Handles case where 'to' is a substring of 'from'
+	}
+
+	return EasterEggName;
+}
 
 const TCHAR FLAG_MULTI_INSTANCE[] = TEXT("-multiInst");
 const TCHAR FLAG_NO_PLUGIN[] = TEXT("-noPlugin");
@@ -177,27 +229,8 @@ const TCHAR FLAG_SYSTRAY[] = TEXT("-systemtray");
 const TCHAR FLAG_LOADINGTIME[] = TEXT("-loadingTime");
 const TCHAR FLAG_HELP[] = TEXT("--help");
 const TCHAR FLAG_ALWAYS_ON_TOP[] = TEXT("-alwaysOnTop");
-
-const TCHAR COMMAND_ARG_HELP[] = TEXT("Usage :\r\
-\r\
-notepad++ [--help] [-multiInst] [-noPlugins] [-lLanguage] [-nLineNumber] [-cColumnNumber] [-xPos] [-yPos] [-nosession] [-notabbar] [-ro] [-systemtray] [-loadingTime] [fullFilePathName]\r\
-\r\
-    --help : This help message\r\
-    -multiInst : Launch another Notepad++ instance\r\
-    -noPlugins : Launch Notepad++ without loading any plugin\r\
-    -l : Launch Notepad++ by applying indicated language to the file to open\r\
-    -n : Launch Notepad++ by scrolling indicated line on the file to open\r\
-    -c : Launch Notepad++ on scrolling indicated column on the file to open\r\
-    -x : Launch Notepad++ by indicating its left side position on the screen\r\
-    -y : Launch Notepad++ by indicating its top position on the screen\r\
-    -nosession : Launch Notepad++ without any session\r\
-    -notabbar : Launch Notepad++ without tabbar\r\
-    -ro : Launch Notepad++ and make the file to open read only\r\
-    -systemtray : Launch Notepad++ directly in system tray\r\
-    -loadingTime : Display Notepad++ loading time\r\
-    -alwaysOnTop : Make Notepad++ always on top\r\
-    fullFilePathName : file name to open (absolute or relative path name)\r\
-");
+const TCHAR FLAG_OPENSESSIONFILE[] = TEXT("-openSession");
+const TCHAR FLAG_RECURSIVE[] = TEXT("-r");
 
 void doException(Notepad_plus_Window & notepad_plus_plus);
 
@@ -218,7 +251,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	bool isParamePresent;
 	bool showHelp = isInList(FLAG_HELP, params);
 	bool isMultiInst = isInList(FLAG_MULTI_INSTANCE, params);
-
+	
 	CmdLineParams cmdLineParams;
 	cmdLineParams._isNoTab = isInList(FLAG_NOTABBAR, params);
 	cmdLineParams._isNoPlugin = isInList(FLAG_NO_PLUGIN, params);
@@ -227,18 +260,30 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	cmdLineParams._isPreLaunch = isInList(FLAG_SYSTRAY, params);
 	cmdLineParams._alwaysOnTop = isInList(FLAG_ALWAYS_ON_TOP, params);
 	cmdLineParams._showLoadingTime = isInList(FLAG_LOADINGTIME, params);
+	cmdLineParams._isSessionFile = isInList(FLAG_OPENSESSIONFILE, params);
+	cmdLineParams._isRecursive = isInList(FLAG_RECURSIVE, params);
 	cmdLineParams._langType = getLangTypeFromParam(params);
+	cmdLineParams._localizationPath = getLocalizationPathFromParam(params);
 	cmdLineParams._line2go = getNumberFromParam('n', params, isParamePresent);
     cmdLineParams._column2go = getNumberFromParam('c', params, isParamePresent);
 	cmdLineParams._point.x = getNumberFromParam('x', params, cmdLineParams._isPointXValid);
 	cmdLineParams._point.y = getNumberFromParam('y', params, cmdLineParams._isPointYValid);
-
+	cmdLineParams._easterEggName = getEasterEggNameFromParam(params, cmdLineParams._quoteType);
+	
+	
 	if (showHelp)
 	{
 		::MessageBox(NULL, COMMAND_ARG_HELP, TEXT("Notepad++ Command Argument Help"), MB_OK);
 	}
 
 	NppParameters *pNppParameters = NppParameters::getInstance();
+	
+	if (cmdLineParams._localizationPath != TEXT(""))
+	{
+		pNppParameters->setStartWithLocFileName(cmdLineParams._localizationPath);
+	}
+	pNppParameters->load();
+
 	// override the settings if notepad style is present
 	if (pNppParameters->asNotepadStyle())
 	{
@@ -247,34 +292,30 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 		cmdLineParams._isNoSession = true;
 	}
 
+	// override the settings if multiInst is choosen by user in the preference dialog
+	const NppGUI & nppGUI = pNppParameters->getNppGUI();
+	if (nppGUI._multiInstSetting == multiInst)
+	{
+		isMultiInst = true;
+		// Only the first launch remembers the session
+		if (!TheFirstOne)
+			cmdLineParams._isNoSession = true;
+	}
+
 	generic_string quotFileName = TEXT("");
     // tell the running instance the FULL path to the new files to load
 	size_t nrFilesToOpen = params.size();
 	const TCHAR * currentFile;
-	TCHAR fullFileName[MAX_PATH];
 
-	for(size_t i = 0; i < nrFilesToOpen; i++)
+	for(size_t i = 0; i < nrFilesToOpen; ++i)
 	{
 		currentFile = params.at(i);
 		if (currentFile[0])
 		{
 			//check if relative or full path. Relative paths dont have a colon for driveletter
-			BOOL isRelative = ::PathIsRelative(currentFile);
+			
 			quotFileName += TEXT("\"");
-			if (isRelative)
-			{
-				::GetFullPathName(currentFile, MAX_PATH, fullFileName, NULL);
-				quotFileName += fullFileName;
-			}
-			else
-			{
-				if ((currentFile[0] == '\\' && currentFile[1] != '\\') || currentFile[0] == '/')
-				{
-					quotFileName += getDriveLetter();
-					quotFileName += ':';
-				}
-				quotFileName += currentFile;
-			}
+			quotFileName += relativeFilePathToFullFilePath(currentFile);
 			quotFileName += TEXT("\" ");
 		}
 	}
@@ -285,7 +326,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	if ((!isMultiInst) && (!TheFirstOne))
 	{
 		HWND hNotepad_plus = ::FindWindow(Notepad_plus_Window::getClassName(), NULL);
-		for (int i = 0 ;!hNotepad_plus && i < 5 ; i++)
+		for (int i = 0 ;!hNotepad_plus && i < 5 ; ++i)
 		{
 			Sleep(100);
 			hNotepad_plus = ::FindWindow(Notepad_plus_Window::getClassName(), NULL);
@@ -303,12 +344,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 			sw = SW_MAXIMIZE;
 		else if (::IsIconic(hNotepad_plus))
 			sw = SW_RESTORE;
+
+/* REMOVED
 		else
 			sw = SW_SHOW;
 
 		// IMPORTANT !!!
 		::ShowWindow(hNotepad_plus, sw);
-
+DEVOMER*/
+/* ADDED */
+		if (sw != 0)
+			::ShowWindow(hNotepad_plus, sw);
+/* DEDDA */
 		::SetForegroundWindow(hNotepad_plus);
 
 		if (params.size() > 0)	//if there are files to open, use the WM_COPYDATA system
@@ -330,16 +377,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
         }
 	}
 
-	pNppParameters->load();
 	Notepad_plus_Window notepad_plus_plus;
-
+	
 	NppGUI & nppGui = (NppGUI &)pNppParameters->getNppGUI();
 
 	generic_string updaterDir = pNppParameters->getNppPath();
 	updaterDir += TEXT("\\updater\\");
 
 	generic_string updaterFullPath = updaterDir + TEXT("gup.exe");
-
+ 
 	generic_string version = TEXT("-v");
 	version += VERSION_VALUE;
 
@@ -347,10 +393,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
     bool doUpdate = nppGui._autoUpdateOpt._doAutoUpdate;
 
-    if (doUpdate) // check more detail
+    if (doUpdate) // check more detail 
     {
         Date today(0);
-
+        
         if (today < nppGui._autoUpdateOpt._nextUpdateDate)
             doUpdate = false;
     }
@@ -359,7 +405,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	{
 		Process updater(updaterFullPath.c_str(), version.c_str(), updaterDir.c_str());
 		updater.run();
-
+        
         // Update next update date
         if (nppGui._autoUpdateOpt._intervalDays < 0) // Make sure interval days value is positive
             nppGui._autoUpdateOpt._intervalDays = 0 - nppGui._autoUpdateOpt._intervalDays;
@@ -371,23 +417,57 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 	Win32Exception::installHandler();
 	try {
 		notepad_plus_plus.init(hInstance, NULL, quotFileName.c_str(), &cmdLineParams);
-		bool unicodeSupported = pNppParameters->getWinVersion() >= WV_NT;
+
+		// Tell UAC that lower integrity processes are allowed to send WM_COPYDATA messages to this process (or window)
+		// This allows opening new files to already opened elevated Notepad++ process via explorer context menu.
+		winVer ver = pNppParameters->getWinVersion();
+		if (ver >= WV_VISTA || ver == WV_UNKNOWN)
+		{
+			HMODULE hDll = GetModuleHandle(TEXT("user32.dll"));
+			if (hDll)
+			{
+				// According to MSDN ChangeWindowMessageFilter may not be supported in future versions of Windows, 
+				// that is why we use ChangeWindowMessageFilterEx if it is available (windows version >= Win7).
+				if(pNppParameters->getWinVersion() == WV_VISTA)
+				{
+					typedef BOOL (WINAPI *MESSAGEFILTERFUNC)(UINT message,DWORD dwFlag);
+					const DWORD MSGFLT_ADD = 1;
+
+					MESSAGEFILTERFUNC func = (MESSAGEFILTERFUNC)::GetProcAddress( hDll, "ChangeWindowMessageFilter" );
+
+					if (func)
+					{
+						func(WM_COPYDATA, MSGFLT_ADD);
+					}
+				}
+				else
+				{
+					typedef BOOL (WINAPI *MESSAGEFILTERFUNCEX)(HWND hWnd,UINT message,DWORD action,VOID* pChangeFilterStruct);
+					const DWORD MSGFLT_ALLOW = 1;
+
+					MESSAGEFILTERFUNCEX func = (MESSAGEFILTERFUNCEX)::GetProcAddress( hDll, "ChangeWindowMessageFilterEx" );
+
+					if (func)
+					{
+						func(notepad_plus_plus.getHSelf(), WM_COPYDATA, MSGFLT_ALLOW, NULL );
+					}
+				}
+			}
+		}
+
 		bool going = true;
 		while (going)
 		{
-			going = (unicodeSupported?(::GetMessageW(&msg, NULL, 0, 0)):(::GetMessageA(&msg, NULL, 0, 0))) != 0;
+			going = ::GetMessageW(&msg, NULL, 0, 0) != 0;
 			if (going)
 			{
 				// if the message doesn't belong to the notepad_plus_plus's dialog
-				if (!notepad_plus_plus.isDlgsMsg(&msg, unicodeSupported))
+				if (!notepad_plus_plus.isDlgsMsg(&msg))
 				{
 					if (::TranslateAccelerator(notepad_plus_plus.getHSelf(), notepad_plus_plus.getAccTable(), &msg) == 0)
 					{
 						::TranslateMessage(&msg);
-						if (unicodeSupported)
-							::DispatchMessageW(&msg);
-						else
-							::DispatchMessage(&msg);
+						::DispatchMessageW(&msg);
 					}
 				}
 			}
@@ -422,7 +502,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 void doException(Notepad_plus_Window & notepad_plus_plus) {
 	Win32Exception::removeHandler();	//disable exception handler after excpetion, we dont want corrupt data structurs to crash the exception handler
 	::MessageBox(Notepad_plus_Window::gNppHWND, TEXT("Notepad++ will attempt to save any unsaved data. However, dataloss is very likely."), TEXT("Recovery initiating"), MB_OK | MB_ICONINFORMATION);
-
+	
 	TCHAR tmpDir[1024];
 	GetTempPath(1024, tmpDir);
 	generic_string emergencySavedDir = tmpDir;

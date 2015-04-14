@@ -1,6 +1,6 @@
 <!--
     Copyright 2007 Don HO <don.h@free.fr>
-
+	
     This file is part of GUP.
 
     GUP is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 <GUPInput>
 	<!-- optional.
 	It's the current version of your program. GUP will add "?version=versionNumber" at the end of InfoUrl.
-	This parameter will be ignored if you pass directly your version number to GUP
+	This parameter will be ignored if you pass directly your version number to GUP 
 	-->
 	<Version>4.8.2</Version>
 
@@ -32,25 +32,25 @@
 	<!--InfoUrl>http://notepad-plus.sourceforge.net/commun/update/getDownLoadUrl.php</InfoUrl-->
 	<InfoUrl>http://notepad-plus-plus.org/update/getDownloadUrl.php</InfoUrl>
 
-	<!-- optional.
+	<!-- optional. 
 	The window class name of program that you want to update.
 	GUP uses FindWindow routine to get the Handle of window, then send WM_CLOSE to the handle in order to quit the program.
 	If there are several running instances, GUP will kill one by one until the last instance.
-
-	In win32 system, if a program is running, the binary file is locked.
+	
+	In win32 system, if a program is running, the binary file is locked. 
 	Use this parameter to close the program to make sure the old binary files can be erased by new ones.
 	-->
 	<ClassName2Close>Notepad++</ClassName2Close>
-
+	
 	<!-- Optional.
 	This is the title to display on the messagebox title bar.
 	-->
 	<MessageBoxTitle extraCmd="1034" ecWparam="" ecLparam="">Notepad++ update</MessageBoxTitle>
 
 	<!-- optional. YES by default.
-	This parameter can hide all the network error message.
-	If "SilentMode" is set as "yes", then users won't be warned when there's no connection of internet or the url is not available.
+	This parameter can hide all the network error message. 
+	If "SilentMode" is set as "yes", then users won't be warned when there's no connection of internet or the url is not available. 
 	-->
 	<SilentMode>yes</SilentMode>
-
+	
 </GUPInput>

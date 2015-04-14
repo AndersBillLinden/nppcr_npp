@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -31,7 +31,7 @@
 #include "ScintillaEditView.h"
 
 
-void ColumnEditorDlg::display(bool toShow) const
+void ColumnEditorDlg::display(bool toShow) const 
 {
     Window::display(toShow);
     if (toShow)
@@ -40,7 +40,7 @@ void ColumnEditorDlg::display(bool toShow) const
 
 BOOL CALLBACK ColumnEditorDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 {
-	switch (message)
+	switch (message) 
 	{
 		case WM_INITDIALOG :
 		{
@@ -57,7 +57,7 @@ BOOL CALLBACK ColumnEditorDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 			}
 			return TRUE;
 		}
-		case WM_COMMAND :
+		case WM_COMMAND : 
 		{
 			switch (wParam)
 			{
@@ -68,18 +68,18 @@ BOOL CALLBACK ColumnEditorDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 				case IDOK :
                 {
 					(*_ppEditView)->execute(SCI_BEGINUNDOACTION);
-
+					
 					const int stringSize = 1024;
 					TCHAR str[stringSize];
-
+					
 					bool isTextMode = (BST_CHECKED == ::SendDlgItemMessage(_hSelf, IDC_COL_TEXT_RADIO, BM_GETCHECK, 0, 0));
-
+					
 					if (isTextMode)
 					{
 						::SendDlgItemMessage(_hSelf, IDC_COL_TEXT_EDIT, WM_GETTEXT, stringSize, (LPARAM)str);
 
 						display(false);
-
+						
 						if ((*_ppEditView)->execute(SCI_SELECTIONISRECTANGLE) || (*_ppEditView)->execute(SCI_GETSELECTIONS) > 1)
 						{
 							ColumnModeInfos colInfos = (*_ppEditView)->getColumnModeSelectInfo();
@@ -99,7 +99,7 @@ BOOL CALLBACK ColumnEditorDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 							int lineAllocatedLen = 1024;
 							TCHAR *line = new TCHAR[lineAllocatedLen];
 
-							for (int i = cursorLine ; i <= endLine ; i++)
+							for (int i = cursorLine ; i <= endLine ; ++i)
 							{
 								int lineBegin = (*_ppEditView)->execute(SCI_POSITIONFROMLINE, i);
 								int lineEnd = (*_ppEditView)->execute(SCI_GETLINEENDPOSITION, i);
@@ -138,7 +138,7 @@ BOOL CALLBACK ColumnEditorDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 						int increaseNumber = ::GetDlgItemInt(_hSelf, IDC_COL_INCREASENUM_EDIT, NULL, TRUE);
 						UCHAR format = getFormat();
 						display(false);
-
+						
 						if ((*_ppEditView)->execute(SCI_SELECTIONISRECTANGLE) || (*_ppEditView)->execute(SCI_GETSELECTIONS) > 1)
 						{
 							ColumnModeInfos colInfos = (*_ppEditView)->getColumnModeSelectInfo();
@@ -161,7 +161,7 @@ BOOL CALLBACK ColumnEditorDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 
 							UCHAR f = format & MASK_FORMAT;
 							bool isZeroLeading = (MASK_ZERO_LEADING & format) != 0;
-
+							
 							int base = 10;
 							if (f == BASE_16)
 								base = 16;
@@ -177,7 +177,7 @@ BOOL CALLBACK ColumnEditorDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 							int nb = max(nbInit, nbEnd);
 
 
-							for (int i = cursorLine ; i <= endLine ; i++)
+							for (int i = cursorLine ; i <= endLine ; ++i)
 							{
 								int lineBegin = (*_ppEditView)->execute(SCI_POSITIONFROMLINE, i);
 								int lineEnd = (*_ppEditView)->execute(SCI_GETLINEENDPOSITION, i);
@@ -274,7 +274,7 @@ void ColumnEditorDlg::switchTo(bool toText)
 	::SetFocus(toText?hText:hNum);
 }
 
-UCHAR ColumnEditorDlg::getFormat()
+UCHAR ColumnEditorDlg::getFormat() 
 {
 	bool isLeadingZeros = (BST_CHECKED == ::SendDlgItemMessage(_hSelf, IDC_COL_LEADZERO_CHECK, BM_GETCHECK, 0, 0));
 	UCHAR f = 0; // Dec by default

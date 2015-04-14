@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -63,11 +63,11 @@ void Notepad_plus_Window::init(HINSTANCE hInst, HWND parent, const TCHAR *cmdLin
 	::SystemParametersInfo(SPI_GETWORKAREA, 0, &workAreaRect, 0);
 
 	NppParameters *pNppParams = NppParameters::getInstance();
-	const NppGUI & nppGUI = pNppParams->getNppGUI();
+	NppGUI & nppGUI = (NppGUI &)pNppParams->getNppGUI();
 
 	if (cmdLineParams->_isNoPlugin)
 		_notepad_plus_plus_core._pluginsManager.disable();
-
+	
 	_hSelf = ::CreateWindowEx(
 					WS_EX_ACCEPTFILES | (_notepad_plus_plus_core._nativeLangSpeaker.isRTL()?WS_EX_LAYOUTRTL:0),\
 					_className,\
@@ -79,7 +79,7 @@ void Notepad_plus_Window::init(HINSTANCE hInst, HWND parent, const TCHAR *cmdLin
 					NULL,\
 					_hInst,\
 					(LPVOID)this); // pass the ptr of this instantiated object
-                                   // for retrieve it in Notepad_plus_Proc from
+                                   // for retrieve it in Notepad_plus_Proc from 
                                    // the CREATESTRUCT.lpCreateParams afterward.
 
 	if (!_hSelf)
@@ -91,38 +91,37 @@ void Notepad_plus_Window::init(HINSTANCE hInst, HWND parent, const TCHAR *cmdLin
 
 	gNppHWND = _hSelf;
 
-	// In setting the startup window position, take into account that the last-saved
-	// position might have assumed a second monitor that's no longer available.
-	POINT newUpperLeft;
-	newUpperLeft.x = nppGUI._appPos.left + workAreaRect.left;
-	newUpperLeft.y = nppGUI._appPos.top + workAreaRect.top;
-
-	// GetSystemMetrics does not support the multi-monitor values on Windows NT and Windows 95.
-	winVer winVersion = pNppParams->getWinVersion();
-	if ((winVersion != WV_95) && (winVersion != WV_NT))
-	{
-		int margin = ::GetSystemMetrics(SM_CYSMCAPTION);
-		if (newUpperLeft.x > ::GetSystemMetrics(SM_CXVIRTUALSCREEN)-margin)
-			newUpperLeft.x = workAreaRect.right - nppGUI._appPos.right;
-		if (newUpperLeft.x + nppGUI._appPos.right < ::GetSystemMetrics(SM_XVIRTUALSCREEN)+margin)
-			newUpperLeft.x = workAreaRect.left;
-		if (newUpperLeft.y > ::GetSystemMetrics(SM_CYVIRTUALSCREEN)-margin)
-			newUpperLeft.y = workAreaRect.bottom - nppGUI._appPos.bottom;
-		if (newUpperLeft.y + nppGUI._appPos.bottom < ::GetSystemMetrics(SM_YVIRTUALSCREEN)+margin)
-			newUpperLeft.y = workAreaRect.top;
-	}
-
 	if (cmdLineParams->isPointValid())
 		::MoveWindow(_hSelf, cmdLineParams->_point.x, cmdLineParams->_point.y, nppGUI._appPos.right, nppGUI._appPos.bottom, TRUE);
 	else
-		::MoveWindow(_hSelf, newUpperLeft.x, newUpperLeft.y, nppGUI._appPos.right, nppGUI._appPos.bottom, TRUE);
+	{
+		WINDOWPLACEMENT posInfo;
 
+	    posInfo.length = sizeof(WINDOWPLACEMENT);
+		posInfo.flags = 0;
+		if(_isPrelaunch)
+			posInfo.showCmd = SW_HIDE;
+		else
+			posInfo.showCmd = nppGUI._isMaximized?SW_SHOWMAXIMIZED:SW_SHOWNORMAL;
+		posInfo.ptMinPosition.x = (LONG)-1;
+		posInfo.ptMinPosition.y = (LONG)-1;
+		posInfo.ptMaxPosition.x = (LONG)-1;
+		posInfo.ptMaxPosition.y = (LONG)-1;
+		posInfo.rcNormalPosition.left   = nppGUI._appPos.left;
+		posInfo.rcNormalPosition.top    = nppGUI._appPos.top;
+		posInfo.rcNormalPosition.bottom = nppGUI._appPos.top + nppGUI._appPos.bottom;
+		posInfo.rcNormalPosition.right  = nppGUI._appPos.left + nppGUI._appPos.right;
+
+		//SetWindowPlacement will take care of situations, where saved position was in no longer available monitor
+		::SetWindowPlacement(_hSelf,&posInfo);
+	}
+	
 	if (nppGUI._tabStatus & TAB_MULTILINE)
 		::SendMessage(_hSelf, WM_COMMAND, IDM_VIEW_DRAWTABBAR_MULTILINE, 0);
 
 	if (!nppGUI._menuBarShow)
 		::SetMenu(_hSelf, NULL);
-
+	
 	if (cmdLineParams->_isNoTab || (nppGUI._tabStatus & TAB_HIDE))
 	{
 		::SendMessage(_hSelf, NPPM_HIDETABBAR, 0, TRUE);
@@ -132,7 +131,8 @@ void Notepad_plus_Window::init(HINSTANCE hInst, HWND parent, const TCHAR *cmdLin
 	{
 		::SendMessage(_hSelf, WM_COMMAND, IDM_VIEW_ALWAYSONTOP, 0);
 	}
-    _notepad_plus_plus_core._rememberThisSession = !cmdLineParams->_isNoSession;
+
+	nppGUI._isCmdlineNosessionActivated = cmdLineParams->_isNoSession;
 	if (nppGUI._rememberLastSession && !cmdLineParams->_isNoSession)
 	{
 		_notepad_plus_plus_core.loadLastSession();
@@ -159,23 +159,22 @@ void Notepad_plus_Window::init(HINSTANCE hInst, HWND parent, const TCHAR *cmdLin
 	vector<generic_string> fileNames;
 	vector<generic_string> patterns;
 	patterns.push_back(TEXT("*.xml"));
-
+	
 	generic_string nppDir = pNppParams->getNppPath();
-#ifdef UNICODE
+
 	LocalizationSwitcher & localizationSwitcher = pNppParams->getLocalizationSwitcher();
 	wstring localizationDir = nppDir;
 	PathAppend(localizationDir, TEXT("localization\\"));
 
 	_notepad_plus_plus_core.getMatchedFileNames(localizationDir.c_str(), patterns, fileNames, false, false);
-	for (size_t i = 0 ; i < fileNames.size() ; i++)
+	for (size_t i = 0, len = fileNames.size(); i < len ; ++i)
 	{
 		localizationSwitcher.addLanguageFromXml(fileNames[i].c_str());
 	}
-#endif
 
 	fileNames.clear();
 	ThemeSwitcher & themeSwitcher = pNppParams->getThemeSwitcher();
-
+	
 	//  Get themes from both npp install themes dir and app data themes dir with the per user
 	//  overriding default themes of the same name.
 
@@ -185,7 +184,7 @@ void Notepad_plus_Window::init(HINSTANCE hInst, HWND parent, const TCHAR *cmdLin
         themeDir = pNppParams->getAppDataNppDir();
 	    PathAppend(themeDir, TEXT("themes\\"));
 	    _notepad_plus_plus_core.getMatchedFileNames(themeDir.c_str(), patterns, fileNames, false, false);
-	    for (size_t i = 0 ; i < fileNames.size() ; i++)
+	    for (size_t i = 0, len = fileNames.size() ; i < len ; ++i)
 	    {
 		    themeSwitcher.addThemeFromXml(fileNames[i].c_str());
 	    }
@@ -195,16 +194,16 @@ void Notepad_plus_Window::init(HINSTANCE hInst, HWND parent, const TCHAR *cmdLin
 	themeDir = nppDir.c_str(); // <- should use the pointer to avoid the constructor of copy
 	PathAppend(themeDir, TEXT("themes\\"));
 	_notepad_plus_plus_core.getMatchedFileNames(themeDir.c_str(), patterns, fileNames, false, false);
-	for (size_t i = 0 ; i < fileNames.size() ; i++)
+	for (size_t i = 0, len = fileNames.size(); i < len ; ++i)
 	{
 		generic_string themeName( themeSwitcher.getThemeFromXmlFileName(fileNames[i].c_str()) );
-		if (! themeSwitcher.themeNameExists(themeName.c_str()) )
+		if (! themeSwitcher.themeNameExists(themeName.c_str()) ) 
 		{
 			themeSwitcher.addThemeFromXml(fileNames[i].c_str());
 		}
 	}
 
-	for (size_t i = 0 ; i < _notepad_plus_plus_core._internalFuncIDs.size() ; i++)
+	for (size_t i = 0, len = _notepad_plus_plus_core._internalFuncIDs.size() ; i < len ; ++i)
 		::SendMessage(_hSelf, WM_COMMAND, _notepad_plus_plus_core._internalFuncIDs[i], 0);
 
 	// Notify plugins that Notepad++ is ready
@@ -214,22 +213,66 @@ void Notepad_plus_Window::init(HINSTANCE hInst, HWND parent, const TCHAR *cmdLin
 	scnN.nmhdr.idFrom = 0;
 	_notepad_plus_plus_core._pluginsManager.notify(&scnN);
 
+	if (cmdLineParams->_easterEggName != TEXT(""))
+	{
+		char dest[MAX_PATH];
+		wcstombs(dest, (cmdLineParams->_easterEggName).c_str(), sizeof(dest));
+
+		//::MessageBoxA(NULL, destStr.c_str(), "", MB_OK);
+		if (cmdLineParams->_quoteType == 0) // Easter Egg Name
+		{
+			int iQuote = _notepad_plus_plus_core.getQuoteIndexFrom(dest);
+			if (iQuote != -1)
+			{
+				_notepad_plus_plus_core.showQuoteFromIndex(iQuote);
+			}
+		}
+		else if (cmdLineParams->_quoteType == 1) // command line quote
+		{
+			_userQuote = dest;
+			_notepad_plus_plus_core.showQuote(_userQuote.c_str(), "Anonymous #999", false);
+		}
+		else if (cmdLineParams->_quoteType == 2) // content drom file
+		{
+			std::string destStr = dest;
+			generic_string fileName(destStr.begin(), destStr.end());
+
+			if (::PathFileExists(fileName.c_str()))
+			{
+				_userQuote = getFileContent(fileName.c_str());
+				if (_userQuote != "")
+					_notepad_plus_plus_core.showQuote(_userQuote.c_str(), "Anonymous #999", false);
+			}
+		}
+	}
+
 	if (cmdLineParams->_showLoadingTime)
 	{
 		time_t timestampEnd = time(NULL);
 		double loadTime = difftime(timestampEnd, timestampBegin);
 
 		char dest[256];
-		sprintf(dest, "Loading time : %.2lf seconds", loadTime);
+		sprintf(dest, "Loading time : %.0lf seconds", loadTime);
 		::MessageBoxA(NULL, dest, "", MB_OK);
+	}
+
+	bool isSnapshotMode = nppGUI.isSnapshotMode();
+	if (isSnapshotMode)
+	{
+		_notepad_plus_plus_core.checkModifiedDocument();
+		// Lauch backup task
+		_notepad_plus_plus_core.launchDocumentBackupTask();
 	}
 }
 
-bool Notepad_plus_Window::isDlgsMsg(MSG *msg, bool unicodeSupported) const
+bool Notepad_plus_Window::isDlgsMsg(MSG *msg) const 
 {
-	for (size_t i = 0; i < _notepad_plus_plus_core._hModelessDlgs.size(); i++)
+	for (size_t i = 0, len = _notepad_plus_plus_core._hModelessDlgs.size(); i < len; ++i)
 	{
-		if (unicodeSupported?(::IsDialogMessageW(_notepad_plus_plus_core._hModelessDlgs[i], msg)):(::IsDialogMessageA(_notepad_plus_plus_core._hModelessDlgs[i], msg)))
+		if (_notepad_plus_plus_core.processIncrFindAccel(msg))
+			return true;
+
+		if (::IsDialogMessageW(_notepad_plus_plus_core._hModelessDlgs[i], msg))
 			return true;
 	}
 	return false;

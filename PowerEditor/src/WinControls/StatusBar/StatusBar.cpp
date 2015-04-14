@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -59,7 +59,7 @@ void StatusBar::init(HINSTANCE hInst, HWND hPere, int nbParts)
     _partWidthArray = new int[_nbParts];
 
 	// Set the default width
-	for (int i = 0 ; i < _nbParts ; i++)
+	for (int i = 0 ; i < _nbParts ; ++i)
 		_partWidthArray[i] = defaultPartWidth;
 
     // Allocate an array for holding the right edge coordinates.
@@ -76,8 +76,8 @@ void StatusBar::adjustParts(int clientWidth)
     // Calculate the right edge coordinate for each part, and
     // copy the coordinates to the array.
     int nWidth = clientWidth - 20;
-    for (int i = _nbParts - 1 ; i >= 0 ; i--)
-    {
+    for (int i = _nbParts - 1 ; i >= 0 ; i--) 
+    { 
        _lpParts[i] = nWidth;
        nWidth -= _partWidthArray[i];
     }

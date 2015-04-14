@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -44,7 +44,7 @@ void RunMacroDlg::initMacroList()
 	if (::SendMessage(_hParent, WM_GETCURRENTMACROSTATUS, 0, 0) == MACRO_RECORDING_HAS_STOPPED)
 		::SendDlgItemMessage(_hSelf, IDC_MACRO_COMBO, CB_ADDSTRING, 0, (LPARAM)TEXT("Current recorded macro"));
 
-	for (size_t i = 0 ; i < macroList.size() ; i++)
+	for (size_t i = 0, len = macroList.size(); i < len ; ++i)
 		::SendDlgItemMessage(_hSelf, IDC_MACRO_COMBO, CB_ADDSTRING, 0, (LPARAM)macroList[i].getName());
 
 	::SendDlgItemMessage(_hSelf, IDC_MACRO_COMBO, CB_SETCURSEL, 0, 0);
@@ -52,8 +52,8 @@ void RunMacroDlg::initMacroList()
 }
 
 BOOL CALLBACK RunMacroDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
-{
-	switch (message)
+{	
+	switch (message) 
 	{
 		case WM_INITDIALOG :
 		{
@@ -73,22 +73,22 @@ BOOL CALLBACK RunMacroDlg::run_dlgProc(UINT message, WPARAM wParam, LPARAM)
 
 			return TRUE;
 		}
-
-		case WM_COMMAND :
+		
+		case WM_COMMAND : 
 		{
 			if (HIWORD(wParam) == EN_CHANGE)
 			{
 				switch (LOWORD(wParam))
-				{
+				{	
 					case IDC_M_RUN_TIMES:
 						check(IDC_M_RUN_MULTI);
 						return TRUE;
-
+					
 					default:
 						return FALSE;
 				}
 			}
-
+			
 			switch (wParam)
 			{
 				case IDCANCEL :
@@ -138,7 +138,7 @@ void RunMacroDlg::check(int id)
 		::SendDlgItemMessage(_hSelf, IDC_M_RUN_EOF, BM_SETCHECK, BST_UNCHECKED, 0);
 }
 
-int RunMacroDlg::getMacro2Exec() const
+int RunMacroDlg::getMacro2Exec() const 
 {
 	bool isCurMacroPresent = ::SendMessage(_hParent, WM_GETCURRENTMACROSTATUS, 0, 0) == MACRO_RECORDING_HAS_STOPPED;
 	return isCurMacroPresent?(m_macroIndex - 1):m_macroIndex;

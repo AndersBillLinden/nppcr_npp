@@ -10,13 +10,13 @@
 
 unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen) {
 	unsigned int len = 0;
-	for (unsigned int i = 0; i < tlen && uptr[i]; i++) {
+	for (unsigned int i = 0; i < tlen && uptr[i]; ++i) {
 		unsigned int uch = uptr[i];
 		if (uch < 0x80)
-			len++;
+			++len;
 		else if (uch < 0x800)
 			len += 2;
-		else
+		else 
 			len +=3;
 	}
 	return len;
@@ -24,7 +24,7 @@ unsigned int UTF8Length(const wchar_t *uptr, unsigned int tlen) {
 
 void UTF8FromUCS2(const wchar_t *uptr, unsigned int tlen, char *putf, unsigned int len) {
 	int k = 0;
-	for (unsigned int i = 0; i < tlen && uptr[i]; i++) {
+	for (unsigned int i = 0; i < tlen && uptr[i]; ++i) {
 		unsigned int uch = uptr[i];
 		if (uch < 0x80) {
 			putf[k++] = static_cast<char>(uch);
@@ -42,10 +42,10 @@ void UTF8FromUCS2(const wchar_t *uptr, unsigned int tlen, char *putf, unsigned i
 
 unsigned int UCS2Length(const char *s, unsigned int len) {
 	unsigned int ulen = 0;
-	for (unsigned int i=0;i<len;i++) {
+	for (unsigned int i=0; i<len; ++i) {
 		UCHAR ch = static_cast<UCHAR>(s[i]);
 		if ((ch < 0x80) || (ch > (0x80 + 0x40)))
-			ulen++;
+			++ulen;
 	}
 	return ulen;
 }
@@ -78,13 +78,13 @@ unsigned int UCS2FromUTF8(const char *s, unsigned int len, wchar_t *tbuf, unsign
 
 unsigned int ascii_to_utf8(const char * pszASCII, unsigned int lenASCII, char * pszUTF8)
 {
-  // length of pszUTF8 must be enough;
+  // length of pszUTF8 must be enough; 
   // its maximum is (lenASCII*3 + 1)
-
+  
   if (!lenASCII || !pszASCII)
   {
     pszUTF8[0] = 0;
-    return 0;
+    return 0;  
   }
 
   unsigned int lenUCS2;
@@ -93,7 +93,7 @@ unsigned int ascii_to_utf8(const char * pszASCII, unsigned int lenASCII, char * 
   if (!pszUCS2)
   {
     pszUTF8[0] = 0;
-    return 0;
+    return 0;  
   }
 
   lenUCS2 = ::MultiByteToWideChar(CP_ACP, 0, pszASCII, lenASCII, pszUCS2, lenASCII + 1);
@@ -108,12 +108,12 @@ int utf8_to_ascii(const char * pszUTF8, unsigned int lenUTF8, char * pszASCII)
 {
   // length of pszASCII must be enough;
   // its maximum is (lenUTF8 + 1)
-
+  
   if (!lenUTF8 || !pszUTF8)
   {
     pszASCII[0] = 0;
     return 0;
-  }
+  }  
 
   unsigned int lenUCS2;
   wchar_t*     pszUCS2;

@@ -22,7 +22,7 @@
                     <Item idName="Plugins" name="Priedai"/>
                     <Item idName="Window" name="Langas"/>
                 </Entries>
-
+             
                 <!-- Sub Menu Entries -->
                 <SubEntries>
                     <Item subMenuId="edit-copyToClipboard"  name="Kopijuoti Á Mainø Sritá"/>
@@ -64,7 +64,7 @@
                     <Item subMenuId="encoding-vietnamese" name="Vietnamieèiø"/>
                     <Item subMenuId="settings-import"  name="Importuoti"/>
                 </SubEntries>
-
+                
                 <!-- all menu item -->
                 <Commands>
                     <Item id="41001" name="&amp;Naujas"/>
@@ -84,7 +84,7 @@
                     <Item id="41015" name="Iðsaugoti Kopijà Kaip..."/>
                     <Item id="41016" name="Paðalinti Ið Disko"/>
                     <Item id="41017" name="Pervadinti..."/>
-
+                    
                     <Item id="42001" name="&amp;Iðkirpti"/>
                     <Item id="42002" name="&amp;Kopijuoti"/>
                     <Item id="42003" name="A&amp;nuliuoti"/>
@@ -97,8 +97,8 @@
                     <Item id="42010" name="Dublikuoti Dabartinæ Eilutæ"/>
                     <Item id="42012" name="Dalinti Eilutes"/>
                     <Item id="42013" name="Sujungti Eilutes"/>
-                    <Item id="42014" name="Perkelti Á Virðø Dabartinæ Eilutæ"/>
-                    <Item id="42015" name="Perkelti Á Apaèià Dabartinæ Eilutæ"/>
+                    <Item id="42014" name="Perkelti Á Virðø Dabartinæ Eilutæ"/>   
+                    <Item id="42015" name="Perkelti Á Apaèià Dabartinæ Eilutæ"/>   
                     <Item id="42016" name="DIDÞIOSIOS"/>
                     <Item id="42017" name="maþosios"/>
                     <Item id="42018" name="&amp;Pradëti Áraðymà"/>
@@ -124,7 +124,7 @@
                     <Item id="42033" name="Iðvalyti Tik Skaitymas Vëlevëlæ"/>
                     <Item id="42035" name="Komentuoti Blokà"/>
                     <Item id="42036" name="Nekomentuoti Bloko"/>
-
+                    
                     <Item id="43001" name="Su&amp;rasti..."/>
                     <Item id="43002" name="Surasti &amp;Sekantá"/>
                     <Item id="43003" name="Pakeisti..."/>
@@ -267,7 +267,7 @@
                     <Item CMID="16" name="Ið Naujo Ákelti"/>
             </TabBar>
         </Menu>
-
+        
         <Dialog>
             <Find title="" titleFind="Surasti" titleReplace="Pakeisti" titleFindInFiles="Surasti Bylose" titleMark="Þymëti">
                 <Item id="1"    name="Surasti Sekentá"/>
@@ -276,13 +276,13 @@
                 <Item id="1603" name="Tik &amp;Pilnus Þodþius"/>
                 <Item id="1604" name="Ávertinti &amp;Registrà"/>
                 <Item id="1605" name="&amp;Reguliari Iðraiðka"/>
-                <Item id="1606" name="Ciklinë&amp; Paieðka"/>
+                <Item id="1606" name="Ciklinë&amp; Paieðka"/>                                      
                 <Item id="1612" name="Á &amp;Virðø"/>
                 <Item id="1613" name="Á &amp;Apaèià"/>
                 <Item id="1614" name="Skaièiuoti"/>
                 <Item id="1615" name="Surasti Viskà"/>
                 <Item id="1616" name="Þymëti Eilutæ"/>
-                <Item id="1617" name="Þymmëti Surastus"/>
+                <Item id="1617" name="Þymmëti Surastus"/>                                              
                 <Item id="1618" name="Valyti Su Kiekviena Paieðka"/>
                 <Item id="1621" name="Kryptis"/>
                 <Item id="1611" name="&amp;Sukeisti Su:"/>
@@ -325,11 +325,11 @@
                 <Item id="2"    name="Atðaukti"/>
                 <Item id="1904" name="Iðsaugoti..."/>
             </Run>
-
+            
             <StyleConfig title="Stiliø Konfiguratorius">
                 <Item id="2"    name="Atðaukti"/>
                 <Item id="2301" name="Iðsaugoti &amp;&amp; Uþdaryti"/>
-                <Item id="2303" name="Permatomumas"/>
+                <Item id="2303" name="Permatomumas"/>       
                 <Item id="2306" name="Iðrinkti Temà: "/>
                 <SubDialog>
                     <Item id="2204" name="Ryðkus"/>
@@ -353,10 +353,10 @@
                     <Item id="2230" name="Ágalinti Globalø Ryðkø Ðrifto Stiliø"/>
                     <Item id="2231" name="Ágalinti Globalø Kursyviná Ðrifto Stiliø"/>
                     <Item id="2232" name="Ágalinti Globalø Pabrauktà Ðrifto Stiliø"/>
-                </SubDialog>
-
+                </SubDialog>                
+                
             </StyleConfig>
-
+            
             <UserDefine title="Vartotojo kalbos nustatymas">
                 <Item id="20002" name="Pervadinti"/>
                 <Item id="20003" name="Sukurti Naujà..."/>
@@ -445,20 +445,20 @@
                     <Item id="6103" name="Maþos Piktogramos"/>
                     <Item id="6104" name="Didelës Piktogramos"/>
                     <Item id="6105" name="Áprastinës Piktogramos"/>
-
+                    
                     <Item id="6106" name="Korteliø Juosta"/>
                     <Item id="6107" name="Sumaþinti"/>
                     <Item id="6108" name="Uþrakinti (Negalimas Perstatymas)"/>
                     <Item id="6109" name="Tamsi Neaktyvi Juosta"/>
                     <Item id="6110" name="Spalvota Juosta Ant Aktyvios Kortelës"/>
-
+                    
                     <Item id="6111" name="Rodyti Bûsenos Juostà"/>
                     <Item id="6112" name="Uþdarymo Mygtuk. Ant Kiekv. Kortelës"/>
                     <Item id="6113" name="Dvigub. Paspaud. Kad Uþdar. Dok."/>
                     <Item id="6118" name="Paslëpta"/>
                     <Item id="6119" name="Daugeliø Eiluèiø"/>
                     <Item id="6120" name="Vertikali"/>
-
+                    
                     <Item id="6121" name="Meniu Juosta"/>
                     <Item id="6122" name="Paslëpti (Naudokite Alt arba F10)"/>
                     <Item id="6123" name="Localizacija"/>
@@ -477,17 +477,17 @@
                     <Item id="6204" name="Apskritimai"/>
                     <Item id="6205" name="Langelis"/>
                     <Item id="6226" name="Iðjungtas"/>
-
+                    
                     <Item id="6227" name="Eiluèiø Perneðimas"/>
                     <Item id="6228" name="Numatytasis"/>
                     <Item id="6229" name="Iðlygintas"/>
                     <Item id="6230" name="Su Paraðte"/>
-
+                    
                     <Item id="6206" name="Rodyti Eiluèiø Numerá"/>
                     <Item id="6207" name="Rodyti Þymeles"/>
                     <Item id="6208" name="Rodyti Vertikalø Kraðtà"/>
                     <Item id="6209" name="Stulpeliø Skaièius: "/>
-
+                    
                     <Item id="6211" name="Vertikaliø Kraðtø Nustatymai"/>
                     <Item id="6212" name="Linijos Reþimas"/>
                     <Item id="6213" name="Antro Plano Reþimas"/>
@@ -574,12 +574,12 @@
                     <Item id="6327" name="Ágalinti"/>
                     <Item id="6328" name="Kortelës Atributø Apðvietimas"/>
                     <Item id="6330" name="Comment/php/asp Zonø Apðvietimas"/>
-
+                    
                     <Item id="6331" name="Rodyti Tik Bylos Pav. Pavadinimo Juostoje"/>
                     <Item id="6114" name="Ágalinti"/>
                     <Item id="6115" name="Automatinë Pastraipa"/>
                     <Item id="6117" name="Ágalinti Daþniausiai Naudojamus"/>
-
+                    
                 </MISC>
                 <Backup title="Atsarginis Kopijav./Auto Uþbaig.">
                     <Item id="6801" name="Atsarginis Kopijavimas"/>
@@ -638,7 +638,7 @@
             <FileLockedWarning title="Iðsaugojimas Nepavyko" message="Praðome patikrinti ar ðá byla nëra atidaryta kitos programos"/>
             <FileAlreadyOpenedInNpp title="" message="Byla jau yra atidaryta Notepad++."/>
             <DeleteFileFailed title="Paðalinti Bylà" message="Paðalinti bylos nepavyko"/>
-
+            
             <!-- $INT_REPLACE$ saugo bylos vietà, jo neversti -->
             <NbFileToOpenImportantWarning title="Atidaromos bylos apimtis yra per didelë" message="$INT_REPLACE$ Bylos ruoðiamos atidarti.\rAr jûs tikrai norite jas atidaryti?"/>
         </MessageBox>

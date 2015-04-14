@@ -7,9 +7,9 @@
 		ignore any casing, start and stopFunc specify what chars a function starts and stops with.
 		param specifies parameter separator and terminal can be used to specify a character that stops
 		any function. Using the same character for different functions results in undefined behaviour.
-
+		
 		05/11/2009
-		The basic word character are : A-Z a-z 0-9 and '_'
+		The basic word character are : A-Z a-z 0-9 and '_' 
 		If your function name contains other characters,
 		add your characters in "additionalWordChar" attribute (without separator)
 		in order to make calltip hint work
@@ -554,8 +554,8 @@
 			</Overload>
 		</KeyWord>
 		<KeyWord name="for" />
-		<KeyWord name="forward_iterator" />
 		<KeyWord name="for_each" />
+		<KeyWord name="forward_iterator" />
 		<KeyWord name="fprintf" func="yes">
 			<Overload retVal="int" >
 				<Param name="FILE *stream" />

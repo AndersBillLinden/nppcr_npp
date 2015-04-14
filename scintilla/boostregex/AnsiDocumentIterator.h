@@ -4,14 +4,14 @@
 class AnsiDocumentIterator : public std::iterator<std::bidirectional_iterator_tag, char>
 {
 public:
-	AnsiDocumentIterator() :
-		m_doc(0),
+	AnsiDocumentIterator() : 
+		m_doc(0), 
 		m_pos(0),
 		m_end(0)
 	{
 	}
 
-	AnsiDocumentIterator(Document* doc, int pos, int end) :
+	AnsiDocumentIterator(Document* doc, int pos, int end) : 
 		m_doc(doc),
 		m_pos(pos),
 		m_end(end)

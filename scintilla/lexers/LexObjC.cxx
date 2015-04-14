@@ -90,21 +90,21 @@ static void ColouriseObjCDoc(unsigned int startPos, int length, int initStyle, W
 
 	StyleContext sc(startPos, length, initStyle, styler);
 
-	for (; sc.More(); sc.Forward())
+	for (; sc.More(); sc.Forward()) 
 	{
-		if (sc.atLineStart && (sc.state == SCE_C_STRING))
+		if (sc.atLineStart && (sc.state == SCE_C_STRING)) 
 		{
 			// Prevent SCE_C_STRINGEOL from leaking back to previous line
 			sc.SetState(SCE_C_STRING);
 		}
 
 		// Handle line continuation generically.
-		if (sc.ch == '\\')
+		if (sc.ch == '\\') 
 		{
-			if (sc.chNext == '\n' || sc.chNext == '\r')
+			if (sc.chNext == '\n' || sc.chNext == '\r') 
 			{
 				sc.Forward();
-				if (sc.ch == '\r' && sc.chNext == '\n')
+				if (sc.ch == '\r' && sc.chNext == '\n') 
 				{
 					sc.Forward();
 				}
@@ -119,16 +119,16 @@ static void ColouriseObjCDoc(unsigned int startPos, int length, int initStyle, W
 			{
 				sc.SetState(SCE_C_DEFAULT);
 				break;
-			}
+			} 
 			case SCE_C_NUMBER :
 			{
-				if (!IsAWordChar(sc.ch))
+				if (!IsAWordChar(sc.ch)) 
 					sc.SetState(SCE_C_DEFAULT);
 				break;
-			}
-			case SCE_C_IDENTIFIER :
+			} 
+			case SCE_C_IDENTIFIER : 
 			{
-				if (!IsAWordChar(sc.ch) || (sc.ch == '.'))
+				if (!IsAWordChar(sc.ch) || (sc.ch == '.')) 
 				{
 					char s[100];
 					sc.GetCurrent(s, sizeof(s));
@@ -138,18 +138,18 @@ static void ColouriseObjCDoc(unsigned int startPos, int length, int initStyle, W
 						if (objcDirectiveList.InList(ps))
 							sc.ChangeState(SCE_OBJC_DIRECTIVE);
 					}
-					else
+					else 
 					{
-						if (mainInstrsList.InList(s))
+						if (mainInstrsList.InList(s)) 
 						{
 							lastWordWasUUID = strcmp(s, "uuid") == 0;
 							sc.ChangeState(SCE_C_WORD);
-						}
-						else if (mainTypesList.InList(s))
+						} 
+						else if (mainTypesList.InList(s)) 
 						{
 							sc.ChangeState(SCE_C_WORD2);
 						}
-						else if (objcQualifierList.InList(s))
+						else if (objcQualifierList.InList(s)) 
 						{
 							sc.ChangeState(SCE_OBJC_QUALIFIER);
 						}
@@ -157,70 +157,70 @@ static void ColouriseObjCDoc(unsigned int startPos, int length, int initStyle, W
 					sc.SetState(SCE_C_DEFAULT);
 				}
 				break;
-			}
+			} 
 			case SCE_C_PREPROCESSOR :
 			{
-				if (stylingWithinPreprocessor)
+				if (stylingWithinPreprocessor) 
 				{
-					if (IsASpace(sc.ch))
+					if (IsASpace(sc.ch)) 
 						sc.SetState(SCE_C_DEFAULT);
-				}
-				else
+				} 
+				else 
 				{
-					if ((sc.atLineEnd) || (sc.Match('/', '*')) || (sc.Match('/', '/')))
+					if ((sc.atLineEnd) || (sc.Match('/', '*')) || (sc.Match('/', '/'))) 
 						sc.SetState(SCE_C_DEFAULT);
 				}
 				break;
-			}
+			} 
 			case SCE_C_COMMENT :
 			{
-				if (sc.Match('*', '/'))
+				if (sc.Match('*', '/')) 
 				{
 					sc.Forward();
 					sc.ForwardSetState(SCE_C_DEFAULT);
 				}
 				break;
-			}
+			} 
 			case SCE_C_COMMENTDOC :
 			{
-				if (sc.Match('*', '/'))
+				if (sc.Match('*', '/')) 
 				{
 					sc.Forward();
 					sc.ForwardSetState(SCE_C_DEFAULT);
-				}
-				else if (sc.ch == '@' || sc.ch == '\\')
+				} 
+				else if (sc.ch == '@' || sc.ch == '\\') 
 				{
 					sc.SetState(SCE_C_COMMENTDOCKEYWORD);
 				}
 				break;
-			}
+			} 
 			case SCE_C_COMMENTLINE :
 			case SCE_C_COMMENTLINEDOC :
 			{
-				if (sc.atLineEnd)
+				if (sc.atLineEnd) 
 				{
 					sc.SetState(SCE_C_DEFAULT);
 					visibleChars = 0;
 				}
 				break;
-			}
+			} 
 			case SCE_C_COMMENTDOCKEYWORD :
 			{
-				if (sc.Match('*', '/'))
+				if (sc.Match('*', '/')) 
 				{
 					sc.ChangeState(SCE_C_COMMENTDOCKEYWORDERROR);
 					sc.Forward();
 					sc.ForwardSetState(SCE_C_DEFAULT);
-				}
-				else if (!IsADoxygenChar(sc.ch))
+				} 
+				else if (!IsADoxygenChar(sc.ch)) 
 				{
 					char s[100];
-					if (caseSensitive)
+					if (caseSensitive) 
 						sc.GetCurrent(s, sizeof(s));
-					else
+					else 
 						sc.GetCurrentLowered(s, sizeof(s));
 
-					if (!isspace(sc.ch) || !DoxygenList.InList(s + 1))
+					if (!isspace(sc.ch) || !DoxygenList.InList(s + 1)) 
 						sc.ChangeState(SCE_C_COMMENTDOCKEYWORDERROR);
 
 					sc.SetState(SCE_C_COMMENTDOC);
@@ -229,74 +229,74 @@ static void ColouriseObjCDoc(unsigned int startPos, int length, int initStyle, W
 			}
 			case SCE_C_STRING :
 			{
-				if (sc.ch == '\\')
+				if (sc.ch == '\\') 
 				{
 					if (sc.chNext == '\"' || sc.chNext == '\'' || sc.chNext == '\\')
 						sc.Forward();
-				}
-				else if (sc.ch == '\"')
+				} 
+				else if (sc.ch == '\"') 
 				{
 					sc.ForwardSetState(SCE_C_DEFAULT);
-				}
-				else if (sc.atLineEnd)
+				} 
+				else if (sc.atLineEnd) 
 				{
 					sc.ChangeState(SCE_C_STRINGEOL);
 					sc.ForwardSetState(SCE_C_DEFAULT);
 					visibleChars = 0;
 				}
 				break;
-			}
+			} 
 			case SCE_C_CHARACTER :
 			{
-				if (sc.atLineEnd)
+				if (sc.atLineEnd) 
 				{
 					sc.ChangeState(SCE_C_STRINGEOL);
 					sc.ForwardSetState(SCE_C_DEFAULT);
 					visibleChars = 0;
-				}
-				else if (sc.ch == '\\')
+				} 
+				else if (sc.ch == '\\') 
 				{
-					if (sc.chNext == '\"' || sc.chNext == '\'' || sc.chNext == '\\')
+					if (sc.chNext == '\"' || sc.chNext == '\'' || sc.chNext == '\\') 
 					{
 						sc.Forward();
 					}
-				}
-				else if (sc.ch == '\'')
+				} 
+				else if (sc.ch == '\'') 
 				{
 					sc.ForwardSetState(SCE_C_DEFAULT);
 				}
 				break;
-			}
+			} 
 			case SCE_C_REGEX :
 			{
-				if (sc.ch == '\r' || sc.ch == '\n' || sc.ch == '/')
+				if (sc.ch == '\r' || sc.ch == '\n' || sc.ch == '/') 
 				{
 					sc.ForwardSetState(SCE_C_DEFAULT);
-				}
-				else if (sc.ch == '\\')
+				} 
+				else if (sc.ch == '\\') 
 				{
 					// Gobble up the quoted character
-					if (sc.chNext == '\\' || sc.chNext == '/')
+					if (sc.chNext == '\\' || sc.chNext == '/') 
 					{
 						sc.Forward();
 					}
 				}
 				break;
-			}
+			} 
 			case SCE_C_VERBATIM :
 			{
-				if (sc.ch == '\"')
+				if (sc.ch == '\"') 
 				{
-					if (sc.chNext == '\"')
+					if (sc.chNext == '\"') 
 						sc.Forward();
-					else
+					else 
 						sc.ForwardSetState(SCE_C_DEFAULT);
 				}
 				break;
-			}
+			} 
 			case SCE_C_UUID :
 			{
-				if (sc.ch == '\r' || sc.ch == '\n' || sc.ch == ')')
+				if (sc.ch == '\r' || sc.ch == '\n' || sc.ch == ')') 
 					sc.SetState(SCE_C_DEFAULT);
 				break;
 			}
@@ -305,66 +305,66 @@ static void ColouriseObjCDoc(unsigned int startPos, int length, int initStyle, W
 		}
 
 		// Determine if a new state should be entered.
-		if (sc.state == SCE_C_DEFAULT)
+		if (sc.state == SCE_C_DEFAULT) 
 		{
-			if (sc.Match('@', '\"'))
+			if (sc.Match('@', '\"')) 
 			{
 				sc.SetState(SCE_C_VERBATIM);
 				sc.Forward();
 			}
-			else if (IsADigit(sc.ch) || (sc.ch == '.' && IsADigit(sc.chNext)))
+			else if (IsADigit(sc.ch) || (sc.ch == '.' && IsADigit(sc.chNext))) 
 			{
-				if (lastWordWasUUID)
+				if (lastWordWasUUID) 
 				{
 					sc.SetState(SCE_C_UUID);
 					lastWordWasUUID = false;
-				}
-				else
+				} 
+				else 
 				{
 					sc.SetState(SCE_C_NUMBER);
 				}
-			}
-			else if (IsAWordStart(sc.ch) || (sc.ch == '@'))
+			} 
+			else if (IsAWordStart(sc.ch) || (sc.ch == '@')) 
 			{
-				if (lastWordWasUUID)
+				if (lastWordWasUUID) 
 				{
 					sc.SetState(SCE_C_UUID);
 					lastWordWasUUID = false;
-				}
-				else
+				} 
+				else 
 				{
 					sc.SetState(SCE_C_IDENTIFIER);
 				}
-			}
-			else if (sc.Match('/', '*'))
+			} 
+			else if (sc.Match('/', '*')) 
 			{
-				if (sc.Match("/**") || sc.Match("/*!"))
+				if (sc.Match("/**") || sc.Match("/*!")) 
 					// Support of Qt/Doxygen doc. style
 					sc.SetState(SCE_C_COMMENTDOC);
-				else
+				else 
 					sc.SetState(SCE_C_COMMENT);
 				sc.Forward();	// Eat the * so it isn't used for the end of the comment
-			}
-			else if (sc.Match('/', '/'))
+			} 
+			else if (sc.Match('/', '/')) 
 			{
 				if (sc.Match("///") || sc.Match("//!"))	// Support of Qt/Doxygen doc. style
 					sc.SetState(SCE_C_COMMENTLINEDOC);
 				else
 					sc.SetState(SCE_C_COMMENTLINE);
-			}
-			else if (sc.ch == '/' && IsOKBeforeRE(chPrevNonWhite))
+			} 
+			else if (sc.ch == '/' && IsOKBeforeRE(chPrevNonWhite)) 
 			{
 				sc.SetState(SCE_C_REGEX);
-			}
-			else if (sc.ch == '\"')
+			} 
+			else if (sc.ch == '\"') 
 			{
 				sc.SetState(SCE_C_STRING);
-			}
-			else if (sc.ch == '\'')
+			} 
+			else if (sc.ch == '\'') 
 			{
 				sc.SetState(SCE_C_CHARACTER);
-			}
-			else if (sc.ch == '#' && visibleChars == 0)
+			} 
+			else if (sc.ch == '#' && visibleChars == 0) 
 			{
 				// Preprocessor commands are alone on their line
 				sc.SetState(SCE_C_PREPROCESSOR);
@@ -372,7 +372,7 @@ static void ColouriseObjCDoc(unsigned int startPos, int length, int initStyle, W
 				do {
 					sc.Forward();
 				} while ((sc.ch == ' ' || sc.ch == '\t') && sc.More());
-				if (sc.atLineEnd)
+				if (sc.atLineEnd) 
 					sc.SetState(SCE_C_DEFAULT);
 			}
 			else if (isoperator(static_cast<char>(sc.ch)))
@@ -407,10 +407,10 @@ static bool matchKeyword(unsigned int start, WordList &keywords, Accessor &style
 	bool FoundKeyword = false;
 
 	for (unsigned int i = 0;
-			strlen(keywords.words[i]) > 0 && !FoundKeyword;
+			strlen(keywords.WordAt(i)) > 0 && !FoundKeyword;
 	        i++) {
-		if (atoi(keywords.words[i]) == keywordtype) {
-			FoundKeyword = styler.Match(start, ((char *)keywords.words[i]) + 2);
+		if (atoi(keywords.WordAt(i)) == keywordtype) {
+			FoundKeyword = styler.Match(start, ((char *)keywords.WordAt(i)) + 2);
 		}
 	}
 	return FoundKeyword;
@@ -516,20 +516,20 @@ static void FoldObjCDoc(unsigned int startPos, int length, int initStyle, WordLi
 
 		if (style == SCE_OBJC_DIRECTIVE)
 		{
-			if (ch == '@')
+			if (ch == '@') 
 			{
 				unsigned int j = i + 1;
-				if (styler.Match(j, "interface") || styler.Match(j, "implementation") || styler.Match(j, "protocol"))
+				if (styler.Match(j, "interface") || styler.Match(j, "implementation") || styler.Match(j, "protocol")) 
 				{
 					levelCurrent++;
-				}
-				else if (styler.Match(j, "end"))
+				} 
+				else if (styler.Match(j, "end")) 
 				{
 					levelCurrent--;
 				}
 			}
 		}
-
+		
 		/* Check for fold header keyword at beginning of word */
 		if ((style == SCE_C_WORD || style == SCE_C_COMMENT || style == SCE_C_COMMENTLINE)
 		 && (style != stylePrev)) {

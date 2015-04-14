@@ -226,18 +226,18 @@ static void ColouriseMETAPOSTDoc(
 				if (sc.state == SCE_METAPOST_COMMAND) {
 					sc.GetCurrent(key, sizeof(key)) ;
 					if ((strcmp(key,"btex") == 0) || (strcmp(key,"verbatimtex") == 0)) {
-					sc.ChangeState(SCE_METAPOST_GROUP) ;
+    					sc.ChangeState(SCE_METAPOST_GROUP) ;
 						inTeX = true ;
 					} else if (inTeX) {
 						if (strcmp(key,"etex") == 0) {
-						sc.ChangeState(SCE_METAPOST_GROUP) ;
+	    					sc.ChangeState(SCE_METAPOST_GROUP) ;
 							inTeX = false ;
 						} else {
-						sc.ChangeState(SCE_METAPOST_TEXT) ;
+	    					sc.ChangeState(SCE_METAPOST_TEXT) ;
 						}
 					} else {
 						if (keywords && keywords.InList(key)) {
-						sc.ChangeState(SCE_METAPOST_COMMAND) ;
+    						sc.ChangeState(SCE_METAPOST_COMMAND) ;
 						} else if (keywords2 && keywords2.InList(key)) {
 							sc.ChangeState(SCE_METAPOST_EXTRA) ;
 						} else {

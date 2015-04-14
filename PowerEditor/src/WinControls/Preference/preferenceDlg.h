@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -57,6 +57,7 @@ class SettingsDlg : public StaticDialog
 {
 public :
 	SettingsDlg() {};
+
 private :
 	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
 };
@@ -76,7 +77,7 @@ public :
 	virtual void destroy() {
 		_verticalEdgeLineNbColVal.destroy();
 	};
-
+	
 private :
 	URLCtrl _verticalEdgeLineNbColVal;
 	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
@@ -94,6 +95,30 @@ class DefaultNewDocDlg : public StaticDialog
 {
 public :
 	DefaultNewDocDlg() {};
+
+private :
+	std::vector<LangID_Name> _langList;
+	void makeOpenAnsiAsUtf8(bool doIt){
+		if (!doIt)
+			::SendDlgItemMessage(_hSelf, IDC_CHECK_OPENANSIASUTF8, BM_SETCHECK, BST_UNCHECKED, 0);
+		::EnableWindow(::GetDlgItem(_hSelf, IDC_CHECK_OPENANSIASUTF8), doIt);
+	};
+	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
+};
+
+class DefaultDirectoryDlg : public StaticDialog
+{
+public :
+	DefaultDirectoryDlg() {};
+
+private :
+	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
+};
+
+class RecentFilesHistoryDlg : public StaticDialog
+{
+public :
+	RecentFilesHistoryDlg() {};
 	virtual void destroy() {
 		_nbHistoryVal.destroy();
 		_customLenVal.destroy();
@@ -102,11 +127,6 @@ private :
 	URLCtrl _nbHistoryVal;
 	URLCtrl _customLenVal;
 	std::vector<LangID_Name> _langList;
-	void makeOpenAnsiAsUtf8(bool doIt){
-		if (!doIt)
-			::SendDlgItemMessage(_hSelf, IDC_CHECK_OPENANSIASUTF8, BM_SETCHECK, BST_UNCHECKED, 0);
-		::EnableWindow(::GetDlgItem(_hSelf, IDC_CHECK_OPENANSIASUTF8), doIt);
-	};
 	void setCustomLen(int val);
 	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
 };
@@ -115,16 +135,26 @@ class LangMenuDlg : public StaticDialog
 {
 public :
 	LangMenuDlg() {};
+
+private :
+    LexerStylerArray _lsArray;
+	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
+	vector<LangMenuItem> _langList;
+};
+
+class TabSettings : public StaticDialog
+{
+public :
+	TabSettings() {};
     virtual void destroy() {
 		_tabSizeVal.destroy();
 	};
 
 private :
     URLCtrl _tabSizeVal;
-    LexerStylerArray _lsArray;
 	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
-	vector<LangMenuItem> _langList;
 };
+
 
 struct strCouple {
 	generic_string _varDesc;
@@ -149,13 +179,52 @@ class BackupDlg : public StaticDialog
 public :
 	BackupDlg() {};
 private :
-	URLCtrl _nbCharVal;
 	void updateBackupGUI();
 	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
 };
 
 
+class AutoCompletionDlg : public StaticDialog
+{
+public :
+	AutoCompletionDlg() {};
+private :
+	URLCtrl _nbCharVal;
+	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
+};
 
+class MultiInstDlg : public StaticDialog
+{
+public :
+	MultiInstDlg() {};
+
+private :
+	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
+};
+
+class DelimiterSettingsDlg : public StaticDialog
+{
+public :
+	DelimiterSettingsDlg() {};
+
+private :
+	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
+	POINT _singleLineModePoint, _multiLineModePoint;
+	RECT _closerRect, _closerLabelRect;
+};
+
+class SettingsOnCloudDlg : public StaticDialog
+{
+public :
+	SettingsOnCloudDlg(): _initialCloudChoice(noCloud) {};
+
+private :
+	CloudChoice _initialCloudChoice;
+
+	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
+	void setCloudChoice(const char *choice);
+	void removeCloudChoice();
+};
 
 class PreferenceDlg : public StaticDialog
 {
@@ -169,36 +238,43 @@ public :
 	};
 
     void doDialog(bool isRTL = false) {
-	if (!isCreated())
+    	if (!isCreated())
 		{
 			create(IDD_PREFERENCE_BOX, isRTL);
 			goToCenter();
 		}
 	    display();
     };
-
-	virtual void destroy() {
-		_ctrlTab.destroy();
-		_barsDlg.destroy();
-		_marginsDlg.destroy();
-		_settingsDlg.destroy();
-		_fileAssocDlg.destroy();
-		_langMenuDlg.destroy();
-		_printSettingsDlg.destroy();
-		_defaultNewDocDlg.destroy();
+	bool renameDialogTitle(const TCHAR *internalName, const TCHAR *newName);
+	
+	int getListSelectedIndex() const {
+		return ::SendDlgItemMessage(_hSelf, IDC_LIST_DLGTITLE, LB_GETCURSEL, 0, 0);
 	};
+	void setListSelection(size_t currentSel) const;
+
+	virtual void destroy();
+
 private :
 	BOOL CALLBACK run_dlgProc(UINT Message, WPARAM wParam, LPARAM lParam);
-	ControlsTab _ctrlTab;
+	void makeCategoryList();
+	void showDialogByIndex(int index);
+	//ControlsTab _ctrlTab;
 	WindowVector _wVector;
 	BarsDlg _barsDlg;
 	MarginsDlg _marginsDlg;
 	SettingsDlg _settingsDlg;
 	RegExtDlg _fileAssocDlg;
 	LangMenuDlg _langMenuDlg;
+	TabSettings _tabSettings;
 	PrintSettingsDlg _printSettingsDlg;
 	DefaultNewDocDlg _defaultNewDocDlg;
+	DefaultDirectoryDlg	_defaultDirectoryDlg;
+	RecentFilesHistoryDlg _recentFilesHistoryDlg;
 	BackupDlg _backupDlg;
+	AutoCompletionDlg _autoCompletionDlg;
+	MultiInstDlg _multiInstDlg;
+	DelimiterSettingsDlg _delimiterSettingsDlg;
+	SettingsOnCloudDlg _settingsOnCloudDlg;
 };
 
 

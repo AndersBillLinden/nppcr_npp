@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -47,7 +47,7 @@ bool sortXMLCase(const xmlname & x1, const xmlname & x2) {
 }
 
 inline bool lower(char c) {
-	return (c >= 'a' && c <= 'z');
+	return (c >= 'a' && c <= 'z');	
 }
 
 inline bool match(char c1, char c2) {
@@ -56,26 +56,26 @@ inline bool match(char c1, char c2) {
 		return ((c1-32) == c2);
 	if (lower(c2))
 		return ((c2-32) == c1);
-	return false;
+	return false;	
 }
 
 //true if x1 smaller
 bool sortXML(const xmlname & x1, const xmlname & x2) {
-
+	
 	const char * n1 = x1.name, * n2 = x2.name;
 	int i = 0;
 	while(match(n2[i], n1[i])) {
 		if (n1[i] == 0) {
-			return true;	//equal
+			return true;	//equal	
 		}
-		i++;
+		i++;	
 	}
-
+	
 	int subs1 = lower(n1[i])?32:0;
 	int subs2 = lower(n2[i])?32:0;
-
+	
 	return ( (n1[i]-subs1) < (n2[i]-subs2) );
-
+	
 }
 
 void merge(TiXmlElement * n1, TiXmlElement * n2);
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
 	if (argc < 2) {
 		cout << "Usage: sorter.exe xmlfile.xml" << endl;
 		return 1;
-	}
+	} 
 	file = argv[1];
 
 	TiXmlDocument *pXmlApi = NULL;
@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
 
 	if (envNode)
 		element2->LinkEndChild(envNode);
-
+	
 	for(size_t i = 0; i < words.size(); i++) {
 		element2->LinkEndChild(words[i].node);
 	}
@@ -188,17 +188,17 @@ void merge(TiXmlElement * n1, TiXmlElement * n2) {
 	const char * funcAttr = NULL;
 	funcAttr = n2->Attribute("func");
 	if (!funcAttr || !strcmp(funcAttr, "yes")) {
-		return;
+		return;	
 	}
 
 	n1->SetAttribute("func", "yes");
-
+	
 	for (TiXmlElement *childNode = n2->FirstChildElement("Overload");
 		childNode ;
 		childNode = childNode->NextSiblingElement("Overload") )
 	{
 		n1->LinkEndChild(childNode);
 	}
-
+	
 	return;
 }

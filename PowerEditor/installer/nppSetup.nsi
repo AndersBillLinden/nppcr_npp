@@ -7,10 +7,10 @@
 ; version 2 of the License, or (at your option) any later version.
 ;
 ; Note that the GPL places important restrictions on "derived works", yet
-; it does not provide a detailed definition of that term.  To avoid
-; misunderstandings, we consider an application to constitute a
+; it does not provide a detailed definition of that term.  To avoid      
+; misunderstandings, we consider an application to constitute a          
 ; "derivative work" for the purpose of this license if it does any of the
-; following:
+; following:                                                             
 ; 1. Integrates source code from Notepad++.
 ; 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 ;    installer, such as those produced by InstallShield.
@@ -20,20 +20,32 @@
 ; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ; GNU General Public License for more details.
-;
+; 
 ; You should have received a copy of the GNU General Public License
 ; along with this program; if not, write to the Free Software
 ; Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+
+; NSIS includes
+!include "x64.nsh"       ; a few simple macros to handle installations on x64 machines
+!include "MUI.nsh"       ; Modern UI
+!include "nsDialogs.nsh" ; allows creation of custom pages in the installer
+!include "Memento.nsh"   ; remember user selections in the installer across runs
+
+
 ; Define the application name
 !define APPNAME "Notepad++"
 
-!define APPVERSION "6.2.2"
+!define APPVERSION "6.7.5"
 !define APPNAMEANDVERSION "${APPNAME} v${APPVERSION}"
 !define VERSION_MAJOR 6
-!define VERSION_MINOR 22
+!define VERSION_MINOR 75
 
 !define APPWEBSITE "http://notepad-plus-plus.org/"
+
+!define UNINSTALL_REG_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
+!define MEMENTO_REGISTRY_ROOT HKLM
+!define MEMENTO_REGISTRY_KEY ${UNINSTALL_REG_KEY}
 
 ; Main Install settings
 Name "${APPNAMEANDVERSION}"
@@ -41,109 +53,119 @@ InstallDir "$PROGRAMFILES\${APPNAME}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
 OutFile ".\build\npp.${APPVERSION}.Installer.exe"
 
-; GetWindowsVersion
- ;
- ; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
- ; Updated by Joost Verburg
- ;
- ; Returns on top of stack
- ;
- ; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003, Vista)
- ; or
- ; '' (Unknown Windows Version)
- ;
- ; Usage:
- ;   Call GetWindowsVersion
- ;   Pop $R0
- ;   ; at this point $R0 is "NT 4.0" or whatnot
-
+; GetWindowsVersion 3.0 (2013-02-07)
+;
+; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
+; Update by Joost Verburg
+; Update (Macro, Define, Windows 7 detection) - John T. Haller of PortableApps.com - 2008-01-07
+; Update (Windows 8 detection) - Marek Mizanin (Zanir) - 2013-02-07
+;
+; Usage: ${GetWindowsVersion} $R0
+;
+; $R0 contains: 95, 98, ME, NT x.x, 2000, XP, 2003, Vista, 7, 8 or '' (for unknown)
+ 
 Function GetWindowsVersion
-   Push $R0
-   Push $R1
-
-   ClearErrors
-
-   ReadRegStr $R0 HKLM \
-   "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
-
-   IfErrors 0 lbl_winnt
-
-   ; we are not NT
-   ReadRegStr $R0 HKLM \
-   "SOFTWARE\Microsoft\Windows\CurrentVersion" VersionNumber
-
-   StrCpy $R1 $R0 1
-   StrCmp $R1 '4' 0 lbl_error
-
-   StrCpy $R1 $R0 3
-
-   StrCmp $R1 '4.0' lbl_win32_95
-   StrCmp $R1 '4.9' lbl_win32_ME lbl_win32_98
-
-   lbl_win32_95:
-     StrCpy $R0 '95'
-   Goto lbl_done
-
-   lbl_win32_98:
-     StrCpy $R0 '98'
-   Goto lbl_done
-
-   lbl_win32_ME:
-     StrCpy $R0 'ME'
-   Goto lbl_done
-
-   lbl_winnt:
-
-   StrCpy $R1 $R0 1
-
-   StrCmp $R1 '3' lbl_winnt_x
-   StrCmp $R1 '4' lbl_winnt_x
-
-   StrCpy $R1 $R0 3
-
-   StrCmp $R1 '5.0' lbl_winnt_2000
-   StrCmp $R1 '5.1' lbl_winnt_XP
-   StrCmp $R1 '5.2' lbl_winnt_2003
-   StrCmp $R1 '6.0' lbl_winnt_vista lbl_error
-
-   lbl_winnt_x:
-     StrCpy $R0 "NT $R0" 6
-   Goto lbl_done
-
-   lbl_winnt_2000:
-     Strcpy $R0 '2000'
-   Goto lbl_done
-
-   lbl_winnt_XP:
-     Strcpy $R0 'XP'
-   Goto lbl_done
-
-   lbl_winnt_2003:
-     Strcpy $R0 '2003'
-   Goto lbl_done
-
-   lbl_winnt_vista:
-     Strcpy $R0 'Vista'
-   Goto lbl_done
-
-   lbl_error:
-     Strcpy $R0 ''
-   lbl_done:
-
-   Pop $R1
-   Exch $R0
-
+ 
+  Push $R0
+  Push $R1
+ 
+  ClearErrors
+ 
+  ReadRegStr $R0 HKLM \
+  "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
+ 
+  IfErrors 0 lbl_winnt
+ 
+  ; we are not NT
+  ReadRegStr $R0 HKLM \
+  "SOFTWARE\Microsoft\Windows\CurrentVersion" VersionNumber
+ 
+  StrCpy $R1 $R0 1
+  StrCmp $R1 '4' 0 lbl_error
+ 
+  StrCpy $R1 $R0 3
+ 
+  StrCmp $R1 '4.0' lbl_win32_95
+  StrCmp $R1 '4.9' lbl_win32_ME lbl_win32_98
+ 
+  lbl_win32_95:
+    StrCpy $R0 '95'
+  Goto lbl_done
+ 
+  lbl_win32_98:
+    StrCpy $R0 '98'
+  Goto lbl_done
+ 
+  lbl_win32_ME:
+    StrCpy $R0 'ME'
+  Goto lbl_done
+ 
+  lbl_winnt:
+ 
+  StrCpy $R1 $R0 1
+ 
+  StrCmp $R1 '3' lbl_winnt_x
+  StrCmp $R1 '4' lbl_winnt_x
+ 
+  StrCpy $R1 $R0 3
+ 
+  StrCmp $R1 '5.0' lbl_winnt_2000
+  StrCmp $R1 '5.1' lbl_winnt_XP
+  StrCmp $R1 '5.2' lbl_winnt_2003
+  StrCmp $R1 '6.0' lbl_winnt_vista
+  StrCmp $R1 '6.1' lbl_winnt_7
+  StrCmp $R1 '6.2' lbl_winnt_8 lbl_error
+ 
+  lbl_winnt_x:
+    StrCpy $R0 "NT $R0" 6
+  Goto lbl_done
+ 
+  lbl_winnt_2000:
+    Strcpy $R0 '2000'
+  Goto lbl_done
+ 
+  lbl_winnt_XP:
+    Strcpy $R0 'XP'
+  Goto lbl_done
+ 
+  lbl_winnt_2003:
+    Strcpy $R0 '2003'
+  Goto lbl_done
+ 
+  lbl_winnt_vista:
+    Strcpy $R0 'Vista'
+  Goto lbl_done
+ 
+  lbl_winnt_7:
+    Strcpy $R0 '7'
+  Goto lbl_done
+ 
+  lbl_winnt_8:
+    Strcpy $R0 '8'
+  Goto lbl_done
+ 
+  lbl_error:
+    Strcpy $R0 ''
+  lbl_done:
+ 
+  Pop $R1
+  Exch $R0
+ 
 FunctionEnd
+ 
+!macro GetWindowsVersion OUTPUT_VALUE
+	Call GetWindowsVersion
+	Pop `${OUTPUT_VALUE}`
+!macroend
+ 
+!define GetWindowsVersion '!insertmacro "GetWindowsVersion"'
+
 
 Function LaunchNpp
   Exec '"$INSTDIR\notepad++.exe" "$INSTDIR\change.log" '
 FunctionEnd
 
 ; Modern interface settings
-!include "MUI.nsh"
-!include "x64.nsh"
-!include "nsDialogs.nsh"
-
 !define MUI_ICON ".\images\npp_inst.ico"
 
 !define MUI_WELCOMEFINISHPAGE_BITMAP ".\images\wizard.bmp"
@@ -171,6 +193,9 @@ page Custom ExtraOptions
 
 !insertmacro MUI_UNPAGE_CONFIRM
 !insertmacro MUI_UNPAGE_INSTFILES
+
+; TODO for optional arg
+;!insertmacro GetParameters
 
 ; Set languages (first is default language)
 ;!insertmacro MUI_LANGUAGE "English"
@@ -225,9 +250,9 @@ page Custom ExtraOptions
   !insertmacro MUI_LANGUAGE "Macedonian"
   !insertmacro MUI_LANGUAGE "Latvian"
   !insertmacro MUI_LANGUAGE "Bosnian"
-
-  ;!insertmacro MUI_LANGUAGE "Estonian"
-  ;!insertmacro MUI_LANGUAGE "Mongolian"
+  !insertmacro MUI_LANGUAGE "Mongolian"
+  !insertmacro MUI_LANGUAGE "Estonian"
+  
   ;!insertmacro MUI_LANGUAGE "Breton"
   ;!insertmacro MUI_LANGUAGE "Icelandic"
   ;!insertmacro MUI_LANGUAGE "Kurdish"
@@ -241,6 +266,7 @@ Var NoUserDataCheckboxHandle
 Var OldIconCheckboxHandle
 Var ShortcutCheckboxHandle
 Var PluginLoadFromUserDataCheckboxHandle
+Var WinVer
 
 Function ExtraOptions
 	nsDialogs::Create 1018
@@ -253,19 +279,21 @@ Function ExtraOptions
 	${NSD_CreateCheckbox} 0 0 100% 30u "Don't use %APPDATA%$\nEnable this option to make Notepad++ load/write the configuration files from/to its install directory. Check it if you use Notepad++ in an USB device."
 	Pop $NoUserDataCheckboxHandle
 	${NSD_OnClick} $NoUserDataCheckboxHandle OnChange_NoUserDataCheckBox
-
+	
 	${NSD_CreateCheckbox} 0 50 100% 30u "Allow plugins to be loaded from %APPDATA%\\notepad++\\plugins$\nIt could cause a security issue. Turn it on if you know what you are doing."
 	Pop $PluginLoadFromUserDataCheckboxHandle
 	${NSD_OnClick} $PluginLoadFromUserDataCheckboxHandle OnChange_PluginLoadFromUserDataCheckBox
-
+	
 	${NSD_CreateCheckbox} 0 110 100% 30u "Create Shortcut on Desktop"
 	Pop $ShortcutCheckboxHandle
+	StrCmp $WinVer "8" 0 +2
+	${NSD_Check} $ShortcutCheckboxHandle
 	${NSD_OnClick} $ShortcutCheckboxHandle ShortcutOnChange_OldIconCheckBox
 
 	${NSD_CreateCheckbox} 0 170 100% 30u "Use the old, obsolete and monstrous icon$\nI won't blame you if you want to get the old icon back :)"
 	Pop $OldIconCheckboxHandle
 	${NSD_OnClick} $OldIconCheckboxHandle OnChange_OldIconCheckBox
-
+	
 	nsDialogs::Show
 FunctionEnd
 
@@ -273,6 +301,9 @@ Var noUserDataChecked
 Var allowPluginLoadFromUserDataChecked
 Var isOldIconChecked
 Var createShortcutChecked
+
+; TODO for optional arg
+;Var params
 
 ; The definition of "OnChange" event for checkbox
 Function OnChange_NoUserDataCheckBox
@@ -291,21 +322,21 @@ Function ShortcutOnChange_OldIconCheckBox
 	${NSD_GetState} $ShortcutCheckboxHandle $createShortcutChecked
 FunctionEnd
 
+
 Function .onInit
 
 	;Test if window9x
-	Call GetWindowsVersion
-	Pop $R0
-
-	StrCmp $R0 "95" 0 +3
+	${GetWindowsVersion} $WinVer
+	
+	StrCmp $WinVer "95" 0 +3
 		MessageBox MB_OK "This version of Notepad++ does not support your OS.$\nPlease download zipped package of version 5.9 and use ANSI version. You can find v5.9 here:$\nhttp://notepad-plus-plus.org/release/5.9"
 		Abort
-
-	StrCmp $R0 "98" 0 +3
+		
+	StrCmp $WinVer "98" 0 +3
 		MessageBox MB_OK "This version of Notepad++ does not support your OS.$\nPlease download zipped package of version 5.9 and use ANSI version. You can find v5.9 here:$\nhttp://notepad-plus-plus.org/release/5.9"
 		Abort
-
-	StrCmp $R0 "ME" 0 +3
+		
+	StrCmp $WinVer "ME" 0 +3
 		MessageBox MB_OK "This version of Notepad++ does not support your OS.$\nPlease download zipped package of version 5.9 and use ANSI version. You can find v5.9 here:$\nhttp://notepad-plus-plus.org/release/5.9"
 		Abort
 
@@ -321,6 +352,12 @@ Function .onInit
 	;Pop $0 ; $0 has '1' if the user closed the splash screen early,
 			; '0' if everything closed normally, and '-1' if some error occurred.
 
+	${MementoSectionRestore}
+
+FunctionEnd
+
+Function .onInstSuccess
+	${MementoSectionSave}
 FunctionEnd
 
 
@@ -372,6 +409,8 @@ LangString langFileName ${LANG_UZBEK} "uzbek.xml"
 LangString langFileName ${LANG_MACEDONIAN} "macedonian.xml"
 LangString langFileName ${LANG_LATVIAN} "Latvian.xml"
 LangString langFileName ${LANG_BOSNIAN} "bosnian.xml"
+LangString langFileName ${LANG_MONGOLIAN} "mongolian.xml"
+LangString langFileName ${LANG_ESTONIAN} "estonian.xml"
 
 
 Var UPDATE_PATH
@@ -382,9 +421,9 @@ Section -"Notepad++" mainSection
 	SetOverwrite on
 
 	StrCpy $UPDATE_PATH $INSTDIR
-
+	
 	File /oname=$TEMP\xmlUpdater.exe ".\bin\xmlUpdater.exe"
-
+		
 	SetOutPath "$INSTDIR\"
 
 	${If} $noUserDataChecked == ${BST_CHECKED}
@@ -395,14 +434,25 @@ Section -"Notepad++" mainSection
 		StrCpy $UPDATE_PATH "$APPDATA\Notepad++"
 		CreateDirectory $UPDATE_PATH\plugins\config
 	${EndIf}
-
+	
 	${If} $allowPluginLoadFromUserDataChecked == ${BST_CHECKED}
 		File "..\bin\allowAppDataPlugins.xml"
 	${ELSE}
 		IfFileExists $INSTDIR\allowAppDataPlugins.xml 0 +2
 		Delete $INSTDIR\allowAppDataPlugins.xml
 	${EndIf}
-
+	
+	
+	; TODO for optional arg
+	;${GetParameters} $params
+	;${GetOptions} $params "/noEasterEggs"  $R0
+ 
+	;IfErrors 0 +2
+	;MessageBox MB_OK "Not found /noEasterEggs" IDOK +2
+	;MessageBox MB_OK "Found /noEasterEggs"
+	
+	
+	
 	SetOutPath "$TEMP\"
 	File "langsModel.xml"
 	File "configModel.xml"
@@ -416,27 +466,30 @@ Section -"Notepad++" mainSection
 
 	nsExec::ExecToStack '"$TEMP\xmlUpdater.exe" "$TEMP\langsModel.xml" "$TEMP\langs.model.xml" "$UPDATE_PATH\langs.xml"'
 	nsExec::ExecToStack '"$TEMP\xmlUpdater.exe" "$TEMP\configModel.xml" "$TEMP\config.model.xml" "$UPDATE_PATH\config.xml"'
-
+	
 	nsExec::ExecToStack '"$TEMP\xmlUpdater.exe" "$TEMP\stylesGlobalModel.xml" "$TEMP\stylers.model.xml" "$UPDATE_PATH\stylers.xml"'
 	nsExec::ExecToStack '"$TEMP\xmlUpdater.exe" "$TEMP\stylesLexerModel.xml" "$TEMP\stylers_remove.xml" "$UPDATE_PATH\stylers.xml"'
 	nsExec::ExecToStack '"$TEMP\xmlUpdater.exe" "$TEMP\stylesLexerModel.xml" "$TEMP\stylers.model.xml" "$UPDATE_PATH\stylers.xml"'
-
+	
 	; This line is added due to the bug of xmlUpdater, to be removed in the future
 	nsExec::ExecToStack '"$TEMP\xmlUpdater.exe" "$TEMP\stylesLexerModel.xml" "$TEMP\stylers.model.xml" "$UPDATE_PATH\stylers.xml"'
-
+	
 	SetOverwrite off
 	SetOutPath "$UPDATE_PATH\"
 	File "..\bin\contextMenu.xml"
-
+	File "..\bin\functionList.xml"
+	
 	SetOverwrite on
 	SetOutPath "$INSTDIR\"
 	File "..\bin\langs.model.xml"
 	File "..\bin\config.model.xml"
 	File "..\bin\stylers.model.xml"
+	File "..\bin\contextMenu.xml"
+	File "..\bin\functionList.xml"
 
 	SetOverwrite off
 	File "..\bin\shortcuts.xml"
-
+	
 	; Set Section Files and Shortcuts
 	SetOverwrite on
 	File "..\license.txt"
@@ -446,7 +499,7 @@ Section -"Notepad++" mainSection
 	File "..\bin\readme.txt"
 
 	; Localization
-	; Default language English
+	; Default language English 
 	SetOutPath "$INSTDIR\localization\"
 	File ".\nativeLang\english.xml"
 
@@ -457,7 +510,7 @@ Section -"Notepad++" mainSection
 
 	IfFileExists "$UPDATE_PATH\nativeLang.xml" 0 +2
 		Delete "$UPDATE_PATH\nativeLang.xml"
-
+		
 	IfFileExists "$INSTDIR\nativeLang.xml" 0 +2
 		Delete "$INSTDIR\nativeLang.xml"
 
@@ -474,37 +527,37 @@ Section -"Notepad++" mainSection
 
 	; remove unstable plugins
 	CreateDirectory "$INSTDIR\plugins\disabled"
-
+	
 	IfFileExists "$INSTDIR\plugins\HexEditorPlugin.dll" 0 +4
 		MessageBox MB_OK "Due to the stability issue,$\nHexEditorPlugin.dll is about to be deleted." /SD IDOK
 		Rename "$INSTDIR\plugins\HexEditorPlugin.dll" "$INSTDIR\plugins\disabled\HexEditorPlugin.dll"
 		Delete "$INSTDIR\plugins\HexEditorPlugin.dll"
 
 	IfFileExists "$INSTDIR\plugins\HexEditor.dll" 0 +4
-		MessageBox MB_OK "Due to the stability issue,$\nHexEditor.dll will be moved to the directory $\"disabled$\"" /SD IDOK
-		Rename "$INSTDIR\plugins\HexEditor.dll" "$INSTDIR\plugins\disabled\HexEditor.dll"
+		MessageBox MB_OK "Due to the stability issue,$\nHexEditor.dll will be moved to the directory $\"disabled$\"" /SD IDOK 
+		Rename "$INSTDIR\plugins\HexEditor.dll" "$INSTDIR\plugins\disabled\HexEditor.dll" 
 		Delete "$INSTDIR\plugins\HexEditor.dll"
 
 	IfFileExists "$INSTDIR\plugins\MultiClipboard.dll" 0 +4
 		MessageBox MB_OK "Due to the stability issue,$\nMultiClipboard.dll will be moved to the directory $\"disabled$\"" /SD IDOK
 		Rename "$INSTDIR\plugins\MultiClipboard.dll" "$INSTDIR\plugins\disabled\MultiClipboard.dll"
 		Delete "$INSTDIR\plugins\MultiClipboard.dll"
-
+		
 	Delete "$INSTDIR\plugins\NppDocShare.dll"
 
 	IfFileExists "$INSTDIR\plugins\FunctionList.dll" 0 +4
 		MessageBox MB_OK "Due to the stability issue,$\nFunctionList.dll will be moved to the directory $\"disabled$\"" /SD IDOK
 		Rename "$INSTDIR\plugins\FunctionList.dll" "$INSTDIR\plugins\disabled\FunctionList.dll"
 		Delete "$INSTDIR\plugins\FunctionList.dll"
-
+	
 	IfFileExists "$INSTDIR\plugins\docMonitor.unicode.dll" 0 +4
 		MessageBox MB_OK "Due to the stability issue,$\ndocMonitor.unicode.dll will be moved to the directory $\"disabled$\"" /SD IDOK
 		Rename "$INSTDIR\plugins\docMonitor.unicode.dll" "$INSTDIR\plugins\disabled\docMonitor.unicode.dll"
 		Delete "$INSTDIR\plugins\docMonitor.unicode.dll"
-
+		
 	IfFileExists "$INSTDIR\plugins\NPPTextFX.ini" 0 +1
 		Delete "$INSTDIR\plugins\NPPTextFX.ini"
-
+		 
 	IfFileExists "$INSTDIR\plugins\NppAutoIndent.dll" 0 +4
 		MessageBox MB_OK "Due to the stability issue,$\nNppAutoIndent.dll will be moved to the directory $\"disabled$\"" /SD IDOK
 		Rename "$INSTDIR\plugins\NppAutoIndent.dll" "$INSTDIR\plugins\disabled\NppAutoIndent.dll"
@@ -519,14 +572,14 @@ Section -"Notepad++" mainSection
 		MessageBox MB_OK "Due to the stability issue,$\nNppPlugin_ChangeMarker.dll will be moved to the directory $\"disabled$\"" /SD IDOK
 		Rename "$INSTDIR\plugins\NppPlugin_ChangeMarker.dll" "$INSTDIR\plugins\disabled\NppPlugin_ChangeMarker.dll"
 		Delete "$INSTDIR\plugins\NppPlugin_ChangeMarker.dll"
-
+		
 	IfFileExists "$INSTDIR\plugins\QuickText.UNI.dll" 0 +4
-		MessageBox MB_OK "Due to the stability issue,$\n\QuickText.UNI.dll will be moved to the directory $\"disabled$\"" /SD IDOK
+		MessageBox MB_OK "Due to the stability issue,$\nQuickText.UNI.dll will be moved to the directory $\"disabled$\"" /SD IDOK
 		Rename "$INSTDIR\plugins\QuickText.UNI.dll" "$INSTDIR\plugins\disabled\QuickText.UNI.dll"
 		Delete "$INSTDIR\plugins\QuickText.UNI.dll"
 
 	IfFileExists "$INSTDIR\plugins\AHKExternalLexer.dll" 0 +4
-		MessageBox MB_OK "Due to the compability issue,$\n\AHKExternalLexer.dll will be moved to the directory $\"disabled$\"" /SD IDOK
+		MessageBox MB_OK "Due to the compability issue,$\nAHKExternalLexer.dll will be moved to the directory $\"disabled$\"" /SD IDOK
 		Rename "$INSTDIR\plugins\AHKExternalLexer.dll" "$INSTDIR\plugins\disabled\AHKExternalLexer.dll"
 		Delete "$INSTDIR\plugins\AHKExternalLexer.dll"
 
@@ -546,198 +599,215 @@ Section -"Notepad++" mainSection
 		Delete "$INSTDIR\plugins\Oberon2LexerU.dll"
 
 
+	IfFileExists "$INSTDIR\plugins\NotepadSharp.dll" 0 +4
+		MessageBox MB_OK "Due to the stability issue,$\n\NotepadSharp.dll will be moved to the directory $\"disabled$\"" /SD IDOK
+		Rename "$INSTDIR\plugins\NotepadSharp.dll" "$INSTDIR\plugins\disabled\NotepadSharp.dll"
+		Delete "$INSTDIR\plugins\NotepadSharp.dll"
+		
+	IfFileExists "$INSTDIR\plugins\PreviewHTML.dll" 0 +4
+		MessageBox MB_OK "Due to the stability issue,$\nPreviewHTML.dll will be moved to the directory $\"disabled$\"" /SD IDOK
+		Rename "$INSTDIR\plugins\PreviewHTML.dll" "$INSTDIR\plugins\disabled\PreviewHTML.dll"
+		Delete "$INSTDIR\plugins\PreviewHTML.dll"
+		
+	IfFileExists "$INSTDIR\plugins\nppRegEx.dll" 0 +4
+		MessageBox MB_OK "Due to the stability issue,$\nnppRegEx.dll will be moved to the directory $\"disabled$\"" /SD IDOK
+		Rename "$INSTDIR\plugins\nppRegEx.dll" "$INSTDIR\plugins\disabled\nppRegEx.dll"
+		Delete "$INSTDIR\plugins\nppRegEx.dll"
+		
+	IfFileExists "$INSTDIR\plugins\AutoSaveU.dll" 0 +4
+		MessageBox MB_OK "Due to the stability issue,$\nAutoSaveU.dll will be moved to the directory $\"disabled$\"" /SD IDOK
+		Rename "$INSTDIR\plugins\AutoSaveU.dll" "$INSTDIR\plugins\disabled\AutoSaveU.dll"
+		Delete "$INSTDIR\plugins\AutoSaveU.dll"
+		
     ; Context Menu Management : removing old version of Context Menu module
 	IfFileExists "$INSTDIR\nppcm.dll" 0 +3
 		Exec 'regsvr32 /u /s "$INSTDIR\nppcm.dll"'
 		Delete "$INSTDIR\nppcm.dll"
-
+        
     IfFileExists "$INSTDIR\NppShell.dll" 0 +3
 		Exec 'regsvr32 /u /s "$INSTDIR\NppShell.dll"'
 		Delete "$INSTDIR\NppShell.dll"
-
+		
     IfFileExists "$INSTDIR\NppShell_01.dll" 0 +3
 		Exec 'regsvr32 /u /s "$INSTDIR\NppShell_01.dll"'
 		Delete "$INSTDIR\NppShell_01.dll"
-
+        
     IfFileExists "$INSTDIR\NppShell_02.dll" 0 +3
 		Exec 'regsvr32 /u /s "$INSTDIR\NppShell_02.dll"'
 		Delete "$INSTDIR\NppShell_02.dll"
-
+		
     IfFileExists "$INSTDIR\NppShell_03.dll" 0 +3
 		Exec 'regsvr32 /u /s "$INSTDIR\NppShell_03.dll"'
 		Delete "$INSTDIR\NppShell_03.dll"
-
+		
 	IfFileExists "$INSTDIR\NppShell_04.dll" 0 +3
 		Exec 'regsvr32 /u /s "$INSTDIR\NppShell_04.dll"'
 		Delete "$INSTDIR\NppShell_04.dll"
-
-	; detect the right of
+		
+	IfFileExists "$INSTDIR\NppShell_05.dll" 0 +3
+		Exec 'regsvr32 /u /s "$INSTDIR\NppShell_05.dll"'
+		Delete "$INSTDIR\NppShell_05.dll"
+		
+	; detect the right of 
 	UserInfo::GetAccountType
 	Pop $1
 	StrCmp $1 "Admin" 0 +2
-
+	
 	SetShellVarContext all
 	; add all the npp shortcuts for all user or current user
 	CreateDirectory "$SMPROGRAMS\Notepad++"
 	CreateShortCut "$SMPROGRAMS\Notepad++\Notepad++.lnk" "$INSTDIR\notepad++.exe"
 	SetShellVarContext current
-
+	
 	${If} $createShortcutChecked == ${BST_CHECKED}
 		CreateShortCut "$DESKTOP\Notepad++.lnk" "$INSTDIR\notepad++.exe"
 	${EndIf}
-
+	
 	${If} $isOldIconChecked == ${BST_CHECKED}
 		SetOutPath "$TEMP\"
 		File "..\misc\vistaIconTool\changeIcon.exe"
 		File "..\src\icons\npp.ico"
 		nsExec::ExecToStack '"$TEMP\changeIcon.exe" "$TEMP\npp.ico" "$INSTDIR\notepad++.exe" 100 1033'
 	${EndIf}
-
+	
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\notepad++.exe" "" "$INSTDIR\notepad++.exe"
 SectionEnd
 
-Section "Context Menu Entry" explorerContextMenu
+${MementoSection} "Context Menu Entry" explorerContextMenu
 	SetOverwrite try
 	SetOutPath "$INSTDIR\"
 	${If} ${RunningX64}
-		File /oname=$INSTDIR\NppShell_05.dll "..\bin\NppShell64_05.dll"
+		File /oname=$INSTDIR\NppShell_06.dll "..\bin\NppShell64_06.dll"
 	${Else}
-		File "..\bin\NppShell_05.dll"
+		File "..\bin\NppShell_06.dll"
 	${EndIf}
-
-	Exec 'regsvr32 /s "$INSTDIR\NppShell_05.dll"'
-SectionEnd
+	
+	Exec 'regsvr32 /s "$INSTDIR\NppShell_06.dll"'
+${MementoSectionEnd}
 
 SectionGroup "Auto-completion Files" autoCompletionComponent
 	SetOverwrite off
-
-	Section C
+	
+	${MementoSection} "C" C
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\c.xml"
-	SectionEnd
-
-	Section C++
+	${MementoSectionEnd}
+	
+	${MementoSection} "C++" C++
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\cpp.xml"
-	SectionEnd
+	${MementoSectionEnd}
 
-	Section Java
+	${MementoSection} "Java" Java
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\java.xml"
-	SectionEnd
-
-	Section C#
+	${MementoSectionEnd}
+	
+	${MementoSection} "C#" C#
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\cs.xml"
-	SectionEnd
-
-	Section HTML
+	${MementoSectionEnd}
+	
+	${MementoSection} "HTML" HTML
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\html.xml"
-	SectionEnd
-
-	Section RC
+	${MementoSectionEnd}
+	
+	${MementoSection} "RC" RC
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\rc.xml"
-	SectionEnd
-
-	Section SQL
+	${MementoSectionEnd}
+	
+	${MementoSection} "SQL" SQL
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\sql.xml"
-	SectionEnd
-
-	Section PHP
+	${MementoSectionEnd}
+	
+	${MementoSection} "PHP" PHP
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\php.xml"
-	SectionEnd
+	${MementoSectionEnd}
 
-	Section CSS
+	${MementoSection} "CSS" CSS
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\css.xml"
-	SectionEnd
+	${MementoSectionEnd}
 
-	Section VB
+	${MementoSection} "VB" VB
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\vb.xml"
-	SectionEnd
+	${MementoSectionEnd}
 
-	Section Perl
+	${MementoSection} "Perl" Perl
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\perl.xml"
-	SectionEnd
-
-	Section JavaScript
+	${MementoSectionEnd}
+	
+	${MementoSection} "JavaScript" JavaScript
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\javascript.xml"
-	SectionEnd
+	${MementoSectionEnd}
 
-	Section Python
+	${MementoSection} "Python" Python
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\python.xml"
-	SectionEnd
-
-	Section ActionScript
+	${MementoSectionEnd}
+	
+	${MementoSection} "ActionScript" ActionScript
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\actionscript.xml"
-	SectionEnd
-
-	Section LISP
+	${MementoSectionEnd}
+	
+	${MementoSection} "LISP" LISP
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\lisp.xml"
-	SectionEnd
-
-	Section VHDL
+	${MementoSectionEnd}
+	
+	${MementoSection} "VHDL" VHDL
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\vhdl.xml"
-	SectionEnd
-
-	Section TeX
+	${MementoSectionEnd}
+	
+	${MementoSection} "TeX" TeX
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\tex.xml"
-	SectionEnd
-
-	Section DocBook
+	${MementoSectionEnd}
+	
+	${MementoSection} "DocBook" DocBook
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\xml.xml"
-	SectionEnd
-
-	Section NSIS
+	${MementoSectionEnd}
+	
+	${MementoSection} "NSIS" NSIS
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\nsis.xml"
-	SectionEnd
-
-	Section CMAKE
+	${MementoSectionEnd}
+	
+	${MementoSection} "CMAKE" CMAKE
 		SetOutPath "$INSTDIR\plugins\APIs"
 		File ".\APIs\cmake.xml"
-	SectionEnd
+	${MementoSectionEnd}
 SectionGroupEnd
 
 SectionGroup "Plugins" Plugins
-
 	SetOverwrite on
-/*
-	Section "NPPTextFX" NPPTextFX
+
+	${MementoSection} "Spell-Checker" DSpellCheck
+		Delete "$INSTDIR\plugins\DSpellCheck.dll"
 		SetOutPath "$INSTDIR\plugins"
-		File "..\bin\plugins\NPPTextFX.dll"
+		File "..\bin\plugins\DSpellCheck.dll"
+		SetOutPath "$UPDATE_PATH\plugins\Config"
+		SetOutPath "$INSTDIR\plugins\Config\Hunspell"
+		File "..\bin\plugins\Config\Hunspell\dictionary.lst"
+		File "..\bin\plugins\Config\Hunspell\en_GB.aff"
+		File "..\bin\plugins\Config\Hunspell\en_GB.dic"
+		File "..\bin\plugins\Config\Hunspell\README_en_GB.txt"
+		File "..\bin\plugins\Config\Hunspell\en_US.aff"
+		File "..\bin\plugins\Config\Hunspell\en_US.dic"
+		File "..\bin\plugins\Config\Hunspell\README_en_US.txt"
+	${MementoSectionEnd}
 
-		SetOutPath "$INSTDIR\plugins\Config\tidy"
-		File "..\bin\plugins\Config\tidy\AsciiToEBCDIC.bin"
-		File "..\bin\plugins\Config\tidy\libTidy.dll"
-		File "..\bin\plugins\Config\tidy\TIDYCFG.INI"
-		File "..\bin\plugins\Config\tidy\W3C-CSSValidator.htm"
-		File "..\bin\plugins\Config\tidy\W3C-HTMLValidator.htm"
-
-		SetOutPath "$INSTDIR\plugins\doc"
-		File "..\bin\plugins\doc\NPPTextFXdemo.TXT"
-	SectionEnd
-*/
-	Section "Spell-Checker" SpellChecker
-		Delete "$INSTDIR\plugins\SpellChecker.dll"
-		SetOutPath "$INSTDIR\plugins"
-		File "..\bin\plugins\SpellChecker.dll"
-	SectionEnd
-
-	Section "Npp FTP" NppFTP
+	${MementoSection} "Npp FTP" NppFTP
 		Delete "$INSTDIR\plugins\NppFTP.dll"
 		SetOutPath "$INSTDIR\plugins"
 		File "..\bin\plugins\NppFTP.dll"
@@ -749,367 +819,395 @@ SectionGroup "Plugins" Plugins
 		File "..\bin\plugins\doc\NppFTP\license_ZLIB.txt"
 		File "..\bin\plugins\doc\NppFTP\license_UTCP.htm"
 		File "..\bin\plugins\doc\NppFTP\Readme.txt"
-	SectionEnd
+	${MementoSectionEnd}
 
-	Section "NppExport" NppExport
+	${MementoSection} "NppExport" NppExport
 		Delete "$INSTDIR\plugins\NppExport.dll"
 		SetOutPath "$INSTDIR\plugins"
 		File "..\bin\plugins\NppExport.dll"
-	SectionEnd
-/*
-	Section "Compare Plugin" ComparePlugin
-		Delete "$INSTDIR\plugins\ComparePlugin.dll"
-		SetOutPath "$INSTDIR\plugins"
-		File "..\bin\plugins\ComparePlugin.dll"
-	SectionEnd
-*/
-	Section "Plugin Manager" PluginManager
+	${MementoSectionEnd}
+
+	${MementoSection} "Plugin Manager" PluginManager
 		Delete "$INSTDIR\plugins\PluginManager.dll"
 		SetOutPath "$INSTDIR\plugins"
 		File "..\bin\plugins\PluginManager.dll"
 		SetOutPath "$INSTDIR\updater"
 		File "..\bin\updater\gpup.exe"
-	SectionEnd
-
-	Section "Converter" Converter
+	${MementoSectionEnd}
+	
+	${MementoSection} "Mime Tools" MimeTools
+		Delete "$INSTDIR\plugins\mimeTools.dll"
+		SetOutPath "$INSTDIR\plugins"
+		File "..\bin\plugins\mimeTools.dll"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Converter" Converter
 		Delete "$INSTDIR\plugins\NppConverter.dll"
 		SetOutPath "$INSTDIR\plugins"
 		File "..\bin\plugins\NppConverter.dll"
-	SectionEnd
+	${MementoSectionEnd}
 SectionGroupEnd
 
 SectionGroup "Localization" localization
 	SetOverwrite on
-	Section /o "Afrikaans"  afrikaans
+	${MementoUnselectedSection} "Afrikaans" afrikaans
 		CopyFiles "$TEMP\nppLocalization\afrikaans.xml" "$INSTDIR\localization\afrikaans.xml"
-	SectionEnd
-	Section /o "Albanian"  albanian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Albanian" albanian
 		CopyFiles "$TEMP\nppLocalization\albanian.xml" "$INSTDIR\localization\albanian.xml"
-	SectionEnd
-	Section /o "Arabic"  arabic
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Arabic" arabic
 		CopyFiles "$TEMP\nppLocalization\arabic.xml" "$INSTDIR\localization\arabic.xml"
-	SectionEnd
-	Section /o "Aragonese"  aragonese
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Aragonese" aragonese
 		CopyFiles "$TEMP\nppLocalization\aragonese.xml" "$INSTDIR\localization\aragonese.xml"
-	SectionEnd
-	Section /o "Aranese"  aranese
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Aranese" aranese
 		CopyFiles "$TEMP\nppLocalization\aranese.xml" "$INSTDIR\localization\aranese.xml"
-	SectionEnd
-	Section /o "Azerbaijani"  azerbaijani
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Azerbaijani" azerbaijani
 		CopyFiles "$TEMP\nppLocalization\azerbaijani.xml" "$INSTDIR\localization\azerbaijani.xml"
-	SectionEnd
-	Section /o "Basque"  basque
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Basque" basque
 		CopyFiles "$TEMP\nppLocalization\basque.xml" "$INSTDIR\localization\basque.xml"
-	SectionEnd
-	Section /o "Belarusian"  belarusian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Belarusian" belarusian
 		CopyFiles "$TEMP\nppLocalization\belarusian.xml" "$INSTDIR\localization\belarusian.xml"
-	SectionEnd
-	Section /o "Bosnian"  bosnian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Bengali" bengali
+		CopyFiles "$TEMP\nppLocalization\bengali.xml" "$INSTDIR\localization\bengali.xml"
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Bosnian" bosnian
 		CopyFiles "$TEMP\nppLocalization\bosnian.xml" "$INSTDIR\localization\bosnian.xml"
-	SectionEnd
-	Section /o "Brazilian Portuguese"  brazilian_portuguese
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Brazilian Portuguese" brazilian_portuguese
 		CopyFiles "$TEMP\nppLocalization\brazilian_portuguese.xml" "$INSTDIR\localization\brazilian_portuguese.xml"
-	SectionEnd
-	Section /o "Bulgarian"  bulgarian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Bulgarian" bulgarian
 		CopyFiles "$TEMP\nppLocalization\bulgarian.xml" "$INSTDIR\localization\bulgarian.xml"
-	SectionEnd
-	Section /o "Catalan"  catalan
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Catalan" catalan
 		CopyFiles "$TEMP\nppLocalization\catalan.xml" "$INSTDIR\localization\catalan.xml"
-	SectionEnd
-	Section /o "Chinese (Traditional)" chineseTraditional
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Chinese (Traditional)" chineseTraditional
 		CopyFiles "$TEMP\nppLocalization\chinese.xml" "$INSTDIR\localization\chinese.xml"
-	SectionEnd
-	Section /o "Chinese (Simplified)"  chineseSimplified
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Chinese (Simplified)" chineseSimplified
 		CopyFiles "$TEMP\nppLocalization\chineseSimplified.xml" "$INSTDIR\localization\chineseSimplified.xml"
-	SectionEnd
-	Section /o "Croatian"  croatian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Croatian" croatian
 		CopyFiles "$TEMP\nppLocalization\croatian.xml" "$INSTDIR\localization\croatian.xml"
-	SectionEnd
-	Section /o "Czech"  czech
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Czech" czech
 		CopyFiles "$TEMP\nppLocalization\czech.xml" "$INSTDIR\localization\czech.xml"
-	SectionEnd
-	Section /o "Danish"  danish
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Danish" danish
 		CopyFiles "$TEMP\nppLocalization\danish.xml" "$INSTDIR\localization\danish.xml"
-	SectionEnd
-	Section /o "Dutch"  dutch
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Dutch" dutch
 		CopyFiles "$TEMP\nppLocalization\dutch.xml" "$INSTDIR\localization\dutch.xml"
-	SectionEnd
-	Section /o "English (Customizable)"  english_customizable
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "English (Customizable)" english_customizable
 		CopyFiles "$TEMP\nppLocalization\english_customizable.xml" "$INSTDIR\localization\english_customizable.xml"
-	SectionEnd
-	Section /o "Esperanto"  esperanto
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Esperanto" esperanto
 		CopyFiles "$TEMP\nppLocalization\esperanto.xml" "$INSTDIR\localization\esperanto.xml"
-	SectionEnd
-	Section /o "Extremaduran"  extremaduran
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Estonian" estonian
+		CopyFiles "$TEMP\nppLocalization\estonian.xml" "$INSTDIR\localization\estonian.xml"
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Extremaduran" extremaduran
 		CopyFiles "$TEMP\nppLocalization\extremaduran.xml" "$INSTDIR\localization\extremaduran.xml"
-	SectionEnd
-	Section /o "Farsi"  farsi
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Farsi" farsi
 		CopyFiles "$TEMP\nppLocalization\farsi.xml" "$INSTDIR\localization\farsi.xml"
-	SectionEnd
-	Section /o "Finnish"  finnish
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Finnish" finnish
 		CopyFiles "$TEMP\nppLocalization\finnish.xml" "$INSTDIR\localization\finnish.xml"
-	SectionEnd
-	Section /o "Friulian"  friulian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Friulian" friulian
 		CopyFiles "$TEMP\nppLocalization\friulian.xml" "$INSTDIR\localization\friulian.xml"
-	SectionEnd
-	Section /o "French" french
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "French" french 
 		CopyFiles "$TEMP\nppLocalization\french.xml" "$INSTDIR\localization\french.xml"
-	SectionEnd
-	Section /o "Galician"  galician
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Galician" galician
 		CopyFiles "$TEMP\nppLocalization\galician.xml" "$INSTDIR\localization\galician.xml"
-	SectionEnd
-	Section /o "Georgian"  georgian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Georgian" georgian
 		CopyFiles "$TEMP\nppLocalization\georgian.xml" "$INSTDIR\localization\georgian.xml"
-	SectionEnd
-	Section /o "German" german
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "German" german
 		CopyFiles "$TEMP\nppLocalization\german.xml" "$INSTDIR\localization\german.xml"
-	SectionEnd
-	Section /o "Greek" greek
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Greek" greek
 		CopyFiles "$TEMP\nppLocalization\greek.xml" "$INSTDIR\localization\greek.xml"
-	SectionEnd
-	Section /o "Hebrew" hebrew
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Gujarati" gujarati
+		CopyFiles "$TEMP\nppLocalization\gujarati.xml" "$INSTDIR\localization\gujarati.xml"
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Hebrew" hebrew
 		CopyFiles "$TEMP\nppLocalization\hebrew.xml" "$INSTDIR\localization\hebrew.xml"
-	SectionEnd
-	Section /o "Hindi" hindi
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Hindi" hindi
 		CopyFiles "$TEMP\nppLocalization\hindi.xml" "$INSTDIR\localization\hindi.xml"
-	SectionEnd
-	Section /o "Hungarian" hungarian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Hungarian" hungarian
 		CopyFiles "$TEMP\nppLocalization\hungarian.xml" "$INSTDIR\localization\hungarian.xml"
-	SectionEnd
-	Section /o "Hungarian (ANSI)" hungarianA
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Hungarian (ANSI)" hungarianA
 		CopyFiles "$TEMP\nppLocalization\hungarianA.xml" "$INSTDIR\localization\hungarianA.xml"
-	SectionEnd
-	Section /o "Indonesian" indonesian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Indonesian" indonesian
 		CopyFiles "$TEMP\nppLocalization\indonesian.xml" "$INSTDIR\localization\indonesian.xml"
-	SectionEnd
-	Section /o "Italian" italian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Italian" italian
 		CopyFiles "$TEMP\nppLocalization\italian.xml" "$INSTDIR\localization\italian.xml"
-	SectionEnd
-	Section /o "Japanese" japanese
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Japanese" japanese
 		CopyFiles "$TEMP\nppLocalization\japanese.xml" "$INSTDIR\localization\japanese.xml"
-	SectionEnd
-	Section /o "Kazakh" kazakh
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Kazakh" kazakh
 		CopyFiles "$TEMP\nppLocalization\kazakh.xml" "$INSTDIR\localization\kazakh.xml"
-	SectionEnd
-	Section /o "Korean" korean
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Korean" korean
 		CopyFiles "$TEMP\nppLocalization\korean.xml" "$INSTDIR\localization\korean.xml"
-	SectionEnd
-	Section /o "Kyrgyz" kyrgyz
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Kyrgyz" kyrgyz
 		CopyFiles "$TEMP\nppLocalization\kyrgyz.xml" "$INSTDIR\localization\kyrgyz.xml"
-	SectionEnd
-	Section /o "Latvian" latvian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Latvian" latvian
 		CopyFiles "$TEMP\nppLocalization\latvian.xml" "$INSTDIR\localization\latvian.xml"
-	SectionEnd
-	Section /o "Ligurian" ligurian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Ligurian" ligurian
 		CopyFiles "$TEMP\nppLocalization\ligurian.xml" "$INSTDIR\localization\ligurian.xml"
-	SectionEnd
-	Section /o "Lithuanian" lithuanian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Lithuanian" lithuanian
 		CopyFiles "$TEMP\nppLocalization\lithuanian.xml" "$INSTDIR\localization\lithuanian.xml"
-	SectionEnd
-	Section /o "Luxembourgish" luxembourgish
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Luxembourgish" luxembourgish
 		CopyFiles "$TEMP\nppLocalization\luxembourgish.xml" "$INSTDIR\localization\luxembourgish.xml"
-	SectionEnd
-	Section /o "Macedonian" macedonian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Macedonian" macedonian
 		CopyFiles "$TEMP\nppLocalization\macedonian.xml" "$INSTDIR\localization\macedonian.xml"
-	SectionEnd
-	Section /o "Malay" malay
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Malay" malay
 		CopyFiles "$TEMP\nppLocalization\malay.xml" "$INSTDIR\localization\malay.xml"
-	SectionEnd
-	Section /o "Norwegian" norwegian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Marathi" marathi
+		CopyFiles "$TEMP\nppLocalization\marathi.xml" "$INSTDIR\localization\marathi.xml"
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Mongolian" mongolian
+		CopyFiles "$TEMP\nppLocalization\mongolian.xml" "$INSTDIR\localization\mongolian.xml"
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Norwegian" norwegian
 		CopyFiles "$TEMP\nppLocalization\norwegian.xml" "$INSTDIR\localization\norwegian.xml"
-	SectionEnd
-	Section /o "Nynorsk" nynorsk
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Nynorsk" nynorsk
 		CopyFiles "$TEMP\nppLocalization\nynorsk.xml" "$INSTDIR\localization\nynorsk.xml"
-	SectionEnd
-	Section /o "Occitan" occitan
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Occitan" occitan
 		CopyFiles "$TEMP\nppLocalization\occitan.xml" "$INSTDIR\localization\occitan.xml"
-	SectionEnd
-	Section /o "Polish" polish
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Polish" polish
 		CopyFiles "$TEMP\nppLocalization\polish.xml" "$INSTDIR\localization\polish.xml"
-	SectionEnd
-	Section /o "Portuguese" portuguese
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Portuguese" portuguese
 		CopyFiles "$TEMP\nppLocalization\portuguese.xml" "$INSTDIR\localization\portuguese.xml"
-	SectionEnd
-	Section /o "Romanian" romanian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Kannada" kannada
+		CopyFiles "$TEMP\nppLocalization\kannada.xml" "$INSTDIR\localization\kannada.xml"
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Romanian" romanian
 		CopyFiles "$TEMP\nppLocalization\romanian.xml" "$INSTDIR\localization\romanian.xml"
-	SectionEnd
-	Section /o "Russian" russian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Russian" russian
 		CopyFiles "$TEMP\nppLocalization\russian.xml" "$INSTDIR\localization\russian.xml"
-	SectionEnd
-	Section /o "Samogitian" samogitian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Samogitian" samogitian
 		CopyFiles "$TEMP\nppLocalization\samogitian.xml" "$INSTDIR\localization\samogitian.xml"
-	SectionEnd
-	Section /o "Sardinian" sardinian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Sardinian" sardinian
 		CopyFiles "$TEMP\nppLocalization\sardinian.xml" "$INSTDIR\localization\sardinian.xml"
-	SectionEnd
-	Section /o "Serbian" serbian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Serbian" serbian
 		CopyFiles "$TEMP\nppLocalization\serbian.xml" "$INSTDIR\localization\serbian.xml"
-	SectionEnd
-	Section /o "Serbian (Cyrillic)" serbianCyrillic
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Serbian (Cyrillic)" serbianCyrillic
 		CopyFiles "$TEMP\nppLocalization\serbianCyrillic.xml" "$INSTDIR\localization\serbianCyrillic.xml"
-	SectionEnd
-	Section /o "Slovak" slovak
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Sinhala" sinhala
+		CopyFiles "$TEMP\nppLocalization\sinhala.xml" "$INSTDIR\localization\sinhala.xml"
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Slovak" slovak
 		CopyFiles "$TEMP\nppLocalization\slovak.xml" "$INSTDIR\localization\slovak.xml"
-	SectionEnd
-	Section /o "Slovak (ANSI)" slovakA
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Slovak (ANSI)" slovakA
 		CopyFiles "$TEMP\nppLocalization\slovakA.xml" "$INSTDIR\localization\slovakA.xml"
-	SectionEnd
-	Section /o "Slovenian" slovenian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Slovenian" slovenian
 		CopyFiles "$TEMP\nppLocalization\slovenian.xml" "$INSTDIR\localization\slovenian.xml"
-	SectionEnd
-	Section /o "Spanish" spanish
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Spanish" spanish
 		CopyFiles "$TEMP\nppLocalization\spanish.xml" "$INSTDIR\localization\spanish.xml"
-	SectionEnd
-	Section /o "Spanish_ar" spanish_ar
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Spanish_ar" spanish_ar
 		CopyFiles "$TEMP\nppLocalization\spanish_ar.xml" "$INSTDIR\localization\spanish_ar.xml"
-	SectionEnd
-	Section /o "Swedish" swedish
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Swedish" swedish
 		CopyFiles "$TEMP\nppLocalization\swedish.xml" "$INSTDIR\localization\swedish.xml"
-	SectionEnd
-	Section /o "Tagalog" tagalog
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Tagalog" tagalog
 		CopyFiles "$TEMP\nppLocalization\tagalog.xml" "$INSTDIR\localization\tagalog.xml"
-	SectionEnd
-	Section /o "Tamil" tamil
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Tamil" tamil
 		CopyFiles "$TEMP\nppLocalization\tamil.xml" "$INSTDIR\localization\tamil.xml"
-	SectionEnd
-	Section /o "Telugu" telugu
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Telugu" telugu
 		CopyFiles "$TEMP\nppLocalization\telugu.xml" "$INSTDIR\localization\telugu.xml"
-	SectionEnd
-	Section /o "Thai" thai
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Thai" thai
 		CopyFiles "$TEMP\nppLocalization\thai.xml" "$INSTDIR\localization\thai.xml"
-	SectionEnd
-	Section /o "Turkish" turkish
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Turkish" turkish
 		CopyFiles "$TEMP\nppLocalization\turkish.xml" "$INSTDIR\localization\turkish.xml"
-	SectionEnd
-	Section /o "Ukrainian" ukrainian
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Ukrainian" ukrainian
 		CopyFiles "$TEMP\nppLocalization\ukrainian.xml" "$INSTDIR\localization\ukrainian.xml"
-	SectionEnd
-	Section /o "Uzbek" uzbek
-		CopyFiles "$TEMP\nppLocalization\uzbek.xml" "$INSTDIR\localization\uzbek.xml"
-	SectionEnd
-	Section /o "Uzbek (Cyrillic)" uzbekCyrillic
-		CopyFiles "$TEMP\nppLocalization\uzbekCyrillic.xml" "$INSTDIR\localization\uzbekCyrillic.xml"
-	SectionEnd
-	Section /o "Uyghur" uyghur
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Urdu" urdu
+		CopyFiles "$TEMP\nppLocalization\urdu.xml" "$INSTDIR\localization\urdu.xml"
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Uyghur" uyghur
 		CopyFiles "$TEMP\nppLocalization\uyghur.xml" "$INSTDIR\localization\uyghur.xml"
-	SectionEnd
-
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Uzbek" uzbek
+		CopyFiles "$TEMP\nppLocalization\uzbek.xml" "$INSTDIR\localization\uzbek.xml"
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Uzbek (Cyrillic)" uzbekCyrillic
+		CopyFiles "$TEMP\nppLocalization\uzbekCyrillic.xml" "$INSTDIR\localization\uzbekCyrillic.xml"
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Vietnamese" vietnamese
+		CopyFiles "$TEMP\nppLocalization\vietnamese.xml" "$INSTDIR\localization\vietnamese.xml"
+	${MementoSectionEnd}
+	${MementoUnselectedSection} "Welsh" welsh
+		CopyFiles "$TEMP\nppLocalization\welsh.xml" "$INSTDIR\localization\welsh.xml"
+	${MementoSectionEnd}
 SectionGroupEnd
 
 SectionGroup "Themes" Themes
 	SetOverwrite off
-	Section "Black Board" BlackBoard
-		SetOutPath "$INSTDIR\themes"
+	${MementoSection} "Black Board" BlackBoard
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Black board.xml"
-	SectionEnd
+	${MementoSectionEnd}
 
-	Section "Choco" Choco
-		SetOutPath "$INSTDIR\themes"
+	${MementoSection} "Choco" Choco
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Choco.xml"
-	SectionEnd
-
-	Section "Hello Kitty" HelloKitty
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Hello Kitty" HelloKitty
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Hello Kitty.xml"
-	SectionEnd
-
-	Section "Mono Industrial" MonoIndustrial
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Mono Industrial" MonoIndustrial
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Mono Industrial.xml"
-	SectionEnd
-
-	Section "Monokai" Monokai
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Monokai" Monokai
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Monokai.xml"
-	SectionEnd
-
-	Section "Obsidian" Obsidian
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Obsidian" Obsidian
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\obsidian.xml"
-	SectionEnd
-
-	Section "Plastic Code Wrap" PlasticCodeWrap
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Plastic Code Wrap" PlasticCodeWrap
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Plastic Code Wrap.xml"
-	SectionEnd
-
-	Section "Ruby Blue" RubyBlue
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Ruby Blue" RubyBlue
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Ruby Blue.xml"
-	SectionEnd
-
-	Section "Twilight" Twilight
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Twilight" Twilight
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Twilight.xml"
-	SectionEnd
-
-	Section "Vibrant Ink" VibrantInk
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Vibrant Ink" VibrantInk
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Vibrant Ink.xml"
-	SectionEnd
-
-	Section "Deep Black" DeepBlack
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Deep Black" DeepBlack
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Deep Black.xml"
-	SectionEnd
-
-	Section "vim Dark Blue" vimDarkBlue
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "vim Dark Blue" vimDarkBlue
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\vim Dark Blue.xml"
-	SectionEnd
-
-	Section "Bespin" Bespin
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Bespin" Bespin
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Bespin.xml"
-	SectionEnd
-
-	Section "Zenburn" Zenburn
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Zenburn" Zenburn
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Zenburn.xml"
-	SectionEnd
+	${MementoSectionEnd}
 
-	Section "Solarized" Solarized
-		SetOutPath "$INSTDIR\themes"
+	${MementoSection} "Solarized" Solarized
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Solarized.xml"
-	SectionEnd
+	${MementoSectionEnd}
 
-	Section "Solarized Light" Solarized-light
-		SetOutPath "$INSTDIR\themes"
+	${MementoSection} "Solarized Light" Solarized-light
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Solarized-light.xml"
-	SectionEnd
-
-	Section "Hot Fudge Sundae" HotFudgeSundae
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Hot Fudge Sundae" HotFudgeSundae
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\HotFudgeSundae.xml"
-	SectionEnd
-
-	Section "khaki" khaki
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "khaki" khaki
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\khaki.xml"
-	SectionEnd
+	${MementoSectionEnd}
 
-	Section "Mossy Lawn" MossyLawn
-		SetOutPath "$INSTDIR\themes"
+	${MementoSection} "Mossy Lawn" MossyLawn
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\MossyLawn.xml"
-	SectionEnd
-
-	Section "Navajo" Navajo
-		SetOutPath "$INSTDIR\themes"
+	${MementoSectionEnd}
+	
+	${MementoSection} "Navajo" Navajo
+		SetOutPath "$UPDATE_PATH\themes"
 		File ".\themes\Navajo.xml"
-	SectionEnd
-
+	${MementoSectionEnd}
 SectionGroupEnd
 
-Section /o "As default html viewer" htmlViewer
+${MementoUnselectedSection} "As default html viewer" htmlViewer
 	SetOverwrite on
 	SetOutPath "$INSTDIR\"
 	File "..\bin\nppIExplorerShell.exe"
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Internet Explorer\View Source Editor\Editor Name" "" "$INSTDIR\nppIExplorerShell.exe"
-SectionEnd
+${MementoSectionEnd}
 
 InstType "Minimalist"
 
-Section "Auto-Updater" AutoUpdater
+${MementoSection} "Auto-Updater" AutoUpdater
 	SetOverwrite on
 	SetOutPath "$INSTDIR\updater"
 	File "..\bin\updater\GUP.exe"
@@ -1118,20 +1216,20 @@ Section "Auto-Updater" AutoUpdater
 	File "..\bin\updater\License.txt"
 	File "..\bin\updater\gpl.txt"
 	File "..\bin\updater\readme.txt"
-SectionEnd
+${MementoSectionEnd}
 
-Section "User Manual" UserManual
+${MementoSection} "User Manual" UserManual
 	SetOverwrite on
 	IfFileExists  "$INSTDIR\NppHelp.chm" 0 +2
 		Delete "$INSTDIR\NppHelp.chm"
 	SetOutPath "$INSTDIR\user.manual"
 	File /r "..\bin\user.manual\"
-SectionEnd
+${MementoSectionEnd}
 
 /*
-Section /o "Create Shortcut on Desktop"
+Section /o "Create Shortcut on Desktop" 
 
-
+	
 SectionEnd
 
 
@@ -1140,11 +1238,13 @@ Section /o "Use the old application icon" getOldIcon
 SectionEnd
 */
 
+${MementoSectionDone}
+
 ;--------------------------------
 ;Descriptions
 
   ;Language strings
-
+  
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     ;!insertmacro MUI_DESCRIPTION_TEXT ${makeLocal} 'Enable this option to make Notepad++ load/write the configuration files from/to its install directory. Check it if you use Notepad++ in an USB device.'
@@ -1164,11 +1264,16 @@ SectionEnd
 Section -FinishSection
 
 	WriteRegStr HKLM "Software\${APPNAME}" "" "$INSTDIR"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayName" "${APPNAME}"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "UninstallString" "$INSTDIR\uninstall.exe"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayIcon" "$INSTDIR\notepad++.exe"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "DisplayVersion" "${APPVERSION}"
-	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}" "URLInfoAbout" "${APPWEBSITE}"
+	WriteRegStr HKLM "${UNINSTALL_REG_KEY}" "DisplayName" "${APPNAME}"
+	WriteRegStr HKLM "${UNINSTALL_REG_KEY}" "Publisher" "Notepad++ Team"
+	WriteRegStr HKLM "${UNINSTALL_REG_KEY}" "VersionMajor" "${VERSION_MAJOR}"
+	WriteRegStr HKLM "${UNINSTALL_REG_KEY}" "VersionMinor" "${VERSION_MINOR}"
+	WriteRegStr HKLM "${UNINSTALL_REG_KEY}" "MajorVersion" "${VERSION_MAJOR}"
+	WriteRegStr HKLM "${UNINSTALL_REG_KEY}" "MinorVersion" "${VERSION_MINOR}"
+	WriteRegStr HKLM "${UNINSTALL_REG_KEY}" "UninstallString" "$INSTDIR\uninstall.exe"
+	WriteRegStr HKLM "${UNINSTALL_REG_KEY}" "DisplayIcon" "$INSTDIR\notepad++.exe"
+	WriteRegStr HKLM "${UNINSTALL_REG_KEY}" "DisplayVersion" "${APPVERSION}"
+	WriteRegStr HKLM "${UNINSTALL_REG_KEY}" "URLInfoAbout" "${APPWEBSITE}"
 	WriteUninstaller "$INSTDIR\uninstall.exe"
 
 SectionEnd
@@ -1183,16 +1288,16 @@ SectionGroup un.autoCompletionComponent
 
 	Section un.CSS
 		Delete "$INSTDIR\plugins\APIs\css.xml"
-	SectionEnd
-
+	SectionEnd	
+	
 	Section un.HTML
 		Delete "$INSTDIR\plugins\APIs\html.xml"
 	SectionEnd
-
+	
 	Section un.SQL
 		Delete "$INSTDIR\plugins\APIs\sql.xml"
 	SectionEnd
-
+	
 	Section un.RC
 		Delete "$INSTDIR\plugins\APIs\rc.xml"
 	SectionEnd
@@ -1208,19 +1313,19 @@ SectionGroup un.autoCompletionComponent
 	Section un.C
 		Delete "$INSTDIR\plugins\APIs\c.xml"
 	SectionEnd
-
+	
 	Section un.C++
 		Delete "$INSTDIR\plugins\APIs\cpp.xml"
 	SectionEnd
-
+	
 	Section un.Java
 		Delete "$INSTDIR\plugins\APIs\java.xml"
 	SectionEnd
-
+	
 	Section un.C#
 		Delete "$INSTDIR\plugins\APIs\cs.xml"
 	SectionEnd
-
+	
 	Section un.JavaScript
 		Delete "$INSTDIR\plugins\APIs\javascript.xml"
 	SectionEnd
@@ -1232,34 +1337,34 @@ SectionGroup un.autoCompletionComponent
 	Section un.ActionScript
 		Delete "$INSTDIR\plugins\APIs\actionscript.xml"
 	SectionEnd
-
+	
 	Section un.LISP
 		Delete "$INSTDIR\plugins\APIs\lisp.xml"
 	SectionEnd
-
+	
 	Section un.VHDL
 		Delete "$INSTDIR\plugins\APIs\vhdl.xml"
-	SectionEnd
-
+	SectionEnd	
+	
 	Section un.TeX
 		Delete "$INSTDIR\plugins\APIs\tex.xml"
 	SectionEnd
-
+	
 	Section un.DocBook
 		Delete "$INSTDIR\plugins\APIs\xml.xml"
 	SectionEnd
-
+	
 	Section un.NSIS
 		Delete "$INSTDIR\plugins\APIs\nsis.xml"
 	SectionEnd
-
+	
 	Section un.AWK
 		Delete "$INSTDIR\plugins\APIs\awk.xml"
 	SectionEnd
-
+	
 	Section un.CMAKE
 		Delete "$INSTDIR\plugins\APIs\cmake.xml"
-	SectionEnd
+	SectionEnd	
 SectionGroupEnd
 
 SectionGroup un.Plugins
@@ -1299,7 +1404,7 @@ SectionGroup un.Plugins
 
 	Section un.NppFTP
 		Delete "$INSTDIR\plugins\NppFTP.dll"
-
+		
 		Delete "$INSTDIR\plugins\doc\NppFTP\license_NppFTP.txt"
 		Delete "$INSTDIR\plugins\doc\NppFTP\license_libssh.txt"
 		Delete "$INSTDIR\plugins\doc\NppFTP\license_OpenSSL.txt"
@@ -1307,23 +1412,23 @@ SectionGroup un.Plugins
 		Delete "$INSTDIR\plugins\doc\NppFTP\license_ZLIB.txt"
 		Delete "$INSTDIR\plugins\doc\NppFTP\license_UTCP.htm"
 		Delete "$INSTDIR\plugins\doc\NppFTP\Readme.txt"
-
+		
 	SectionEnd
-
+	
 	Section un.NppExport
 		Delete "$INSTDIR\plugins\NppExport.dll"
 	SectionEnd
-
+	
 	Section un.SelectNLaunch
 		Delete "$INSTDIR\plugins\SelectNLaunch.dll"
 	SectionEnd
-
+	
 	Section un.DocMonitor
 		Delete "$INSTDIR\plugins\docMonitor.dll"
 		Delete "$INSTDIR\plugins\Config\docMonitor.ini"
-	SectionEnd
-
-
+	SectionEnd	
+	
+	
 	Section un.LightExplorer
 		Delete "$INSTDIR\plugins\LightExplorer.dll"
 		Delete "$INSTDIR\lightExplorer.ini"
@@ -1343,6 +1448,17 @@ SectionGroup un.Plugins
 	Section un.SpellChecker
 		Delete "$INSTDIR\plugins\SpellChecker.dll"
 	SectionEnd
+	Section un.DSpellCheck
+		Delete "$INSTDIR\plugins\DSpellCheck.dll"
+		Delete "$UPDATE_PATH\plugins\Config\DSpellCheck.ini"
+		Delete "$INSTDIR\plugins\Config\Hunspell\dictionary.lst"
+		Delete "$INSTDIR\plugins\Config\Hunspell\en_GB.aff"
+		Delete "$INSTDIR\plugins\Config\Hunspell\en_GB.dic"
+		Delete "$INSTDIR\plugins\Config\Hunspell\README_en_GB.txt"
+		Delete "$INSTDIR\plugins\Config\Hunspell\en_US.aff"
+		Delete "$INSTDIR\plugins\Config\Hunspell\en_US.dic"
+		Delete "$INSTDIR\plugins\Config\Hunspell\README_en_US.txt"
+	SectionEnd	
 	Section un.NppExec
 		Delete "$INSTDIR\plugins\NppExec.dll"
 		Delete "$INSTDIR\plugins\doc\NppExec.txt"
@@ -1363,97 +1479,100 @@ SectionGroup un.Plugins
 	Section un.Converter
 		Delete "$INSTDIR\plugins\NppConverter.dll"
 	SectionEnd
+	Section un.MimeTools
+		Delete "$INSTDIR\plugins\mimeTools.dll"
+	SectionEnd
 	Section un.PluginManager
 		Delete "$INSTDIR\plugins\PluginManager.dll"
 		Delete "$INSTDIR\updater\gpup.exe"
 		RMDir "$INSTDIR\updater\"
-	SectionEnd
+	SectionEnd	
 	Section un.ChangeMarkers
 		Delete "$INSTDIR\plugins\NppPlugin_ChangeMarker.dll"
-	SectionEnd
+	SectionEnd	
 SectionGroupEnd
 
 SectionGroup un.Themes
 	Section un.BlackBoard
-		Delete "$INSTDIR\themes\Black board.xml"
+		Delete "$UPDATE_PATH\themes\Black board.xml"
 	SectionEnd
 
 	Section un.Choco
-		Delete "$INSTDIR\themes\Choco.xml"
+		Delete "$UPDATE_PATH\themes\Choco.xml"
 	SectionEnd
-
+	
 	Section un.HelloKitty
-		Delete "$INSTDIR\themes\Hello Kitty.xml"
+		Delete "$UPDATE_PATH\themes\Hello Kitty.xml"
 	SectionEnd
-
+	
 	Section un.MonoIndustrial
-		Delete "$INSTDIR\themes\Mono Industrial.xml"
+		Delete "$UPDATE_PATH\themes\Mono Industrial.xml"
 	SectionEnd
-
+	
 	Section un.Monokai
-		Delete "$INSTDIR\themes\Monokai.xml"
+		Delete "$UPDATE_PATH\themes\Monokai.xml"
 	SectionEnd
-
+	
 	Section un.Obsidian
-		Delete "$INSTDIR\themes/obsidian.xml"
+		Delete "$UPDATE_PATH\themes/obsidian.xml"
 	SectionEnd
-
+	
 	Section un.PlasticCodeWrap
-		Delete "$INSTDIR\themes\Plastic Code Wrap.xml"
+		Delete "$UPDATE_PATH\themes\Plastic Code Wrap.xml"
 	SectionEnd
-
+	
 	Section un.RubyBlue
-		Delete "$INSTDIR\themes\Ruby Blue.xml"
+		Delete "$UPDATE_PATH\themes\Ruby Blue.xml"
 	SectionEnd
-
+	
 	Section un.Twilight
-		Delete "$INSTDIR\themes\Twilight.xml"
+		Delete "$UPDATE_PATH\themes\Twilight.xml"
 	SectionEnd
-
+	
 	Section un.VibrantInk
-		Delete "$INSTDIR\themes\Vibrant Ink.xml"
+		Delete "$UPDATE_PATH\themes\Vibrant Ink.xml"
 	SectionEnd
 
 	Section un.DeepBlack
-		Delete "$INSTDIR\themes\Deep Black.xml"
+		Delete "$UPDATE_PATH\themes\Deep Black.xml"
 	SectionEnd
-
+	
 	Section un.vimDarkBlue
-		Delete "$INSTDIR\themes\vim Dark Blue.xml"
+		Delete "$UPDATE_PATH\themes\vim Dark Blue.xml"
 	SectionEnd
-
+	
 	Section un.Bespin
-		Delete "$INSTDIR\themes\Bespin.xml"
+		Delete "$UPDATE_PATH\themes\Bespin.xml"
 	SectionEnd
-
+	
 	Section un.Zenburn
-		Delete "$INSTDIR\themes\Zenburn.xml"
+		Delete "$UPDATE_PATH\themes\Zenburn.xml"
 	SectionEnd
 
 	Section un.Solarized
-		Delete "$INSTDIR\themes\Solarized.xml"
+		Delete "$UPDATE_PATH\themes\Solarized.xml"
 	SectionEnd
 
 	Section un.Solarized-light
-		Delete "$INSTDIR\themes\Solarized-light.xml"
+		Delete "$UPDATE_PATH\themes\Solarized-light.xml"
 	SectionEnd
-
+	
 	Section un.HotFudgeSundae
-		Delete "$INSTDIR\themes\HotFudgeSundae.xml"
+		Delete "$UPDATE_PATH\themes\HotFudgeSundae.xml"
 	SectionEnd
 
 	Section un.khaki
-		Delete "$INSTDIR\themes\khaki.xml"
+		Delete "$UPDATE_PATH\themes\khaki.xml"
 	SectionEnd
-
+	
 	Section un.MossyLawn
-		Delete "$INSTDIR\themes\MossyLawn.xml"
+		Delete "$UPDATE_PATH\themes\MossyLawn.xml"
 	SectionEnd
 
 	Section un.Navajo
-		Delete "$INSTDIR\themes\Navajo.xml"
+		Delete "$UPDATE_PATH\themes\Navajo.xml"
 	SectionEnd
-
+	
 SectionGroupEnd
 
 SectionGroup un.localization
@@ -1481,6 +1600,9 @@ SectionGroup un.localization
 	SectionEnd
 	Section un.belarusian
 		Delete "$INSTDIR\localization\belarusian.xml"
+	SectionEnd
+	Section un.bengali
+		Delete "$INSTDIR\localization\bengali.xml"
 	SectionEnd
 	Section un.bosnian
 		Delete "$INSTDIR\localization\bosnian.xml"
@@ -1518,6 +1640,9 @@ SectionGroup un.localization
 	Section un.esperanto
 		Delete "$INSTDIR\localization\esperanto.xml"
 	SectionEnd
+	Section un.estonian
+		Delete "$INSTDIR\localization\estonian.xml"
+	SectionEnd
 	Section un.extremaduran
 		Delete "$INSTDIR\localization\extremaduran.xml"
 	SectionEnd
@@ -1530,7 +1655,7 @@ SectionGroup un.localization
 	Section un.friulian
 		Delete "$INSTDIR\localization\friulian.xml"
 	SectionEnd
-	Section un.french
+	Section un.french 
 		Delete "$INSTDIR\localization\french.xml"
 	SectionEnd
 	Section un.galician
@@ -1544,6 +1669,9 @@ SectionGroup un.localization
 	SectionEnd
 	Section un.greek
 		Delete "$INSTDIR\localization\greek.xml"
+	SectionEnd
+	Section un.gujarati
+		Delete "$INSTDIR\localization\gujarati.xml"
 	SectionEnd
 	Section un.hebrew
 		Delete "$INSTDIR\localization\hebrew.xml"
@@ -1593,6 +1721,12 @@ SectionGroup un.localization
 	Section un.malay
 		Delete "$INSTDIR\localization\malay.xml"
 	SectionEnd
+	Section un.marathi
+		Delete "$INSTDIR\localization\marathi.xml"
+	SectionEnd
+	Section un.mongolian
+		Delete "$INSTDIR\localization\mongolian.xml"
+	SectionEnd
 	Section un.norwegian
 		Delete "$INSTDIR\localization\norwegian.xml"
 	SectionEnd
@@ -1604,6 +1738,9 @@ SectionGroup un.localization
 	SectionEnd
 	Section un.polish
 		Delete "$INSTDIR\localization\polish.xml"
+	SectionEnd
+	Section un.kannada
+		Delete "$INSTDIR\localization\kannada.xml"
 	SectionEnd
 	Section un.portuguese
 		Delete "$INSTDIR\localization\portuguese.xml"
@@ -1625,6 +1762,9 @@ SectionGroup un.localization
 	SectionEnd
 	Section un.serbianCyrillic
 		Delete "$INSTDIR\localization\serbianCyrillic.xml"
+	SectionEnd
+	Section un.sinhala
+		Delete "$INSTDIR\localization\sinhala.xml"
 	SectionEnd
 	Section un.slovak
 		Delete "$INSTDIR\localization\slovak.xml"
@@ -1662,14 +1802,23 @@ SectionGroup un.localization
 	Section un.ukrainian
 		Delete "$INSTDIR\localization\ukrainian.xml"
 	SectionEnd
+	Section un.urdu
+		Delete "$INSTDIR\localization\urdu.xml"
+	SectionEnd
+	Section un.uyghur
+		Delete "$INSTDIR\localization\uyghur.xml"
+	SectionEnd
 	Section un.uzbek
 		Delete "$INSTDIR\localization\uzbek.xml"
 	SectionEnd
 	Section un.uzbekCyrillic
 		Delete "$INSTDIR\localization\uzbekCyrillic.xml"
 	SectionEnd
-	Section un.uyghur
-		Delete "$INSTDIR\localization\uyghur.xml"
+	Section un.vietnamese
+		Delete "$INSTDIR\localization\vietnamese.xml"
+	SectionEnd
+	Section un.welsh
+		Delete "$INSTDIR\localization\welsh.xml"
 	SectionEnd
 SectionGroupEnd
 
@@ -1688,7 +1837,7 @@ Section un.AutoUpdater
 	Delete "$INSTDIR\updater\readme.txt"
 	Delete "$INSTDIR\updater\getDownLoadUrl.php"
 	RMDir "$INSTDIR\updater\"
-SectionEnd
+SectionEnd  
 
 Section un.explorerContextMenu
 	Exec 'regsvr32 /u /s "$INSTDIR\NppShell_01.dll"'
@@ -1696,11 +1845,13 @@ Section un.explorerContextMenu
 	Exec 'regsvr32 /u /s "$INSTDIR\NppShell_03.dll"'
 	Exec 'regsvr32 /u /s "$INSTDIR\NppShell_04.dll"'
 	Exec 'regsvr32 /u /s "$INSTDIR\NppShell_05.dll"'
+	Exec 'regsvr32 /u /s "$INSTDIR\NppShell_06.dll"'
 	Delete "$INSTDIR\NppShell_01.dll"
 	Delete "$INSTDIR\NppShell_02.dll"
 	Delete "$INSTDIR\NppShell_03.dll"
 	Delete "$INSTDIR\NppShell_04.dll"
 	Delete "$INSTDIR\NppShell_05.dll"
+	Delete "$INSTDIR\NppShell_06.dll"
 SectionEnd
 
 Section un.UnregisterFileExt
@@ -1765,7 +1916,7 @@ SectionEnd
 
 Section Uninstall
 	;Remove from registry...
-	DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPNAME}"
+	DeleteRegKey HKLM "${UNINSTALL_REG_KEY}"
 	DeleteRegKey HKLM "SOFTWARE\${APPNAME}"
 	DeleteRegKey HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\notepad++.exe"
 
@@ -1775,16 +1926,16 @@ Section Uninstall
 	; Delete Shortcuts
 	Delete "$SMPROGRAMS\Notepad++\Uninstall.lnk"
 	RMDir "$SMPROGRAMS\Notepad++"
-
+	
 	UserInfo::GetAccountType
 	Pop $1
 	StrCmp $1 "Admin" 0 +2
 		SetShellVarContext all
-
+	
 	Delete "$DESKTOP\Notepad++.lnk"
 	Delete "$SMPROGRAMS\Notepad++\Notepad++.lnk"
 	Delete "$SMPROGRAMS\Notepad++\readme.lnk"
-
+	
 
 	; Clean up Notepad++
 	Delete "$INSTDIR\LINEDRAW.TTF"
@@ -1794,8 +1945,8 @@ Section Uninstall
 
 	Delete "$INSTDIR\notepad++.exe"
 	Delete "$INSTDIR\readme.txt"
-
-
+	
+	
 	Delete "$INSTDIR\config.xml"
 	Delete "$INSTDIR\config.model.xml"
 	Delete "$INSTDIR\langs.xml"
@@ -1805,15 +1956,18 @@ Section Uninstall
 	Delete "$INSTDIR\stylers_remove.xml"
 	Delete "$INSTDIR\contextMenu.xml"
 	Delete "$INSTDIR\shortcuts.xml"
+	Delete "$INSTDIR\functionList.xml"
 	Delete "$INSTDIR\nativeLang.xml"
 	Delete "$INSTDIR\session.xml"
-
+	Delete "$INSTDIR\localization\english.xml"
+	
 	SetShellVarContext current
 	Delete "$APPDATA\Notepad++\langs.xml"
 	Delete "$APPDATA\Notepad++\config.xml"
 	Delete "$APPDATA\Notepad++\stylers.xml"
 	Delete "$APPDATA\Notepad++\contextMenu.xml"
 	Delete "$APPDATA\Notepad++\shortcuts.xml"
+	Delete "$APPDATA\Notepad++\functionList.xml"
 	Delete "$APPDATA\Notepad++\nativeLang.xml"
 	Delete "$APPDATA\Notepad++\session.xml"
 	Delete "$APPDATA\Notepad++\insertExt.ini"
@@ -1821,10 +1975,10 @@ Section Uninstall
 		Delete "$INSTDIR\NppHelp.chm"
 
 	RMDir "$APPDATA\Notepad++"
-
+	
 	StrCmp $1 "Admin" 0 +2
 		SetShellVarContext all
-
+		
 	; Remove remaining directories
 	RMDir /r "$INSTDIR\plugins\disabled\"
 	RMDir "$INSTDIR\plugins\APIs\"

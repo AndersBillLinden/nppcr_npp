@@ -6,7 +6,7 @@
 #   so as a workaround, I define the variables myself in the top script. This is
 #   not optimal.
 
-#
+# 
 
 PROJECT(Notepad++)
 
@@ -59,8 +59,8 @@ SET(objs	./winmain.cpp
 			./Utf8_16.cpp
 			./Utf8_16.h
 
-
-
+			
+			
 			./ScitillaComponent/DocTabView.cpp
 			./ScitillaComponent/DocTabView.h
 			./ScitillaComponent/FindReplaceDlg.cpp

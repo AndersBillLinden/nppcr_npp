@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -29,20 +29,25 @@
 #include "precompiledHeaders.h"
 #include "VerticalFileSwitcherListView.h"
 #include "Buffer.h"
+#include "localization.h"
+
+#define FS_ROOTNODE					"DocSwitcher"
+#define FS_CLMNNAME					"ColumnName"
+#define FS_CLMNEXT					"ColumnExt"
 
 void VerticalFileSwitcherListView::init(HINSTANCE hInst, HWND parent, HIMAGELIST hImaLst)
 {
 	Window::init(hInst, parent);
 	_hImaLst = hImaLst;
     INITCOMMONCONTROLSEX icex;
-
-    // Ensure that the common control DLL is loaded.
+    
+    // Ensure that the common control DLL is loaded. 
     icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
     icex.dwICC  = ICC_LISTVIEW_CLASSES;
     InitCommonControlsEx(&icex);
-
+    
     // Create the list-view window in report view with label editing enabled.
-	int listViewStyles = LVS_REPORT | LVS_SINGLESEL | LVS_AUTOARRANGE\
+	int listViewStyles = LVS_REPORT /*| LVS_SINGLESEL*/ | LVS_AUTOARRANGE\
 						| LVS_SHAREIMAGELISTS | LVS_SHOWSELALWAYS;
 
 	_hSelf = ::CreateWindow(WC_LISTVIEW,
@@ -67,7 +72,6 @@ void VerticalFileSwitcherListView::init(HINSTANCE hInst, HWND parent, HIMAGELIST
 	ListView_SetExtendedListViewStyle(_hSelf, LVS_EX_FULLROWSELECT | LVS_EX_BORDERSELECT | LVS_EX_INFOTIP);
 	ListView_SetItemCountEx(_hSelf, 50, LVSICF_NOSCROLL);
 	ListView_SetImageList(_hSelf, _hImaLst, LVSIL_SMALL);
-	ListView_SetItemState(_hSelf, 0, LVIS_SELECTED|LVIS_FOCUSED, LVIS_SELECTED|LVIS_FOCUSED);
 }
 
 void VerticalFileSwitcherListView::destroy()
@@ -75,7 +79,7 @@ void VerticalFileSwitcherListView::destroy()
 	LVITEM item;
 	item.mask = LVIF_PARAM;
 	int nbItem = ListView_GetItemCount(_hSelf);
-	for (int i = 0 ; i < nbItem ; i++)
+	for (int i = 0 ; i < nbItem ; ++i)
 	{
 		item.iItem = i;
 		ListView_GetItem(_hSelf, &item);
@@ -84,7 +88,7 @@ void VerticalFileSwitcherListView::destroy()
 	}
 	::DestroyWindow(_hSelf);
 	_hSelf = NULL;
-}
+} 
 
 LRESULT VerticalFileSwitcherListView::runProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
@@ -94,8 +98,31 @@ LRESULT VerticalFileSwitcherListView::runProc(HWND hwnd, UINT Message, WPARAM wP
 void VerticalFileSwitcherListView::initList()
 {
 	TaskListInfo taskListInfo;
-	::SendMessage(::GetParent(_hParent), WM_GETTASKLISTINFO, (WPARAM)&taskListInfo, TRUE);
-	for (size_t i = 0 ; i < taskListInfo._tlfsLst.size() ; i++)
+	static HWND nppHwnd = ::GetParent(_hParent);
+	::SendMessage(nppHwnd, WM_GETTASKLISTINFO, (WPARAM)&taskListInfo, TRUE);
+
+	NppParameters *nppParams = NppParameters::getInstance();
+	NativeLangSpeaker *pNativeSpeaker = nppParams->getNativeLangSpeaker();
+	
+	bool isExtColumn = !nppParams->getNppGUI()._fileSwitcherWithoutExtColumn;
+	
+	RECT rc;
+	::GetClientRect(_hParent, &rc);
+	int totalWidth = rc.right - rc.left;
+
+	generic_string nameStr = pNativeSpeaker->getAttrNameStr(TEXT("Name"), FS_ROOTNODE, FS_CLMNNAME);
+	
+	//insertColumn(nameStr.c_str(), 150, 0);
+	insertColumn(nameStr.c_str(), (isExtColumn ? totalWidth - 50 : totalWidth), 0);
+
+	//bool isExtColumn = !nppParams->getNppGUI()._fileSwitcherWithoutExtColumn;
+	if (isExtColumn)
+	{
+		generic_string extStr = pNativeSpeaker->getAttrNameStr(TEXT("Ext."), FS_ROOTNODE, FS_CLMNEXT);
+		insertColumn(extStr.c_str(), 50, 1);
+	}
+
+	for (size_t i = 0, len = taskListInfo._tlfsLst.size(); i < len ; ++i)
 	{
 		TaskLstFnStatus & fileNameStatus = taskListInfo._tlfsLst[i];
 
@@ -103,22 +130,36 @@ void VerticalFileSwitcherListView::initList()
 
 		TCHAR fn[MAX_PATH];
 		lstrcpy(fn, ::PathFindFileName(fileNameStatus._fn.c_str()));
-		::PathRemoveExtension(fn);
 
+		if (isExtColumn)
+		{
+			::PathRemoveExtension(fn);
+		}
 		LVITEM item;
 		item.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
-
+		
 		item.pszText = fn;
 		item.iItem = i;
 		item.iSubItem = 0;
 		item.iImage = fileNameStatus._status;
 		item.lParam = (LPARAM)tl;
 		ListView_InsertItem(_hSelf, &item);
-		ListView_SetItemText(_hSelf, i, 1, (LPTSTR)::PathFindExtension(fileNameStatus._fn.c_str()));
+		if (isExtColumn)
+		{
+			ListView_SetItemText(_hSelf, i, 1, (LPTSTR)::PathFindExtension(fileNameStatus._fn.c_str()));
+		}
 	}
+	ListView_SetItemState(_hSelf, taskListInfo._currentIndex, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
 }
 
-int VerticalFileSwitcherListView::getBufferInfoFromIndex(int index, int & view) const {
+void VerticalFileSwitcherListView::reload()
+{
+	removeAll();
+	initList();
+}
+
+int VerticalFileSwitcherListView::getBufferInfoFromIndex(int index, int & view) const
+{
 	int nbItem = ListView_GetItemCount(_hSelf);
 	if (index < 0 || index >= nbItem)
 		return -1;
@@ -146,11 +187,14 @@ int VerticalFileSwitcherListView::newItem(int bufferID, int iView)
 void VerticalFileSwitcherListView::setItemIconStatus(int bufferID)
 {
 	Buffer *buf = (Buffer *)bufferID;
-
+	
 	TCHAR fn[MAX_PATH];
 	lstrcpy(fn, ::PathFindFileName(buf->getFileName()));
-	::PathRemoveExtension(fn);
-
+	bool isExtColumn = !(NppParameters::getInstance())->getNppGUI()._fileSwitcherWithoutExtColumn;
+	if (isExtColumn)
+	{
+		::PathRemoveExtension(fn);
+	}
 	LVITEM item;
 	item.pszText = fn;
 	item.iSubItem = 0;
@@ -158,7 +202,7 @@ void VerticalFileSwitcherListView::setItemIconStatus(int bufferID)
 
 	int nbItem = ListView_GetItemCount(_hSelf);
 
-	for (int i = 0 ; i < nbItem ; i++)
+	for (int i = 0 ; i < nbItem ; ++i)
 	{
 		item.mask = LVIF_PARAM;
 		item.iItem = i;
@@ -168,7 +212,12 @@ void VerticalFileSwitcherListView::setItemIconStatus(int bufferID)
 		{
 			item.mask = LVIF_TEXT | LVIF_IMAGE;
 			ListView_SetItem(_hSelf, &item);
-			ListView_SetItemText(_hSelf, i, 1, (LPTSTR)::PathFindExtension(buf->getFileName()));
+
+			if (isExtColumn)
+			{
+				ListView_SetItemText(_hSelf, i, 1, (LPTSTR)::PathFindExtension(buf->getFileName()));
+
+			}
 		}
 	}
 }
@@ -198,11 +247,12 @@ int VerticalFileSwitcherListView::closeItem(int bufferID, int iView)
 
 void VerticalFileSwitcherListView::activateItem(int bufferID, int iView)
 {
-	int i = find(bufferID, iView);
-	if (i == -1)
-	{
-		newItem(bufferID, iView);
-	}
+	// Clean all selection
+	int nbItem = ListView_GetItemCount(_hSelf);
+	for (int i = 0; i < nbItem; ++i)
+		ListView_SetItemState(_hSelf, i, 0, LVIS_FOCUSED|LVIS_SELECTED);
+
+	int i = newItem(bufferID, iView);
 	ListView_SetItemState(_hSelf, i, LVIS_FOCUSED|LVIS_SELECTED, LVIS_FOCUSED|LVIS_SELECTED);
 }
 
@@ -216,11 +266,14 @@ int VerticalFileSwitcherListView::add(int bufferID, int iView)
 
 	TCHAR fn[MAX_PATH];
 	lstrcpy(fn, ::PathFindFileName(fileName));
-	::PathRemoveExtension(fn);
-
+	bool isExtColumn = !(NppParameters::getInstance())->getNppGUI()._fileSwitcherWithoutExtColumn;
+	if (isExtColumn)
+	{
+		::PathRemoveExtension(fn);
+	}
 	LVITEM item;
 	item.mask = LVIF_TEXT | LVIF_IMAGE | LVIF_PARAM;
-
+	
 	item.pszText = fn;
 	item.iItem = index;
 	item.iSubItem = 0;
@@ -228,11 +281,15 @@ int VerticalFileSwitcherListView::add(int bufferID, int iView)
 	item.lParam = (LPARAM)tl;
 	ListView_InsertItem(_hSelf, &item);
 
-	ListView_SetItemText(_hSelf, index, 1, ::PathFindExtension(fileName));
+	if (isExtColumn)
+	{
+		ListView_SetItemText(_hSelf, index, 1, ::PathFindExtension(fileName));
+	}
 	ListView_SetItemState(_hSelf, index, LVIS_FOCUSED|LVIS_SELECTED, LVIS_FOCUSED|LVIS_SELECTED);
-
+	
 	return index;
 }
+
 
 void VerticalFileSwitcherListView::remove(int index)
 {
@@ -245,13 +302,23 @@ void VerticalFileSwitcherListView::remove(int index)
 	ListView_DeleteItem(_hSelf, index);
 }
 
+void VerticalFileSwitcherListView::removeAll()
+{
+	int nbItem = ListView_GetItemCount(_hSelf);
+	
+	for (int i = nbItem - 1; i >= 0 ; --i)
+	{
+		remove(i);
+	}
+}
+
 int VerticalFileSwitcherListView::find(int bufferID, int iView) const
 {
 	LVITEM item;
 	bool found = false;
 	int nbItem = ListView_GetItemCount(_hSelf);
 	int i = 0;
-	for (; i < nbItem ; i++)
+	for (; i < nbItem ; ++i)
 	{
 		item.mask = LVIF_PARAM;
 		item.iItem = i;
@@ -263,15 +330,54 @@ int VerticalFileSwitcherListView::find(int bufferID, int iView) const
 			break;
 		}
 	}
-	return (found?i:-1);
+	return (found?i:-1);	
 }
 
-void VerticalFileSwitcherListView::insertColumn(TCHAR *name, int width, int index)
+void VerticalFileSwitcherListView::insertColumn(const TCHAR *name, int width, int index)
 {
 	LVCOLUMN lvColumn;
-
+ 
 	lvColumn.mask = LVCF_TEXT | LVCF_WIDTH;
 	lvColumn.cx = width;
-	lvColumn.pszText = name;
+	lvColumn.pszText = (TCHAR *)name;
 	ListView_InsertColumn(_hSelf, index, &lvColumn);
+}
+
+void VerticalFileSwitcherListView::resizeColumns(int totalWidth)
+{
+	NppParameters *nppParams = NppParameters::getInstance();
+	bool isExtColumn = !nppParams->getNppGUI()._fileSwitcherWithoutExtColumn;
+	if (isExtColumn)
+	{
+		ListView_SetColumnWidth(_hSelf, 0, totalWidth - 50);
+		ListView_SetColumnWidth(_hSelf, 1, 50);
+	}
+	else
+	{
+		ListView_SetColumnWidth(_hSelf, 0, totalWidth);
+	}
+}
+
+std::vector<SwitcherFileInfo> VerticalFileSwitcherListView::getSelectedFiles(bool reverse) const
+{
+	std::vector<SwitcherFileInfo> files;
+	LVITEM item;
+	int nbItem = ListView_GetItemCount(_hSelf);
+	int i = 0;
+	for (; i < nbItem ; ++i)
+	{
+		int isSelected = ListView_GetItemState(_hSelf, i, LVIS_SELECTED);
+		bool isChosen = reverse?isSelected != LVIS_SELECTED:isSelected == LVIS_SELECTED;
+		if (isChosen)
+		{
+			item.mask = LVIF_PARAM;
+			item.iItem = i;
+			ListView_GetItem(_hSelf, &item);
+
+			TaskLstFnStatus *tlfs = (TaskLstFnStatus *)item.lParam;
+			files.push_back(SwitcherFileInfo(int(tlfs->_bufID), tlfs->_iView));
+		}
+	}
+
+	return files;
 }

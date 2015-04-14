@@ -7,10 +7,10 @@
 // version 2 of the License, or (at your option) any later version.
 //
 // Note that the GPL places important restrictions on "derived works", yet
-// it does not provide a detailed definition of that term.  To avoid
-// misunderstandings, we consider an application to constitute a
+// it does not provide a detailed definition of that term.  To avoid      
+// misunderstandings, we consider an application to constitute a          
 // "derivative work" for the purpose of this license if it does any of the
-// following:
+// following:                                                             
 // 1. Integrates source code from Notepad++.
 // 2. Integrates/includes/aggregates Notepad++ into a proprietary executable
 //    installer, such as those produced by InstallShield.
@@ -64,7 +64,7 @@ struct TBHDR {
 class TabBar : public Window
 {
 public:
-	TabBar() : Window(), _nbItem(0), _hasImgLst(false), _hFont(NULL){};
+	TabBar() : Window(), _nbItem(0), _hasImgLst(false), _hFont(NULL), _hLargeFont(NULL), _hVerticalFont(NULL), _hVerticalLargeFont(NULL){};
 	virtual ~TabBar() {};
 	virtual void destroy();
 	virtual void init(HINSTANCE hInst, HWND hwnd, bool isVertical = false, bool isTraditional = false, bool isMultiLine = false);
@@ -76,6 +76,11 @@ public:
 	int getCurrentTabIndex() const {
 		return ::SendMessage(_hSelf, TCM_GETCURSEL, 0, 0);
 	};
+
+	int getItemCount() const {
+		return ::SendMessage(_hSelf, TCM_GETITEMCOUNT, 0, 0);
+	}
+
 	void deletItemAt(size_t index);
 
 	void deletAllItem() {
@@ -87,17 +92,17 @@ public:
 		_hasImgLst = true;
 		::SendMessage(_hSelf, TCM_SETIMAGELIST, 0, (LPARAM)himl);
 	};
-
+    
     int nbItem() const {
         return _nbItem;
     };
 
 	void setFont(TCHAR *fontName, size_t fontSize);
-
+		
 	void setVertical(bool b) {
 		_isVertical = b;
 	};
-
+	
 	void setMultiLine(bool b) {
 		_isMultiLine = b;
 	};
@@ -116,7 +121,7 @@ protected:
 
 	bool _isVertical;
 	bool _isMultiLine;
-
+	
 	long getRowCount() const {
 		return long(::SendMessage(_hSelf, TCM_GETROWCOUNT, 0, 0));
 	};
@@ -139,7 +144,7 @@ class TabBarPlus : public TabBar
 public :
 
 	TabBarPlus() : TabBar(), _isDragging(false), _tabBarDefaultProc(NULL), _currentHoverTabItem(-1),\
-		_isCloseHover(false), _whichCloseClickDown(-1), _lmbdHit(false) {};
+		_isCloseHover(false), _whichCloseClickDown(-1), _lmbdHit(false), _tooltips(NULL) {};
 	enum tabColourIndex {
 		activeText, activeFocusedTop, activeUnfocusedTop, inactiveText, inactiveBg
 	};
@@ -149,6 +154,8 @@ public :
     };
 
 	virtual void init(HINSTANCE hInst, HWND hwnd, bool isVertical = false, bool isTraditional = false, bool isMultiLine = false);
+
+	virtual void destroy();
 
     static bool doDragNDropOrNot() {
         return _doDragNDrop;
@@ -229,6 +236,7 @@ protected:
 	bool _isCloseHover;
 	int _whichCloseClickDown;
 	bool _lmbdHit; // Left Mouse Button Down Hit
+	HWND _tooltips;
 
 	LRESULT runProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam);
 

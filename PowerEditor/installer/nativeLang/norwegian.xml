@@ -1,4 +1,4 @@
-<?xml version = "1.0" encoding = "Windows-1252" ?>
+<?xml version = "1.0" encoding = "Windows-1252" ?> 
 <NotepadPlus>
 	<Native-Langue name = "Norsk" filename="norwegian.xml" >
 		<Menu>
@@ -6,13 +6,13 @@
 				<!--  Main Menu Entries -->
 				<Entries>
 					<Item menuId="file" name = "&amp;Fil" />
-					<Item menuId="edit" name = "&amp;Rediger" />
-					<Item menuId="search" name = "&amp;Søk" />
-					<Item menuId="view" name = "&amp;Vis" />
-					<Item menuId="encoding" name = "&amp;Format" />
-					<Item menuId="language" name = "&amp;Språk" />
-					<Item menuId="settings" name = "&amp;Oppsett" />
-					<Item menuId="macro" name = "Makro" />
+					<Item menuId="edit" name = "&amp;Rediger" /> 
+					<Item menuId="search" name = "&amp;Søk" /> 
+					<Item menuId="view" name = "&amp;Vis" /> 
+					<Item menuId="encoding" name = "&amp;Format" /> 
+					<Item menuId="language" name = "&amp;Språk" /> 
+					<Item menuId="settings" name = "&amp;Oppsett" /> 
+					<Item menuId="macro" name = "Makro" /> 
 					<Item menuId="run" name = "Utfør"/>
 					<Item idName  =  "Plugins" name  =  "Tillegg"/>
 					<Item idName  =  "Window" name  =  "Vindu"/>
@@ -31,36 +31,36 @@
                     <Item subMenuId="view-showSymbol" name = "Vis symbol"/>
                     <Item subMenuId="view-zoom" name = "Forstørr"/>
                     <Item subMenuId="view-moveCloneDocument" name = "Flytt/klon gjeldende dokument"/>
-
+					
                     <Item subMenuId="view-collapseLevel" name = "Skjul nivå"/>
                     <Item subMenuId="view-uncollapseLevel" name = "Vis nivå"/>
 				</SubEntries>
 
 				<!--  all menu item -->
 				<Commands>
-					<Item id = "41001" name = "&amp;Ny	Ctrl+N" />
-					<Item id = "41002" name = "&amp;Åpne	Ctrl+O" />
-					<Item id = "41003" name = "Lukk	Ctrl+W" />
-					<Item id = "41004" name = "L&amp;ukk alle" />
-					<Item id = "41005" name = "Lukk alle UTENOM aktivt dokument" />
-					<Item id = "41006" name = "&amp;Lagre	Ctrl+S" />
-					<Item id = "41007" name = "&amp;Lagre alle" />
-					<Item id = "41008" name = "&amp;Lagre som ..." />
-					<Item id = "41010" name = "Skriv ut ..." />
+					<Item id = "41001" name = "&amp;Ny	Ctrl+N" /> 
+					<Item id = "41002" name = "&amp;Åpne	Ctrl+O" /> 
+					<Item id = "41003" name = "Lukk	Ctrl+W" /> 
+					<Item id = "41004" name = "L&amp;ukk alle" /> 
+					<Item id = "41005" name = "Lukk alle UTENOM aktivt dokument" /> 
+					<Item id = "41006" name = "&amp;Lagre	Ctrl+S" /> 
+					<Item id = "41007" name = "&amp;Lagre alle" /> 
+					<Item id = "41008" name = "&amp;Lagre som ..." /> 
+					<Item id = "41010" name = "Skriv ut ..." /> 
                     <Item id = "1001"  name = "Skriv ut nå!"/>
-					<Item id = "41011" name = "&amp;Avslutt" />
+					<Item id = "41011" name = "&amp;Avslutt" /> 
 					<Item id = "41012" name = "Hent sesjon ..."/>
                     <Item id = "41013" name = "Lagre sesjon ..."/>
 					<Item id = "41014" name = "Hent siste lagret utgave"/>
 					<Item id = "41015" name = "Lagre kopi som..."/>
                     <Item id = "41016" name = "Slett fra disk"/>
                     <Item id = "41017" name = "Gi nytt navn..."/>
-
-					<Item id = "42001" name = "&amp;Klipp ut	Ctrl+X" />
-					<Item id = "42002" name = "&amp;Kopier	Ctrl+C" />
-					<Item id = "42003" name = "&amp;Angre	Ctrl+Z" />
-					<Item id = "42004" name = "&amp;Gjenta	Ctrl+Y" />
-					<Item id = "42005" name = "&amp;Lim inn	Ctrl+V" />
+					
+					<Item id = "42001" name = "&amp;Klipp ut	Ctrl+X" /> 
+					<Item id = "42002" name = "&amp;Kopier	Ctrl+C" /> 
+					<Item id = "42003" name = "&amp;Angre	Ctrl+Z" /> 
+					<Item id = "42004" name = "&amp;Gjenta	Ctrl+Y" /> 
+					<Item id = "42005" name = "&amp;Lim inn	Ctrl+V" /> 
 					<Item id = "42006" name = "&amp;Slett	Del" />
 					<Item id = "42007" name = "&amp;Marker alt	Ctrl+A" />
 					<Item id = "42008" name = "Øke innrykk for linjen" />
@@ -68,8 +68,8 @@
                     <Item id = "42010" name = "Lag kopi av denne linjen	Ctrl+D"/>
                     <Item id = "42012" name = "Splitt linjer	Ctrl+L"/>
                     <Item id = "42013" name = "Slå sammen linjer	Ctrl+Shift+L"/>
-                    <Item id = "42014" name = "Flytt denne linjen opp	Ctrl+Shift+pil opp"/>
-                    <Item id = "42015" name = "Flytt denne linjen ned	Ctrl+Shift+pil ned"/>
+                    <Item id = "42014" name = "Flytt denne linjen opp	Ctrl+Shift+pil opp"/>   
+                    <Item id = "42015" name = "Flytt denne linjen ned	Ctrl+Shift+pil ned"/>   
                     <Item id = "42016" name = "til STORE bokstaver	Ctrl+Shift+U"/>
                     <Item id = "42017" name = "til små bokstaver	Ctrl+U"/>
                     <Item id = "42018" name = "&amp;Start opptak	Ctrl+Shift+R"/>
@@ -90,14 +90,14 @@
 					<Item id = "42035" name = "Kommenter ut blokk"/>
 					<Item id = "42036" name = "Ta inn utkommentert blokk"/>
 
-					<Item id = "43001" name = "&amp;Finn ...	Ctrl+F" />
-					<Item id = "43002" name = "&amp;Finn neste	F3" />
-					<Item id = "43003" name = "Erstatt ...	Ctrl+H" />
-					<Item id = "43004" name = "Gå til linje ...	Ctrl+G" />
-					<Item id = "43005" name = "Opprett/fjern bokmerke	Ctrl+F2" />
-					<Item id = "43006" name = "Neste bokmerke	F2" />
-					<Item id = "43007" name = "Forrige bokmerke	Shift+F2" />
-					<Item id = "43008" name = "Slett alle bokmerker" />
+					<Item id = "43001" name = "&amp;Finn ...	Ctrl+F" /> 
+					<Item id = "43002" name = "&amp;Finn neste	F3" /> 
+					<Item id = "43003" name = "Erstatt ...	Ctrl+H" /> 
+					<Item id = "43004" name = "Gå til linje ...	Ctrl+G" /> 
+					<Item id = "43005" name = "Opprett/fjern bokmerke	Ctrl+F2" /> 
+					<Item id = "43006" name = "Neste bokmerke	F2" /> 
+					<Item id = "43007" name = "Forrige bokmerke	Shift+F2" /> 
+					<Item id = "43008" name = "Slett alle bokmerker" /> 
                     <Item id = "43009" name = "Gå til motsvarende klamme	Ctrl+B"/>
                     <Item id = "43010" name = "Finn forrige	Shift+F3"/>
                     <Item id = "43011" name = "Aktivt søk ...	Ctrl+Alt+I"/>
@@ -122,15 +122,15 @@
                     <Item id = "43031" name = "Fjern femte stil"/>
                     <Item id = "43032" name = "Fjern alle stil"/>
 					<Item id = "44009" name = "Post-it"/>
-					<Item id = "44010" name = "Skjul alle nivå" />
-					<Item id = "44011" name = "Brukerdefineret oppsett" />
-					<Item id = "44019" name = "Alle tegn" />
-					<Item id = "44020" name = "Hjelpelinje for innrykk" />
-					<Item id = "44022" name = "Tekstbrytning" />
-					<Item id = "44023" name = "&amp;Forstørr	Ctrl+musehjul fram" />
-					<Item id = "44024" name = "For&amp;minsk	Ctrl+musehjul bakover" />
-					<Item id = "44025" name = "Vis mellomrom og tabulatorer" />
-					<Item id = "44026" name = "Linje-slutt" />
+					<Item id = "44010" name = "Skjul alle nivå" /> 
+					<Item id = "44011" name = "Brukerdefineret oppsett" /> 
+					<Item id = "44019" name = "Alle tegn" /> 
+					<Item id = "44020" name = "Hjelpelinje for innrykk" /> 
+					<Item id = "44022" name = "Tekstbrytning" /> 
+					<Item id = "44023" name = "&amp;Forstørr	Ctrl+musehjul fram" /> 
+					<Item id = "44024" name = "For&amp;minsk	Ctrl+musehjul bakover" /> 
+					<Item id = "44025" name = "Vis mellomrom og tabulatorer" /> 
+					<Item id = "44026" name = "Linje-slutt" /> 
                     <Item id = "44029" name = "Vis alle nivå	Alt+Shift+0"/>
                     <Item id = "44030" name = "Skjul dette nivået	Ctrl+Alt+F"/>
                     <Item id = "44031" name = "Vis dette nivået	Ctrl+Alt+Shift+F"/>
@@ -141,10 +141,10 @@
                     <Item id = "44036" name = "Synkroniser vannrett rulling"/>
                     <Item id = "44041" name = "Symbol for tekstbrytning"/>
                     <Item id = "44072" name = "Aktiver hovedvisning"/>
-
-					<Item id = "45001" name = "Konverter til Windows-format" />
-					<Item id = "45002" name = "Konverter til UNIX-format" />
-					<Item id = "45003" name = "Konverter til MAC-format" />
+					
+					<Item id = "45001" name = "Konverter til Windows-format" /> 
+					<Item id = "45002" name = "Konverter til UNIX-format" /> 
+					<Item id = "45003" name = "Konverter til MAC-format" /> 
 					<Item id = "45004" name = "Bruk ANSI"/>
 					<Item id = "45005" name = "Bruk UTF-8"/>
 					<Item id = "45006" name = "Bruk UCS-2 stor endian"/>
@@ -155,25 +155,25 @@
 					<Item id = "45011" name = "Gjør om til UTF-8"/>
 					<Item id = "45012" name = "Gjør om til UCS-2 stor endian"/>
 					<Item id = "45013" name = "Gjør om til UCS-2 liten endian"/>
-
-					<Item id = "10001" name = "Vis i annet vindu" />
-					<Item id = "10002" name = "Kopier til et annet vindu" />
+					
+					<Item id = "10001" name = "Vis i annet vindu" /> 
+					<Item id = "10002" name = "Kopier til et annet vindu" /> 
                     <Item id = "10003" name = "Gå til ny instans"/>
                     <Item id = "10004" name = "Åpne i ny instans"/>
 
-
-					<Item id = "46001" name = "Stiler ..." />
+					
+					<Item id = "46001" name = "Stiler ..." /> 
                     <Item id = "47000" name = "Om ...	F1"/>
                     <Item id = "47001" name = "Notepad++ hjemmeside"/>
                     <Item id = "47002" name = "Notepad++ prosjektside"/>
                     <Item id = "47003" name = "Hjelp på internett"/>
                     <Item id = "47004" name = "Forum"/>
                     <Item id = "47005" name = "Hent flere tilleggsmoduler"/>
-
+					
                     <Item id = "48009" name = "Hurtigtaster ..."/>
                     <Item id = "48011" name = "Innstillinger ..."/>
-					<Item id = "49000" name = "&amp;Utfør i ..." />
-
+					<Item id = "49000" name = "&amp;Utfør i ..." /> 
+					
 					<Item id = "50000" name = "Fullfør funksjon	Ctrl+mellomrom"/>
                     <Item id = "50001" name = "Fullfør ord	Ctrl+Shift+mellomrom"/>
                     <Item id = "50002" name = "Funksjons paramter hint"/>
@@ -181,19 +181,19 @@
                     <Item id = "44042" name = "Skjul linjer"/>
                     <Item id = "42040" name = "Åpne alle filer vist over"/>
                     <Item id = "42041" name = "Tøm liste for sist åpnede filer"/>
-
+					
 				</Commands>
 			</Main>
-			<Splitter>
-			</Splitter>
+			<Splitter> 
+			</Splitter> 
 			<TabBar>
-				<Item CMID = "0" name = "Lukk meg" />
-				<Item CMID = "1" name = "Lukk alle andre enn meg" />
-				<Item CMID = "2" name = "Lagre meg" />
-				<Item CMID = "3" name = "Lagre meg som ..." />
-				<Item CMID = "4" name = "Skriv ut meg" />
-				<Item CMID = "5" name = "Bytt til annen visning" />
-				<Item CMID = "6" name = "Kopier til et annet vindu" />
+				<Item CMID = "0" name = "Lukk meg" /> 
+				<Item CMID = "1" name = "Lukk alle andre enn meg" /> 
+				<Item CMID = "2" name = "Lagre meg" /> 
+				<Item CMID = "3" name = "Lagre meg som ..." /> 
+				<Item CMID = "4" name = "Skriv ut meg" /> 
+				<Item CMID = "5" name = "Bytt til annen visning" /> 
+				<Item CMID = "6" name = "Kopier til et annet vindu" /> 
 				<Item CMID = "7" name = "Full filsti til utklippsbordet"/>
 				<Item CMID = "8" name = "Filnavn til utklippsbordet"/>
 				<Item CMID = "9" name = "Nåværende katalog sti til utklippsbordet"/>
@@ -208,78 +208,78 @@
 
 		<Dialog>
 			<Find title  =  "" titleFind  =  "Finn" titleReplace  =  "Erstatt" titleFindInFiles  =  "Finn i filer">
-				<Item id = "1" name = "Finn neste" />
-				<Item id = "2" name = "Lukk" />
-				<Item id = "1620" name = "Søke etter:" />
-				<Item id = "1603" name = "&amp;Bare hele ord" />
-				<Item id = "1604" name = "&amp;Nøyaktig små/store bokstaver" />
-				<Item id = "1605" name = "&amp;Regelbasert uttrykk" />
-				<Item id = "1606" name = "&amp;Uavbrutt søk" />
-				<Item id = "1612" name = "&amp;Opp" />
-				<Item id = "1613" name = "&amp;Ned" />
-				<Item id = "1614" name = "Antall" />
-				<Item id = "1615" name = "Finn alle" />
-				<Item id = "1616" name = "Marker linje" />
-				<Item id = "1617" name = "Marker med funnet stil" />
-				<Item id = "1618" name = "Rydd for hvert søk" />
-				<Item id = "1621" name = "Retning" />
-				<Item id = "1611" name = "Er&amp;statt med:" />
-				<Item id = "1608" name = "&amp;Erstatt" />
-				<Item id = "1609" name = "Erstatt &amp;alle" />
-				<Item id = "1623" name = "Gjennomsiktig" />
-				<Item id = "1686" name = "Gjennomsiktig"/>
+				<Item id = "1" name = "Finn neste" /> 
+				<Item id = "2" name = "Lukk" /> 
+				<Item id = "1620" name = "Søke etter:" /> 
+				<Item id = "1603" name = "&amp;Bare hele ord" /> 
+				<Item id = "1604" name = "&amp;Nøyaktig små/store bokstaver" /> 
+				<Item id = "1605" name = "&amp;Regelbasert uttrykk" /> 
+				<Item id = "1606" name = "&amp;Uavbrutt søk" /> 
+				<Item id = "1612" name = "&amp;Opp" /> 
+				<Item id = "1613" name = "&amp;Ned" /> 
+				<Item id = "1614" name = "Antall" /> 
+				<Item id = "1615" name = "Finn alle" /> 
+				<Item id = "1616" name = "Marker linje" /> 
+				<Item id = "1617" name = "Marker med funnet stil" /> 
+				<Item id = "1618" name = "Rydd for hvert søk" /> 
+				<Item id = "1621" name = "Retning" /> 
+				<Item id = "1611" name = "Er&amp;statt med:" /> 
+				<Item id = "1608" name = "&amp;Erstatt" /> 
+				<Item id = "1609" name = "Erstatt &amp;alle" /> 
+			 	<Item id = "1623" name = "Gjennomsiktig" />
+			 	<Item id = "1686" name = "Gjennomsiktig"/>			 	
                 <Item id = "1687" name = "Uten fokus"/>
-				<Item id = "1688" name = "Alltid"/>
-				<Item id = "1632" name = "I markering"/>
-				<Item id = "1633" name = "Fjern"/>
-				<Item id = "1635" name = "Erstatt alle i alle åpne dokument"/>
-				<Item id = "1636" name = "Finn alle i alle åpne dokument"/>
-				<Item id = "1637" name = "Finn i filer"/>
-				<Item id = "1654" name = "Filter:"/>
-				<Item id = "1655" name = "Katalog:"/>
-				<Item id = "1656" name = "Finn alle sammen"/>
-				<Item id = "1658" name = "I alle undermapper"/>
-				<Item id = "1659" name = "I skjulte mapper"/>
-				<Item id = "1624" name = "Søkemodus"/>
-				<Item id = "1625" name = "Normal"/>
-				<Item id = "1626" name = "Utvidet (\n, \r, \t, \0, \x...)"/>
-                <Item id = "1660" name = "Erstatt i filer" />
+			 	<Item id = "1688" name = "Alltid"/>
+			 	<Item id = "1632" name = "I markering"/>
+			 	<Item id = "1633" name = "Fjern"/>
+			 	<Item id = "1635" name = "Erstatt alle i alle åpne dokument"/>
+			 	<Item id = "1636" name = "Finn alle i alle åpne dokument"/>
+			 	<Item id = "1637" name = "Finn i filer"/>
+			 	<Item id = "1654" name = "Filter:"/>
+			 	<Item id = "1655" name = "Katalog:"/>
+			 	<Item id = "1656" name = "Finn alle sammen"/>
+			 	<Item id = "1658" name = "I alle undermapper"/>
+			 	<Item id = "1659" name = "I skjulte mapper"/>
+			 	<Item id = "1624" name = "Søkemodus"/>
+			 	<Item id = "1625" name = "Normal"/>
+			 	<Item id = "1626" name = "Utvidet (\n, \r, \t, \0, \x...)"/>
+                <Item id = "1660" name = "Erstatt i filer" /> 
 			</Find>
 			<GoToLine title = "Gå til linje #">
                 <Item id = "2007" name = "Lije"/>
                 <Item id = "2008" name = "Avsett"/>
-				<Item id = "1" name = "&amp;Gå !" />
-				<Item id = "2" name = "Avbryt" />
-				<Item id = "2004" name = "Du er her:" />
-				<Item id = "2005" name = "Du vil gå til:" />
-				<Item id = "2006" name = "Du kan ikke gå lengre enn til:" />
+				<Item id = "1" name = "&amp;Gå !" /> 
+				<Item id = "2" name = "Avbryt" /> 
+				<Item id = "2004" name = "Du er her:" /> 
+				<Item id = "2005" name = "Du vil gå til:" /> 
+				<Item id = "2006" name = "Du kan ikke gå lengre enn til:" /> 
 			</GoToLine>
 
 			<Run title = "Utfør ...">
-				<Item id = "1903" name = "Angi det programmet du vil kjøre her" />
-				<Item id = "1" name = "Utfør!" />
-				<Item id = "2" name = "Avbryt" />
+				<Item id = "1903" name = "Angi det programmet du vil kjøre her" /> 
+				<Item id = "1" name = "Utfør!" /> 
+				<Item id = "2" name = "Avbryt" /> 
                 <Item id = "1904" name = "Lagre ..."/>
 			</Run>
 
 			<StyleConfig title = "Stil-innstillinger">
-				<Item id = "2" name = "Avbryt" />
-				<Item id = "2301" name = "Lagre og lukk" />
-				<Item id = "2303" name = "Gjennomsiktig"/>
+				<Item id = "2" name = "Avbryt" /> 
+				<Item id = "2301" name = "Lagre og lukk" /> 
+				<Item id = "2303" name = "Gjennomsiktig"/>		
 
 				<SubDialog>
-					<Item id = "2204" name = "Uthevet" />
-					<Item id = "2205" name = "Kursiv" />
-					<Item id = "2206" name = "Forgrunnsfarge" />
-					<Item id = "2207" name = "Bakgrunnsfarge" />
-					<Item id = "2208" name = "Navn:" />
+					<Item id = "2204" name = "Uthevet" /> 
+					<Item id = "2205" name = "Kursiv" /> 
+					<Item id = "2206" name = "Forgrunnsfarge" /> 
+					<Item id = "2207" name = "Bakgrunnsfarge" /> 
+					<Item id = "2208" name = "Navn:" /> 
 					<Item id = "2209" name = "Størrelse:" />
 					<!--
-					<Item id = "2210" name = "Advarsel: Disse innstillingene vil bli standard for alle ikke definerte oppsett   " />
+					<Item id = "2210" name = "Advarsel: Disse innstillingene vil bli standard for alle ikke definerte oppsett   " /> 
 					-->
-					<Item id = "2211" name = "Beskrivelse av oppsett:" />
-					<Item id = "2212" name = "Farge-oppsett" />
-					<Item id = "2213" name = "Skrifttype" />
+					<Item id = "2211" name = "Beskrivelse av oppsett:" /> 
+					<Item id = "2212" name = "Farge-oppsett" /> 
+					<Item id = "2213" name = "Skrifttype" /> 
 					<Item id = "2214" name = "Standard ext:"/>
 					<Item id = "2216" name = "Bruker-ext:"/>
 					<Item id = "2218" name = "Understreking"/>
@@ -296,53 +296,53 @@
 				</SubDialog>
 
 			</StyleConfig>
-
+			
 			<UserDefine title = "Bruker-oppsett">
-				<Item id = "20002" name = "Gi nytt navn" />
-				<Item id = "20003" name = "Opprett nytt ..." />
-				<Item id = "20004" name = "Fjern" />
-				<Item id = "20005" name = "Lagre som ..." />
-				<Item id = "20007" name = "Bruker-språk:" />
-				<Item id = "20009" name = "Type:" />
+				<Item id = "20002" name = "Gi nytt navn" /> 
+				<Item id = "20003" name = "Opprett nytt ..." /> 
+				<Item id = "20004" name = "Fjern" /> 
+				<Item id = "20005" name = "Lagre som ..." /> 
+				<Item id = "20007" name = "Bruker-språk:" /> 
+				<Item id = "20009" name = "Type:" /> 
 				<Item id = "20011" name = "Gjennomsiktig"/>
 				<Item id = "20012" name = "Overse små/store bokstaver"/>
-				<Item id = "0" name = "Fargeoppsett" />
-				<Item id = "1" name = "Forgrunnsfarge" />
-				<Item id = "2" name = "Bakgrunnsfarge" />
-				<Item id = "3" name = "Skrifttype" />
-				<Item id = "4" name = "Navn:" />
-				<Item id = "5" name = "Størrelse:" />
-				<Item id = "6" name = "Uthevet" />
-				<Item id = "7" name = "Kursiv" />
+				<Item id = "0" name = "Fargeoppsett" /> 
+				<Item id = "1" name = "Forgrunnsfarge" /> 
+				<Item id = "2" name = "Bakgrunnsfarge" /> 
+				<Item id = "3" name = "Skrifttype" /> 
+				<Item id = "4" name = "Navn:" /> 
+				<Item id = "5" name = "Størrelse:" /> 
+				<Item id = "6" name = "Uthevet" /> 
+				<Item id = "7" name = "Kursiv" /> 
 				<Item id = "8" name  = "Understreket"/>
 				<Folder title = "Mapper &amp;&amp; standarder">
-					<Item id = "21101" name = "Standard-oppsett" />
-					<Item id = "21201" name = "Nøkkelord-oppsett for Åpne mappe" />
-					<Item id = "21301" name = "Nøkkelord-oppsett for Lukke mappe" />
+					<Item id = "21101" name = "Standard-oppsett" /> 
+					<Item id = "21201" name = "Nøkkelord-oppsett for Åpne mappe" /> 
+					<Item id = "21301" name = "Nøkkelord-oppsett for Lukke mappe" /> 
 				</Folder>
 				<Keywords title = "Nøkkelord-liste">
-					<Item id = "22101" name = "1. gruppe" />
-					<Item id = "22201" name = "2. gruppe" />
-					<Item id = "22301" name = "3. gruppe" />
-					<Item id = "22401" name = "4. gruppe" />
+					<Item id = "22101" name = "1. gruppe" /> 
+					<Item id = "22201" name = "2. gruppe" /> 
+					<Item id = "22301" name = "3. gruppe" /> 
+					<Item id = "22401" name = "4. gruppe" /> 
 					<Item id = "22113" name = "Prefiks modus"/>
 					<Item id = "22213" name = "Prefiks modus"/>
 					<Item id = "22313" name = "Prefiks modus"/>
 					<Item id = "22413" name = "Prefiks modus"/>
 				</Keywords>
 				<Comment title = "Kommentarer / nummer">
-					<Item id = "23301" name = "Kommentar-linje" />
-					<Item id = "23101" name = "Kommentar-ramme" />
-					<Item id = "23113" name = "Åpne kommentar:" />
-					<Item id = "23115" name = "Lukk kommentar:" />
+					<Item id = "23301" name = "Kommentar-linje" /> 
+					<Item id = "23101" name = "Kommentar-ramme" /> 
+					<Item id = "23113" name = "Åpne kommentar:" /> 
+					<Item id = "23115" name = "Lukk kommentar:" /> 
 					<Item id = "23116" name = "Behandle nøkkelord som symbol"/>
 					<Item id = "23117" name = "Behandle nøkkelord som symboler"/>
-					<Item id = "23201" name = "Nummer" />
+					<Item id = "23201" name = "Nummer" /> 
 				</Comment>
 				<Operator title = "Operatorer">
-					<Item id = "24107" name = "Operator" />
-					<Item id = "24103" name = "Tilgjengelige symboler" />
-					<Item id = "24101" name = "Aktiverte Operatorer" />
+					<Item id = "24107" name = "Operator" /> 
+					<Item id = "24103" name = "Tilgjengelige symboler" /> 
+					<Item id = "24101" name = "Aktiverte Operatorer" /> 
 					<Item id = "24201" name = "Avgrenser 1"/>
 					<Item id = "24211" name = "Grensestart:"/>
 					<Item id = "24214" name = "Grenseslutt:"/>
@@ -359,13 +359,13 @@
 					<Item id = "6103" name = "Små ikoner"/>
 	                <Item id = "6104" name = "Store ikoner"/>
 					<Item id = "6105" name = "Små standard-ikoner"/>
-
+					
 					<Item id = "6106" name = "Arkfaner"/>
 					<Item id = "6107" name = "Små"/>
 					<Item id = "6108" name = "Lås (ikke dra og slipp)"/>
 					<Item id = "6109" name = "Marker ikke aktive faner"/>
 					<Item id = "6110" name = "Vis en orange linje på aktiv fane"/>
-
+					
 					<Item id = "6111" name = "Vis statuslinje"/>
 					<Item id = "6112" name = "Vis knappen Lukk på hver fane"/>
 					<Item id = "6113" name = "Dobbelklikk for å lukke dokument"/>
@@ -376,10 +376,10 @@
 					<Item id = "6118" name = "Skjul"/>
 					<Item id = "6119" name = "Over flere linjer"/>
 					<Item id = "6120" name = "Loddrett"/>
-
+					
 					<Item id = "6121" name = "Meny verktøylinje"/>
 					<Item id = "6122" name = "Skjul (bruk Alt eller F10 for å bytte)"/>
-                    <Item id = "6123" name = "Lokaltilpassing" />
+                    <Item id = "6123" name = "Lokaltilpassing" /> 
 				</Global>
                 <Scintillas title = "Layout">
 					<Item id = "6216" name = "Skrivemerke"/>
@@ -387,22 +387,22 @@
 					<Item id = "6219" name = "Blinke-hastighet :"/>
 					<Item id = "6221" name = "F"/>
 					<Item id = "6222" name = "S"/>
-
+					
 					<Item id = "6301" name = "Tabulator"/>
 					<Item id = "6302" name = "Overskriv med mellomrom"/>
 					<Item id = "6303" name = "Bredde : "/>
-
+					
 					<Item id = "6201" name = "Stil på marg"/>
 					<Item id = "6202" name = "Enkel"/>
 					<Item id = "6203" name = "Piler"/>
 	                <Item id = "6204" name = "Sirkler og tre"/>
 					<Item id = "6205" name = "Bokser og tre"/>
-
+					
 					<Item id = "6206" name = "Vis linjenummer"/>
 					<Item id = "6207" name = "Vis bokmerker"/>
 					<Item id = "6208" name = "Vis loddrett kant"/>
 					<Item id = "6209" name = "Antall kolonner: "/>
-
+					
 					<Item id = "6211" name = "Oppsett for loddrett kant"/>
 					<Item id = "6212" name = "Linjemodus"/>
 					<Item id = "6213" name = "Bakgrunn-modus"/>
@@ -481,12 +481,12 @@
 					<Item id ="6327" name ="Aktiver"/>
 					<Item id ="6328" name ="Uthev attributter"/>
 					<Item id ="6330" name ="Uthev PHP/ASP-sone"/>
-
+					
 					<Item id = "6331" name = "Bare vis filnavn i tittel verktøylinjen"/>
 					<Item id = "6114" name = "Aktiver dokument-snarvei (Ctrl+Tab)"/>
 					<Item id = "6115" name = "Auto-innrykk"/>
 					<Item id = "6117" name = "Aktiver MRU for dokument snarvei"/>
-
+					
                 </MISC>
 				<Backup title = "Sikkerhetskopi/Auto-fullfør">
 					<Item id = "6801" name = " Sikkerhetskopi "/>

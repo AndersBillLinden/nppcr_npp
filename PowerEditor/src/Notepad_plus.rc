@@ -51,7 +51,7 @@ BEGIN
             VALUE    "FileDescription",    "Notepad++ : a free (GNU) source code editor\0"
             VALUE    "FileVersion",        VERSION_VALUE
             VALUE    "InternalName",       "npp.exe\0"
-            VALUE    "LegalCopyright",     "Copyleft 1998-2006 by Don HO\0"
+            VALUE    "LegalCopyright",     "Copyleft 1998-2013 by Don HO\0"
             VALUE    "OriginalFilename",   "Notepad++.exe\0"
             VALUE    "ProductName",        "Notepad++\0"
             VALUE    "ProductVersion",     VERSION_VALUE
@@ -63,6 +63,7 @@ END
 // remains consistent on all systems.
 IDI_M30ICON                     ICON      "icons\\npp.ico"
 IDI_CHAMELEON                   ICON      "icons\\chameleon.ico"
+//IDI_JESUISCHARLIE               ICON      "icons\\Je_suis_Charlie.ico"
 IDI_NEW_OFF_ICON                ICON      "icons\\new_off.ico"
 IDI_OPEN_OFF_ICON               ICON      "icons\\open_off.ico"
 IDI_SAVE_OFF_ICON               ICON      "icons\\save_off.ico"
@@ -155,7 +156,14 @@ IDR_CLOSETAB                    BITMAP    "icons\\closeTabButton.bmp"
 IDR_CLOSETAB_INACT              BITMAP    "icons\\closeTabButton_inact.bmp"
 IDR_CLOSETAB_HOVER              BITMAP    "icons\\closeTabButton_hover.bmp"
 IDR_CLOSETAB_PUSH               BITMAP    "icons\\closeTabButton_push.bmp"
-
+IDR_DOCMAP                      BITMAP    "icons\\docMap.bmp"
+IDR_FUNC_LIST                   BITMAP    "icons\\functionList.bmp"
+IDR_DOCMAP_ICO                  ICON      "icons\\docMap.ico"
+IDR_FUNC_LIST_ICO               ICON      "icons\\functionList.ico"
+IDR_PROJECTPANEL_ICO            ICON      "icons\\projectPanel.ico"
+IDR_CLIPBOARDPANEL_ICO          ICON      "icons\\clipboardPanel.ico"
+IDR_ASCIIPANEL_ICO              ICON      "icons\\asciiPanel.ico"
+IDR_DOCSWITCHER_ICO             ICON      "icons\\docSwitcher.ico"
 IDI_STARTRECORD_OFF_ICON        ICON      "icons\\startrecord_off.ico"
 IDI_STARTRECORD_ON_ICON         ICON      "icons\\startrecord_on.ico"
 IDI_STARTRECORD_DISABLE_ICON    ICON      "icons\\startrecord_dis.ico"
@@ -190,6 +198,12 @@ IDI_PROJECT_FOLDERCLOSE         BITMAP      "icons\\project_folder_close.bmp"
 IDI_PROJECT_FILE                BITMAP      "icons\\project_file.bmp"
 IDI_PROJECT_FILEINVALID         BITMAP      "icons\\project_file_invalid.bmp"
 
+IDI_FUNCLIST_ROOT               BITMAP      "icons\\project_file.bmp"
+IDI_FUNCLIST_NODE               BITMAP      "icons\\funcList_node.bmp"
+IDI_FUNCLIST_LEAF               BITMAP      "icons\\funcList_leaf.bmp"
+
+IDI_FUNCLIST_SORTBUTTON         BITMAP      "icons\\funclstSort.bmp"
+IDI_FUNCLIST_RELOADBUTTON       BITMAP      "icons\\funclstReload.bmp"
 
 IDR_M30_MENU MENU
 BEGIN
@@ -197,6 +211,11 @@ BEGIN
     BEGIN
         MENUITEM "&New",                             IDM_FILE_NEW
         MENUITEM "&Open...",                         IDM_FILE_OPEN
+		POPUP "Open Containing Folder"
+		BEGIN
+            MENUITEM "Explorer",       IDM_FILE_OPEN_FOLDER
+            MENUITEM "cmd",            IDM_FILE_OPEN_CMD
+		END
         MENUITEM "Re&load from Disk",                IDM_FILE_RELOAD
         MENUITEM "&Save",                            IDM_FILE_SAVE
         MENUITEM "Save &As...",                      IDM_FILE_SAVEAS
@@ -205,7 +224,12 @@ BEGIN
         MENUITEM "Rename...",                        IDM_FILE_RENAME
         MENUITEM "&Close",                           IDM_FILE_CLOSE
         MENUITEM "Clos&e All",                       IDM_FILE_CLOSEALL
-        MENUITEM "Close All but Active Document",    IDM_FILE_CLOSEALL_BUT_CURRENT
+		POPUP "Close More"
+		BEGIN
+			MENUITEM "Close All but Active Document",    IDM_FILE_CLOSEALL_BUT_CURRENT
+			MENUITEM "Close All to the Left",			 IDM_FILE_CLOSEALL_TOLEFT
+			MENUITEM "Close All to the Right",			 IDM_FILE_CLOSEALL_TORIGHT
+		END
         MENUITEM "Move to Recycle Bin",              IDM_FILE_DELETE
         MENUITEM SEPARATOR
         MENUITEM "Load Session...",                  IDM_FILE_LOADSESSION
@@ -219,14 +243,15 @@ BEGIN
 
     POPUP "&Edit"
     BEGIN
-        MENUITEM "&Undo",          IDM_EDIT_UNDO
-        MENUITEM "&Redo",          IDM_EDIT_REDO
+        MENUITEM "&Undo",                            IDM_EDIT_UNDO
+        MENUITEM "&Redo",                            IDM_EDIT_REDO
         MENUITEM SEPARATOR
-        MENUITEM "Cu&t",           IDM_EDIT_CUT
-        MENUITEM "&Copy",          IDM_EDIT_COPY
-        MENUITEM "&Paste",         IDM_EDIT_PASTE
-        MENUITEM "&Delete",        IDM_EDIT_DELETE
-        MENUITEM "Select A&ll",    IDM_EDIT_SELECTALL
+        MENUITEM "Cu&t",                             IDM_EDIT_CUT
+        MENUITEM "&Copy",                            IDM_EDIT_COPY
+        MENUITEM "&Paste",                           IDM_EDIT_PASTE
+        MENUITEM "&Delete",                          IDM_EDIT_DELETE
+        MENUITEM "Select A&ll",                      IDM_EDIT_SELECTALL
+		MENUITEM "Begin/End Select",                 IDM_EDIT_BEGINENDSELECT
         MENUITEM SEPARATOR
         POPUP "Copy to Clipboard"
         BEGIN
@@ -249,24 +274,29 @@ BEGIN
             MENUITEM "Duplicate Current Line",    IDM_EDIT_DUP_LINE
             MENUITEM "Split Lines",               IDM_EDIT_SPLIT_LINES
             MENUITEM "Join Lines",                IDM_EDIT_JOIN_LINES
+            MENUITEM "Sort Lines in Ascending Order",                IDM_EDIT_SORTLINES
+            MENUITEM "Sort Lines in Descending Order",                IDM_EDIT_SORTLINESREVERSE
             MENUITEM "Move Up Current Line",      IDM_EDIT_LINE_UP
             MENUITEM "Move Down Current Line",    IDM_EDIT_LINE_DOWN
 			MENUITEM "Remove Empty Lines",        IDM_EDIT_REMOVEEMPTYLINES
 			MENUITEM "Remove Empty Lines (Containing Blank characters)",    IDM_EDIT_REMOVEEMPTYLINESWITHBLANK
+			MENUITEM "Insert Blank Line Above Current",    IDM_EDIT_BLANKLINEABOVECURRENT
+			MENUITEM "Insert Blank Line Below Current",    IDM_EDIT_BLANKLINEBELOWCURRENT
         END
         POPUP "Comment/Uncomment"
         BEGIN
-            MENUITEM "Toggle Block Comment",    IDM_EDIT_BLOCK_COMMENT
-            MENUITEM "Block Comment",           IDM_EDIT_BLOCK_COMMENT_SET
-            MENUITEM "Block Uncomment",         IDM_EDIT_BLOCK_UNCOMMENT
-            MENUITEM "Stream Comment",          IDM_EDIT_STREAM_COMMENT
-            MENUITEM "Stream Uncomment",        IDM_EDIT_STREAM_UNCOMMENT
+            MENUITEM "Toggle Single Line Comment",    IDM_EDIT_BLOCK_COMMENT
+            MENUITEM "Single Line Comment",           IDM_EDIT_BLOCK_COMMENT_SET
+            MENUITEM "Single Line Uncomment",         IDM_EDIT_BLOCK_UNCOMMENT
+            MENUITEM "Block Comment",          IDM_EDIT_STREAM_COMMENT
+            MENUITEM "Block Uncomment",        IDM_EDIT_STREAM_UNCOMMENT
         END
         POPUP "Auto-Completion"
         BEGIN
             MENUITEM "Function Completion",         IDM_EDIT_AUTOCOMPLETE
             MENUITEM "Word Completion",             IDM_EDIT_AUTOCOMPLETE_CURRENTFILE
             MENUITEM "Function Parameters Hint",    IDM_EDIT_FUNCCALLTIP
+			MENUITEM "Path Completion",				IDM_EDIT_AUTOCOMPLETE_PATH
         END
         POPUP "EOL Conversion"
         BEGIN
@@ -323,6 +353,8 @@ BEGIN
         MENUITEM "Previous Search Result",      IDM_SEARCH_GOTOPREVFOUND
         MENUITEM "&Go to...",                   IDM_SEARCH_GOTOLINE
         MENUITEM "Go to Matching Brace",        IDM_SEARCH_GOTOMATCHINGBRACE
+		MENUITEM "Select All Between Matching Braces" IDM_SEARCH_SELECTMATCHINGBRACES
+		MENUITEM "Mar&k..."                     IDM_SEARCH_MARK
         MENUITEM SEPARATOR
 
         POPUP "Mark All"
@@ -407,6 +439,22 @@ BEGIN
             MENUITEM "Move to New Instance",    IDM_VIEW_GOTO_NEW_INSTANCE
             MENUITEM "Open in New Instance",    IDM_VIEW_LOAD_IN_NEW_INSTANCE
         END
+		
+		POPUP "Tab"
+		BEGIN
+			MENUITEM "1st Tab"					IDM_VIEW_TAB1
+			MENUITEM "2nd Tab"					IDM_VIEW_TAB2
+			MENUITEM "3rd Tab"					IDM_VIEW_TAB3
+			MENUITEM "4th Tab"					IDM_VIEW_TAB4
+			MENUITEM "5th Tab"					IDM_VIEW_TAB5
+			MENUITEM "6th Tab"					IDM_VIEW_TAB6
+			MENUITEM "7th Tab"					IDM_VIEW_TAB7
+			MENUITEM "8th Tab"					IDM_VIEW_TAB8
+			MENUITEM "9th Tab"					IDM_VIEW_TAB9
+			MENUITEM SEPARATOR
+			MENUITEM "Next Tab"					IDM_VIEW_TAB_NEXT
+			MENUITEM "Previous Tab"				IDM_VIEW_TAB_PREV
+		END
         MENUITEM "Word wrap",                   IDM_VIEW_WRAP
         MENUITEM "Focus on Another View",         IDM_VIEW_SWITCHTO_OTHER_VIEW
         MENUITEM "Hide Lines",                  IDM_VIEW_HIDELINES
@@ -448,9 +496,8 @@ BEGIN
                 MENUITEM "Project Panel 2",          IDM_VIEW_PROJECT_PANEL_2
                 MENUITEM "Project Panel 3",          IDM_VIEW_PROJECT_PANEL_3
             END
-#ifdef UNICODE
+
         MENUITEM "Document Map",          IDM_VIEW_DOC_MAP
-#endif
         MENUITEM "Function List",         IDM_VIEW_FUNC_LIST
         MENUITEM SEPARATOR
         MENUITEM "Synchronize Vertical Scrolling",      IDM_VIEW_SYNSCROLLV
@@ -460,7 +507,7 @@ BEGIN
         MENUITEM "Text Direction LTR",                  IDM_EDIT_LTR
     END
 
-    POPUP "Encoding"
+    POPUP "E&ncoding"
     BEGIN
         MENUITEM "Encode in ANSI",                    IDM_FORMAT_ANSI
         MENUITEM "Encode in UTF-8 without BOM",       IDM_FORMAT_AS_UTF_8
@@ -601,6 +648,7 @@ BEGIN
         MENUITEM "Caml",                    IDM_LANG_CAML
         MENUITEM "Cmake",                   IDM_LANG_CMAKE
         MENUITEM "COBOL",                   IDM_LANG_COBOL
+        MENUITEM "CoffeeScript",           IDM_LANG_COFFEESCRIPT
         MENUITEM "CSS",                     IDM_LANG_CSS
         MENUITEM "D",                       IDM_LANG_D
         MENUITEM "Diff",                    IDM_LANG_DIFF
@@ -667,6 +715,7 @@ BEGIN
         MENUITEM "Caml",                  IDM_LANG_CAML
         MENUITEM "Cmake",                 IDM_LANG_CMAKE
         MENUITEM "COBOL",                 IDM_LANG_COBOL
+		MENUITEM "CoffeeScript",         IDM_LANG_COFFEESCRIPT
         MENUITEM "CSS",                   IDM_LANG_CSS
     END
     POPUP "D"
@@ -767,7 +816,7 @@ BEGIN
         MENUITEM "Edit Popup ContextMenu",      IDM_SETTING_EDITCONTEXTMENU
     END
 
-    POPUP "Macro"
+    POPUP "&Macro"
     BEGIN
         MENUITEM "Start Re&cording",                   IDM_MACRO_STARTRECORDINGMACRO
         MENUITEM "S&top Recording",                    IDM_MACRO_STOPRECORDINGMACRO
@@ -776,7 +825,7 @@ BEGIN
         MENUITEM "&Run a Macro Multiple Times...",     IDM_MACRO_RUNMULTIMACRODLG
     END
 
-    POPUP "Run"
+    POPUP "&Run"
     BEGIN
         MENUITEM "&Run...",    IDM_EXECUTE
     END
@@ -784,14 +833,17 @@ BEGIN
     POPUP "&?"
     BEGIN
         MENUITEM "Help Contents",              IDM_HELP
+        MENUITEM "Command Line Arguments...",      IDM_CMDLINEARGUMENTS
         MENUITEM SEPARATOR
         MENUITEM "Notepad++ Home",            IDM_HOMESWEETHOME
         MENUITEM "Notepad++ Project Page",    IDM_PROJECTPAGE
-        MENUITEM "Online Documentation",    IDM_ONLINEHELP
+        //MENUITEM "Online Documentation",      IDM_ONLINEHELP
         MENUITEM "Forum",                     IDM_FORUM
         MENUITEM "Get More Plugins",          IDM_PLUGINSHOME
         MENUITEM SEPARATOR
         MENUITEM "Update Notepad++",          IDM_UPDATE_NPP
+		MENUITEM "Set Updater Proxy...",         IDM_CONFUPDATERPROXY
+		MENUITEM SEPARATOR
         MENUITEM "About Notepad++",           IDM_ABOUT
     END
 
@@ -819,8 +871,8 @@ FONT 8, TEXT("MS Shell Dlg"), 0, 0, 0x1
 BEGIN
     EDITTEXT        IDC_BUILD_DATETIME,150,2,150,10, ES_READONLY | NOT WS_BORDER
     CONTROL         "",IDI_CHAMELEON,"Static",SS_OWNERDRAW,20,5,64,64
-    LTEXT           NOTEPAD_PLUS_VERSION, IDC_STATIC,70,20,70,11
-    LTEXT           UNICODE_ANSI_MODE, IDC_STATIC,145,20,65,11
+    //CONTROL         "",IDI_JESUISCHARLIE,"Static",SS_OWNERDRAW,20,5,64,64
+    LTEXT           NOTEPAD_PLUS_VERSION, IDC_STATIC,70,20,140,11
     LTEXT           "Author :",IDC_STATIC,21,45,31,8
     LTEXT           "Notepad++ team",IDC_AUTHOR_NAME,78,45,70,8
     LTEXT           "Home Page :",IDC_STATIC,21,59,47,8
@@ -867,4 +919,4 @@ BEGIN
 END
 
 // xp style
-1 RT_MANIFEST "notepad++.exe.manifest"
+//1 RT_MANIFEST "notepad++.exe.manifest"

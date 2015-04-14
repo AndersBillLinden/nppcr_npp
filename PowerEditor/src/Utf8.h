@@ -29,7 +29,7 @@ namespace Utf8 { // could be a static class, instead of a namespace, if it needs
 	inline static int  continuationBytes(UCHAR c)  {
 		static const char _len[] = { 1,1,2,3 };
 		return (c < 0xC0) ? 0 : _len[(c & 0x30) >>  4];
-	}
+	} 
 
 	// validates a full character
 	inline static bool isValid(const char* buf, int buflen) {

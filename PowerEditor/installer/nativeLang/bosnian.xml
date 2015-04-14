@@ -286,25 +286,25 @@
 				<Item id="1620" name="Pronaði :"/>
                 <Item id="1621" name="Usmjerenje"/>
 				<Item id="1624" name="Naèin pretraživanja"/>
-				<Item id="1625" name="Normalno"/>
-				<Item id="1626" name="Prošireno (\n, \r, \t, \0, \x...)"/>
+			 	<Item id="1625" name="Normalno"/>
+			 	<Item id="1626" name="Prošireno (\n, \r, \t, \0, \x...)"/>
                 <Item id="1611" name="Nado&amp;mjesti sa :"/>
                 <Item id="1608" name="&amp;Nadomjesti"/>
                 <Item id="1609" name="Nadomjesti &amp;sve"/>
-				<Item id="1623" name="Transparencija"/>
-				<Item id="1687" name="Pri neaktivnosti"/>
-				<Item id="1688" name="Uvijek"/>
-				<Item id="1632" name="U odabranom dijelu"/>
-				<Item id="1633" name="Oèisti"/>
-				<Item id="1635" name="Zamijeni sve u svim otvorenim dokumentima"/>
-				<Item id="1636" name="Pronaði sve u svim otvorenim dokumentima"/>
-				<Item id="1637" name="Pronaði u datotekama"/>
-				<Item id="1640" name="Zamijeni dijalog"/>
-				<Item id="1654" name="Filteri :"/>
-				<Item id="1655" name="Putanja :"/>
-				<Item id="1656" name="Pronaði sve"/>
-				<Item id="1658" name="U svim podfolderima"/>
-				<Item id="1659" name="U skrivenim folderima"/>
+			 	<Item id="1623" name="Transparencija"/>
+			 	<Item id="1687" name="Pri neaktivnosti"/>
+			 	<Item id="1688" name="Uvijek"/>
+			 	<Item id="1632" name="U odabranom dijelu"/>
+			 	<Item id="1633" name="Oèisti"/>
+			 	<Item id="1635" name="Zamijeni sve u svim otvorenim dokumentima"/>
+			 	<Item id="1636" name="Pronaði sve u svim otvorenim dokumentima"/>
+			 	<Item id="1637" name="Pronaði u datotekama"/>
+			 	<Item id="1640" name="Zamijeni dijalog"/>
+			 	<Item id="1654" name="Filteri :"/>
+			 	<Item id="1655" name="Putanja :"/>
+			 	<Item id="1656" name="Pronaði sve"/>
+			 	<Item id="1658" name="U svim podfolderima"/>
+			 	<Item id="1659" name="U skrivenim folderima"/>
             </Find>
             <GoToLine title="Idi na red #">
                 <Item id="2007" name="Red"/>
@@ -330,13 +330,13 @@
 				<Item id="2303" name="Transparencija"/>
 
                 <SubDialog>
-			<Item id="2204" name="Podebljano"/>
+                	<Item id="2204" name="Podebljano"/>
                     <Item id="2205" name="Koso/Italic"/>
                     <Item id="2206" name="Boja teksta"/>
                     <Item id="2207" name="Boja pozadine"/>
                     <Item id="2208" name="Tip fonta :"/>
                     <Item id="2209" name="Velièina fonta :"/>
-
+					
                     <Item id="2211" name="Opis stila :"/>
                     <Item id="2212" name="Boje"/>
                     <Item id="2213" name="Vrste fonta"/>

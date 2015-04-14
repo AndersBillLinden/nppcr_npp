@@ -222,7 +222,7 @@ static void ColouriseTeXDoc(
 						sc.ForwardSetState(SCE_TEX_TEXT) ;
 					} else {
 						sc.GetCurrent(key, sizeof(key)-1) ;
-						k = strlen(key) ;
+						k = static_cast<int>(strlen(key)) ;
 						memmove(key,key+1,k) ; // shift left over escape token
 						key[k] = '\0' ;
 						k-- ;
@@ -233,10 +233,10 @@ static void ColouriseTeXDoc(
 							sc.SetState(SCE_TEX_COMMAND) ;
 							newifDone = false ;
 						} else if (keywords.InList(key)) {
-						sc.SetState(SCE_TEX_COMMAND) ;
+    						sc.SetState(SCE_TEX_COMMAND) ;
 							newifDone = autoIf && (strcmp(key,"newif") == 0) ;
 						} else if (autoIf && ! newifDone && (key[0] == 'i') && (key[1] == 'f') && keywords.InList("if")) {
-						sc.SetState(SCE_TEX_COMMAND) ;
+	    					sc.SetState(SCE_TEX_COMMAND) ;
 						} else {
 							sc.ChangeState(SCE_TEX_TEXT) ;
 							sc.SetState(SCE_TEX_TEXT) ;

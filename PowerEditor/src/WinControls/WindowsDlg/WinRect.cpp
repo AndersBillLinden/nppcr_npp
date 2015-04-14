@@ -24,7 +24,7 @@ WINRECT::WINRECT(WORD f, int id, LONG p)
 //////////////////
 // Get the parent of a given WINRECT. To find the parent, chase the prev
 // pointer to the start of the list, then take the item before that in
-// memory.
+// memory. 
 //
 WINRECT* WINRECT::Parent()
 {
@@ -73,7 +73,7 @@ WINRECT* WINRECT::InitMap(WINRECT* pWinMap, WINRECT* parent)
 			pwrc = InitMap(pwrc+1,pwrc); // recurse! Returns end-of-grp
 			assert(pwrc->IsEndGroup());
 		}
-		pwrc++;
+		++pwrc;
 	}
 	// safety checks
 	assert(pwrc->IsEndGroup());
