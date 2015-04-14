@@ -2,6 +2,7 @@
 *.obj
 *.res
 *.tlog
+*.suo
 npp.pdb
 notepadPlus.vs2005.vcxproj
 notepadPlus.vs2005.vcxproj.filters
