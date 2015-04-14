@@ -1,0 +1,14 @@
+*.o
+*.obj
+*.res
+*.tlog
+npp.pdb
+notepadPlus.vs2005.vcxproj
+notepadPlus.vs2005.vcxproj.filters
+notepadPlus.vs2005.opensdf
+notepadPlus.vs2005.sdf
+Lexers.a
+Unicode Release/
+Unicode Debug/
+PowerEditor/bin/
+scintilla/bin/
